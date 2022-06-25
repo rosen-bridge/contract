@@ -358,7 +358,7 @@ object Scripts {
        |  val signedColl = SELF.R4[Coll[Coll[Byte]]].get.map { (row: Coll[Byte]) => proveDlog(decodePoint(row)) }
        |  val paymentSignCount = SELF.R4[Coll[Int]].get(0)
        |  val updateSignCount = SELF.R4[Coll[Int]].get(1)
-//       |  val updateSignLeast = atLeast(2, signedColl)
+       |  val updateSignLeast = atLeast(2, signedColl)
        |  val paymentSignLeast = allOf(
        |    Coll(
        |      atLeast(1, signedColl),
@@ -376,7 +376,7 @@ object Scripts {
        |      allOf(
        |        Coll(
        |          guardSignBoxCheck,
-       |          paymentSignLeast
+       |          paymentSignLeast || updateSignLeast
        |        )
        |      )
        |  )

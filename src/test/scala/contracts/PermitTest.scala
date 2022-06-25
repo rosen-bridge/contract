@@ -1,9 +1,9 @@
 package contracts
 
 import helpers.{Configs, Utils}
-import org.ergoplatform.appkit.{ErgoProver, ErgoToken}
-import rosen.bridge.Contracts
-import scorex.util.encode.Base16
+import org.ergoplatform.appkit.{ConstantsBuilder, ErgoProver, ErgoToken}
+import rosen.bridge.{Contracts, Scripts}
+import scorex.util.encode.{Base16, Base64}
 import testUtils.{Boxes, Commitment, TestSuite}
 
 import scala.collection.JavaConverters._
@@ -450,7 +450,7 @@ class PermitTest extends TestSuite {
     })
   }
 
-  property("test guard nft box spend without update. signed with 5 out of 7 signatures") {
+  property("test guard nft box spend without update with 5 sign.") {
     Configs.ergoClient.execute(ctx => {
       try {
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
@@ -466,7 +466,59 @@ class PermitTest extends TestSuite {
           .outputs(outSignBox, outBox)
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .build()
-        prover.sign(tx)
+        val proverBuilder = ctx.newProverBuilder()
+        secrets.slice(0, 5).map(item => proverBuilder.withDLogSecret(item))
+        proverBuilder.build().sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail(s"transaction not signed")
+      }
+    })
+  }
+
+  property("test guard nft box cant spend without update with 4 sign") {
+    Configs.ergoClient.execute(ctx => {
+      try {
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val prover = guards(0)
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val signBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val box2 = Boxes.createBoxForUser(ctx, guards(0).getAddress, 1e9.toLong)
+        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 5,6)
+        val outBox = Boxes.createBoxCandidateForUser(ctx, guards(1).getAddress, 1e8.toLong)
+        val tx = ctx.newTxBuilder().boxesToSpend(Seq(signBox, box2).asJava)
+          .fee(Configs.fee)
+          .outputs(outSignBox, outBox)
+          .sendChangeTo(prover.getAddress.getErgoAddress)
+          .build()
+        val proverBuilder = ctx.newProverBuilder()
+        secrets.slice(0, 4).map(item => proverBuilder.withDLogSecret(item))
+        proverBuilder.build().sign(tx)
+        fail("transaction signed with 4 signer for updating")
+      } catch {
+        case exp: Throwable =>
+      }
+    })
+  }
+
+  property("test guard nft box spend with update with 6 sign.") {
+    Configs.ergoClient.execute(ctx => {
+      try {
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val prover = guards(0)
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val signBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val box2 = Boxes.createBoxForUser(ctx, guards(0).getAddress, 1e9.toLong)
+        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 4,6)
+        val outBox = Boxes.createBoxCandidateForUser(ctx, guards(1).getAddress, 1e8.toLong)
+        val tx = ctx.newTxBuilder().boxesToSpend(Seq(signBox, box2).asJava)
+          .fee(Configs.fee)
+          .outputs(outSignBox, outBox)
+          .sendChangeTo(prover.getAddress.getErgoAddress)
+          .build()
         val proverBuilder = ctx.newProverBuilder()
         secrets.slice(0, 6).map(item => proverBuilder.withDLogSecret(item))
         proverBuilder.build().sign(tx)
@@ -474,6 +526,32 @@ class PermitTest extends TestSuite {
         case exp: Throwable =>
           println(exp.toString)
           fail(s"transaction not signed")
+      }
+    })
+  }
+
+  property("test guard nft box cant spend with update with 5 sign") {
+    Configs.ergoClient.execute(ctx => {
+      try {
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val prover = guards(0)
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val signBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val box2 = Boxes.createBoxForUser(ctx, guards(0).getAddress, 1e9.toLong)
+        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 4,6)
+        val outBox = Boxes.createBoxCandidateForUser(ctx, guards(1).getAddress, 1e8.toLong)
+        val tx = ctx.newTxBuilder().boxesToSpend(Seq(signBox, box2).asJava)
+          .fee(Configs.fee)
+          .outputs(outSignBox, outBox)
+          .sendChangeTo(prover.getAddress.getErgoAddress)
+          .build()
+        val proverBuilder = ctx.newProverBuilder()
+        secrets.slice(0, 5).map(item => proverBuilder.withDLogSecret(item))
+        proverBuilder.build().sign(tx)
+        fail("transaction signed with 4 signer for updating")
+      } catch {
+        case exp: Throwable =>
       }
     })
   }
