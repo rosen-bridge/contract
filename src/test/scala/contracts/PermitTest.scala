@@ -202,7 +202,7 @@ class PermitTest extends TestSuite {
           .outputs(newPermit)
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .build()
-        val tx = prover.sign(redeemUnsigned)
+        prover.sign(redeemUnsigned)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
@@ -263,7 +263,7 @@ class PermitTest extends TestSuite {
 
   property("test cant create event trigger for lower than minimum required watcher") {
     Configs.ergoClient.execute(ctx => {
-      try {
+      assertThrows[AnyRef] {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
@@ -278,10 +278,6 @@ class PermitTest extends TestSuite {
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .build()
         prover.sign(tx)
-        fail("transaction signed with 3 watcher out of 7 (4 is required)")
-      } catch {
-        case exp: Throwable =>
-          println(s"test create event trigger ${exp.toString}")
       }
     })
   }
@@ -305,7 +301,7 @@ class PermitTest extends TestSuite {
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .outputs(newPermits: _*)
           .build()
-        val tx = prover.sign(unsignedTx)
+        prover.sign(unsignedTx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
@@ -336,7 +332,7 @@ class PermitTest extends TestSuite {
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .outputs(newPermits: _*)
           .build()
-        val tx = prover.sign(unsignedTx)
+        prover.sign(unsignedTx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
@@ -361,7 +357,7 @@ class PermitTest extends TestSuite {
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .outputs(newFraud: _*)
           .build()
-        val tx = prover.sign(unsignedTx)
+        prover.sign(unsignedTx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
@@ -479,7 +475,7 @@ class PermitTest extends TestSuite {
 
   property("test guard nft box cant spend without update with 4 sign") {
     Configs.ergoClient.execute(ctx => {
-      try {
+      assertThrows[AnyRef] {
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
         val prover = guards(0)
@@ -496,9 +492,6 @@ class PermitTest extends TestSuite {
         val proverBuilder = ctx.newProverBuilder()
         secrets.slice(0, 4).map(item => proverBuilder.withDLogSecret(item))
         proverBuilder.build().sign(tx)
-        fail("transaction signed with 4 signer for updating")
-      } catch {
-        case exp: Throwable =>
       }
     })
   }
@@ -519,6 +512,10 @@ class PermitTest extends TestSuite {
           .outputs(outSignBox, outBox)
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .build()
+        val reduced = prover.reduce(tx, 0)
+        println("debug information is:")
+        secrets.foreach(item => println(item))
+        println(Base16.encode(reduced.toBytes))
         val proverBuilder = ctx.newProverBuilder()
         secrets.slice(0, 6).map(item => proverBuilder.withDLogSecret(item))
         proverBuilder.build().sign(tx)
@@ -532,7 +529,7 @@ class PermitTest extends TestSuite {
 
   property("test guard nft box cant spend with update with 5 sign") {
     Configs.ergoClient.execute(ctx => {
-      try {
+      assertThrows[AnyRef] {
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
         val prover = guards(0)
@@ -549,9 +546,6 @@ class PermitTest extends TestSuite {
         val proverBuilder = ctx.newProverBuilder()
         secrets.slice(0, 5).map(item => proverBuilder.withDLogSecret(item))
         proverBuilder.build().sign(tx)
-        fail("transaction signed with 4 signer for updating")
-      } catch {
-        case exp: Throwable =>
       }
     })
   }

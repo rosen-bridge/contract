@@ -107,7 +107,7 @@ object Contracts {
 
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), guardSignScript)
       val address = Utils.getContractAddress(contract)
-      println(s"lock address is : \t\t\t$address")
+      println(s"guard sign address is : \t\t\t$address")
       contract
     })
   }
