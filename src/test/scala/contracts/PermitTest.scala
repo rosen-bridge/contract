@@ -1,9 +1,9 @@
 package contracts
 
 import helpers.{Configs, Utils}
-import org.ergoplatform.appkit.{ConstantsBuilder, ErgoProver, ErgoToken}
-import rosen.bridge.{Contracts, Scripts}
-import scorex.util.encode.{Base16, Base64}
+import org.ergoplatform.appkit.{ErgoProver, ErgoToken}
+import rosen.bridge.{Contracts}
+import scorex.util.encode.{Base16}
 import testUtils.{Boxes, Commitment, TestSuite}
 
 import scala.collection.JavaConverters._
@@ -211,7 +211,7 @@ class PermitTest extends TestSuite {
     })
   }
 
-  property("test create trigger event for all watcher") {
+  property("test create event trigger for all watcher") {
     Configs.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
@@ -236,7 +236,7 @@ class PermitTest extends TestSuite {
     })
   }
 
-  property("test create trigger event for minimum required watcher") {
+  property("test create event trigger for minimum required watcher") {
     Configs.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
@@ -261,7 +261,7 @@ class PermitTest extends TestSuite {
     })
   }
 
-  property("test cant create trigger event for lower than minimum required watcher") {
+  property("test cant create event trigger for lower than minimum required watcher") {
     Configs.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
@@ -281,7 +281,7 @@ class PermitTest extends TestSuite {
         fail("transaction signed with 3 watcher out of 7 (4 is required)")
       } catch {
         case exp: Throwable =>
-          println(exp.toString)
+          println(s"test create event trigger ${exp.toString}")
       }
     })
   }
@@ -345,7 +345,7 @@ class PermitTest extends TestSuite {
     })
   }
 
-  property("test create fraud from trigger event") {
+  property("test create fraud from event trigger") {
     Configs.ergoClient.execute(ctx => {
       try {
         val prover = getProver()

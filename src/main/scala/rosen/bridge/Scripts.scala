@@ -43,7 +43,6 @@ object Scripts {
        |      sigmaProp(
        |        allOf(
        |          Coll(
-       |            true,
        |            repoReplication,
        |            repoOut.R4[Coll[Coll[Byte]]].get.size == widListSize + 1,
        |            repoOut.R4[Coll[Coll[Byte]]].get.slice(0, widOutListSize - 1) == repo.R4[Coll[Coll[Byte]]].get,
@@ -234,7 +233,6 @@ object Scripts {
        |    sigmaProp(
        |      allOf(
        |        Coll(
-       |          true,
        |          OUTPUTS(0).value >= EventBoxErgs,
        |          myWIDCommitments.size == 1,
        |          myWIDExists,
@@ -356,12 +354,12 @@ object Scripts {
        |  // 0: GuardNFT
        |  // --------------------
        |  val signedColl = SELF.R4[Coll[Coll[Byte]]].get.map { (row: Coll[Byte]) => proveDlog(decodePoint(row)) }
-       |  val paymentSignCount = SELF.R4[Coll[Int]].get(0)
-       |  val updateSignCount = SELF.R4[Coll[Int]].get(1)
-       |  val updateSignLeast = atLeast(2, signedColl)
+       |  val paymentSignCount = SELF.R5[Coll[Int]].get(0)
+       |  val updateSignCount = SELF.R5[Coll[Int]].get(1)
+       |  val updateSignLeast = atLeast(updateSignCount, signedColl)
        |  val paymentSignLeast = allOf(
        |    Coll(
-       |      atLeast(1, signedColl),
+       |      atLeast(paymentSignCount, signedColl),
        |      OUTPUTS(0).R4[Coll[Coll[Byte]]].get == SELF.R4[Coll[Coll[Byte]]].get,
        |      OUTPUTS(0).R5[Coll[Int]].get == SELF.R5[Coll[Int]].get,
        |    )
