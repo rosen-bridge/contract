@@ -1,6 +1,7 @@
 package rosen.bridge
 
-import helpers.{MainTokens, Tokens, Utils}
+import helpers.{MainTokens, Network, Tokens, Utils}
+import io.circe.Json
 import scopt.OptionParser
 
 import java.io.PrintWriter
@@ -14,19 +15,17 @@ case class Config(
 
 object RosenContractsExecutor extends App {
 
-  def createJson(networkName: String, networkType: String, networkVersion: String, contracts: Contracts, mainTokens: MainTokens, tokens: Tokens): Unit = {
-
-    val data =
-      s"""
-         |{
-         |  "addresses": ${contracts.toJsonAddresses},
-         |  "tokens": ${tokens.toJson()},
-         |  "mainTokens": ${mainTokens.toJson()}
-         |}
-         |""".stripMargin
+  def createJson(networkName: String, networkType: String, networkVersion: String, contracts: Contracts, mainTokens: MainTokens, network: Network): Unit = {
+    val result = {
+      Json.fromFields(List(
+        ("addresses", contracts.toJsonAddresses),
+        ("tokens", network.tokens.toJson().deepMerge(mainTokens.toJson())),
+        ("cleanupConfirm", Json.fromInt(network.cleanupConfirm))
+      ))
+    }
 
     new PrintWriter(s"${networkName}-${networkType}-${networkVersion}.json") {
-      write(data)
+      write(result.toString())
       close()
     }
 
@@ -53,7 +52,7 @@ object RosenContractsExecutor extends App {
 
   parser.parse(args, Config()) match {
     case Some(config) =>
-      val networkConfig: (Tokens, MainTokens) = Utils.selectConfig(config.networkName, config.networkType)
+      val networkConfig: (Network, MainTokens) = Utils.selectConfig(config.networkName, config.networkType)
       val contracts = new Contracts(networkConfig)
       createJson(
         config.networkName,

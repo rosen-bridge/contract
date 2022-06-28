@@ -1,6 +1,6 @@
 package testUtils
 
-import helpers.{Configs, MainTokens, Tokens, Utils}
+import helpers.{Configs, MainTokens, Network, Tokens, Utils}
 import org.ergoplatform.appkit.{Address, BlockchainContext, ErgoContract, ErgoToken, ErgoType, ErgoValue, InputBox, JavaHelpers, OutBox}
 import rosen.bridge.Contracts
 import scorex.util.encode.Base16
@@ -60,7 +60,7 @@ class Commitment {
 
 object Boxes {
 
-  val networkConfig: (Tokens, MainTokens) = Utils.selectConfig("cardano", "testnet")
+  val networkConfig: (Network, MainTokens) = Utils.selectConfig("cardano", "testnet")
   val contracts = new Contracts(networkConfig)
 
   def getRandomHexString(length: Int = 64): String = {
@@ -130,7 +130,7 @@ object Boxes {
       .value(Configs.minBoxValue)
       .tokens(
         new ErgoToken(networkConfig._2.RepoNFT, 1),
-        new ErgoToken(networkConfig._1.RWTId, RWTCount)
+        new ErgoToken(networkConfig._1.tokens.RWTId, RWTCount)
       )
       .contract(contracts.RWTRepo._1)
       .registers(
@@ -148,7 +148,7 @@ object Boxes {
 
   def createPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
     val txB = ctx.newTxBuilder()
-    val tokensSeq = Seq(new ErgoToken(networkConfig._1.RWTId, RWTCount)) ++ tokens.toSeq
+    val tokensSeq = Seq(new ErgoToken(networkConfig._1.tokens.RWTId, RWTCount)) ++ tokens.toSeq
     txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.WatcherPermit._1)
@@ -166,7 +166,7 @@ object Boxes {
     txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.Fraud._1)
-      .tokens(new ErgoToken(networkConfig._1.RWTId, 1))
+      .tokens(new ErgoToken(networkConfig._1.tokens.RWTId, 1))
       .registers(
         ErgoValue.of(Seq(WID).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
       )
@@ -177,7 +177,7 @@ object Boxes {
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.Commitment._1)
-      .tokens(new ErgoToken(networkConfig._1.RWTId, 1))
+      .tokens(new ErgoToken(networkConfig._1.tokens.RWTId, 1))
       .registers(
         ErgoValue.of(Seq(WID).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
         ErgoValue.of(Seq(RequestId).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
@@ -193,7 +193,7 @@ object Boxes {
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue * size)
       .contract(contracts.WatcherTriggerEvent._1)
-      .tokens(new ErgoToken(networkConfig._1.RWTId, size))
+      .tokens(new ErgoToken(networkConfig._1.tokens.RWTId, size))
       .registers(
         ErgoValue.of(R4, ErgoType.collType(ErgoType.byteType())),
         ErgoValue.of(R5, ErgoType.collType(ErgoType.byteType())),

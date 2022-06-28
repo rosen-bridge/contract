@@ -1,11 +1,12 @@
 package rosen.bridge
 
-import helpers.{Configs, MainTokens, Tokens, Utils}
+import helpers.{Configs, MainTokens, Network, Tokens, Utils}
 import org.ergoplatform.appkit.{ConstantsBuilder, ErgoContract}
 import scorex.crypto.hash.Digest32
 import scorex.util.encode.{Base16, Base64}
+import io.circe.Json
 
-class Contracts(networkConfig: (Tokens, MainTokens)) {
+class Contracts(networkConfig: (Network, MainTokens)) {
   lazy val RWTRepo: (ErgoContract, String) = generateRWTRepoContract()
   lazy val WatcherPermit: (ErgoContract, String) = generateWatcherPermitContract()
   lazy val Commitment: (ErgoContract, String) = generateCommitmentContract()
@@ -14,18 +15,16 @@ class Contracts(networkConfig: (Tokens, MainTokens)) {
   lazy val lock: (ErgoContract, String) = generateLockContract()
   lazy val guardSign: (ErgoContract, String) = generateGuardSignContract()
 
-  def toJsonAddresses: String = {
-    s"""
-       |{
-       |  "RWTRepo": "${RWTRepo._2}",
-       |  "WatcherPermit": "${WatcherPermit._2}",
-       |  "Fraud": "${Fraud._2}",
-       |  "lock": "${lock._2}",
-       |  "guardSign": "${guardSign._2}",
-       |  "Commitment": "${Commitment._2}",
-       |  "WatcherTriggerEvent": "${WatcherTriggerEvent._2}"
-       |}
-       |""".stripMargin
+  def toJsonAddresses: Json = {
+    Json.fromFields(List(
+      ("RWTRepo", Json.fromString(RWTRepo._2)),
+      ("WatcherPermit", Json.fromString(WatcherPermit._2)),
+      ("Fraud", Json.fromString(Fraud._2)),
+      ("lock", Json.fromString(lock._2)),
+      ("guardSign", Json.fromString(guardSign._2)),
+      ("Commitment", Json.fromString(Commitment._2)),
+      ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2))
+    ))
   }
 
   def getContractScriptHash(contract: ErgoContract): Digest32 = {
@@ -78,7 +77,7 @@ class Contracts(networkConfig: (Tokens, MainTokens)) {
     Configs.ergoClient.execute(ctx => {
       val fraud = Base64.encode(getContractScriptHash(Fraud._1))
       val triggerScript = Scripts.EventTriggerScript
-        .replace("CLEANUP_NFT", Base64.encode(Base16.decode(networkConfig._1.CleanupNFT).get))
+        .replace("CLEANUP_NFT", Base64.encode(Base16.decode(networkConfig._1.tokens.CleanupNFT).get))
         .replace("GUARD_NFT", Base64.encode(Base16.decode(networkConfig._2.GuardNFT).get))
         .replace("FRAUD_SCRIPT_HASH", fraud)
         .replace("CLEANUP_CONFIRMATION", networkConfig._1.cleanupConfirm.toString)
@@ -93,7 +92,7 @@ class Contracts(networkConfig: (Tokens, MainTokens)) {
   private def generateFraudContract(): (ErgoContract, String) = {
     Configs.ergoClient.execute(ctx => {
       val fraudScript = Scripts.FraudScript
-        .replace("CLEANUP_NFT", Base64.encode(Base16.decode(networkConfig._1.CleanupNFT).get))
+        .replace("CLEANUP_NFT", Base64.encode(Base16.decode(networkConfig._1.tokens.CleanupNFT).get))
         .replace("REPO_NFT", Base64.encode(Base16.decode(networkConfig._2.RepoNFT).get))
 
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), fraudScript)

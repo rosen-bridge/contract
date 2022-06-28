@@ -1,6 +1,6 @@
 package contracts
 
-import helpers.{Configs, MainTokens, Tokens, Utils}
+import helpers.{Configs, MainTokens, Network, Tokens, Utils}
 import org.ergoplatform.appkit.{ErgoProver, ErgoToken}
 import rosen.bridge.Contracts
 import scorex.util.encode.Base16
@@ -10,7 +10,7 @@ import scala.collection.JavaConverters._
 
 class PermitTest extends TestSuite {
   val sk = Utils.randBigInt
-  val networkConfig: (Tokens, MainTokens) = Utils.selectConfig("cardano", "testnet")
+  val networkConfig: (Network, MainTokens) = Utils.selectConfig("cardano", "testnet")
   val contracts = new Contracts(networkConfig)
 
   def getProver(): ErgoProver = {
@@ -350,7 +350,7 @@ class PermitTest extends TestSuite {
         val commitment = new Commitment()
         val WIDs = generateRandomWIDList(7)
         val triggerEvent = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._1.CleanupNFT, 1L))
+        val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._1.tokens.CleanupNFT, 1L))
         val newFraud = WIDs.indices.map(index => {
           Boxes.createFraudBox(ctx, WIDs(index))
         })
@@ -380,7 +380,7 @@ class PermitTest extends TestSuite {
           var amounts = globalAmounts.map(item => item).toArray
           var WIDs = globalWIDs.map(item => item).toArray
           val WID = WIDs(userIndex)
-          val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._1.CleanupNFT, 1L))
+          val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._1.tokens.CleanupNFT, 1L))
           val fraud = Boxes.createFraudBox(ctx, WID).convertToInputWith(Boxes.getRandomHexString(), 1)
           val RWTCount = repo.getTokens.get(1).getValue.toLong + 1
           val RSNCount = repo.getTokens.get(2).getValue.toLong - 100

@@ -54,15 +54,20 @@ object Configs extends ConfigHelper {
   val ergoClient: ErgoClient = RestApiErgoClient.create(node.url, node.networkType, node.apiKey, explorer)
   lazy val addressEncoder = new ErgoAddressEncoder(node.networkType.networkPrefix)
 
-  private lazy val ergoTokensConfig = config.getObject("tokens")
-  var allNetworksToken = mutable.Map.empty[(String, String), Tokens]
-  ergoTokensConfig.keySet().forEach(networkName => {
-    val networkConfig = ergoTokensConfig.get(networkName).asInstanceOf[ConfigObject]
+  private lazy val ergoNetworksConfig = config.getObject("networks")
+  // (String, String) => (networkName, networkType)
+  var allNetworksToken = mutable.Map.empty[(String, String), Network]
+  ergoNetworksConfig.keySet().forEach(networkName => {
+    val networkConfig = ergoNetworksConfig.get(networkName).asInstanceOf[ConfigObject]
     networkConfig.keySet().forEach(networkType => {
       val networkDataConfig = networkConfig.get(networkType).asInstanceOf[ConfigObject]
-      allNetworksToken((networkName, networkType)) = Tokens(
-        readKeyDynamic(networkDataConfig, "RWTId"),
-        readKeyDynamic(networkDataConfig, "CleanupNFT"),
+      val networkTokensConfig = networkDataConfig.get("tokens").asInstanceOf[ConfigObject]
+      val tokens = Tokens(
+        readKeyDynamic(networkTokensConfig, "RWTId"),
+        readKeyDynamic(networkTokensConfig, "CleanupNFT")
+      )
+      allNetworksToken((networkName, networkType)) =  Network(
+        tokens,
         readKeyDynamic(networkDataConfig, "cleanup-confirm").toInt
       )
     })
