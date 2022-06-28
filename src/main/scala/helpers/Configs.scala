@@ -1,10 +1,10 @@
 package helpers
 
-import java.math.BigInteger
-
-import com.typesafe.config.{Config, ConfigFactory}
+import com.typesafe.config.{Config, ConfigFactory, ConfigObject}
 import org.ergoplatform.ErgoAddressEncoder
-import org.ergoplatform.appkit.{Address, ErgoClient, NetworkType, RestApiErgoClient}
+import org.ergoplatform.appkit.{ErgoClient, NetworkType, RestApiErgoClient}
+
+import scala.collection.mutable
 
 trait ConfigHelper {
   val config: Config  = ConfigFactory.load()
@@ -25,6 +25,42 @@ trait ConfigHelper {
         sys.exit()
     }
   }
+
+  def readKeyDynamic(config: ConfigObject, key: String, default: String = null): String = {
+    try {
+      if(config.containsKey(key)) config.toConfig.getString(key)
+      else if(default.nonEmpty) default
+      else throw new Throwable(s"${key} not found!")
+    } catch {
+      case ex: Throwable =>
+        println(ex.getMessage)
+        null
+    }
+  }
+}
+
+
+case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String) {
+  def toJson(): String = {
+    s"""
+       | {
+       |    "RepoNFT": "${RepoNFT}",
+       |    "GuardNFT": "${GuardNFT}",
+       |    "RSN": "${RSN}"
+       | }
+       |""".stripMargin
+  }
+}
+case class Tokens(CleanupNFT: String, RWTId: String, cleanupConfirm: Int) {
+  def toJson(): String = {
+    s"""
+       | {
+       |    "CleanupNFT": "${CleanupNFT}",
+       |    "RWTId": "${RWTId}",
+       |    "cleanupConfirm": ${cleanupConfirm}
+       | }
+       |""".stripMargin
+  }
 }
 
 object Configs extends ConfigHelper {
@@ -40,12 +76,29 @@ object Configs extends ConfigHelper {
   lazy val minBoxValue: Long = readKey("box.min").toLong
   val ergoClient: ErgoClient = RestApiErgoClient.create(node.url, node.networkType, node.apiKey, explorer)
   lazy val addressEncoder = new ErgoAddressEncoder(node.networkType.networkPrefix)
-  lazy val cleanupConfirm = readKey("cleanup.confirm", (720 * 7).toString).toInt
-  object tokens {
-    lazy val RSN: String = readKey("tokens.RSN")
-    lazy val RepoNFT: String = readKey("tokens.RepoNFT")
-    lazy val GuardNFT: String = readKey("tokens.GuardNFT")
-    lazy val CleanupNFT: String = readKey("tokens.CleanupNFT")
-    lazy val RWTId: String = readKey("tokens.RWTId")
-  }
+
+  private lazy val ergoTokensConfig = config.getObject("tokens")
+  var allNetworksToken = mutable.Map.empty[(String, String), Tokens]
+  ergoTokensConfig.keySet().forEach(networkName => {
+    val networkConfig = ergoTokensConfig.get(networkName).asInstanceOf[ConfigObject]
+    networkConfig.keySet().forEach(networkType => {
+      val networkDataConfig = networkConfig.get(networkType).asInstanceOf[ConfigObject]
+      allNetworksToken((networkName, networkType)) = Tokens(
+        readKeyDynamic(networkDataConfig, "RWTId"),
+        readKeyDynamic(networkDataConfig, "CleanupNFT"),
+        readKeyDynamic(networkDataConfig, "cleanup-confirm").toInt
+      )
+    })
+  })
+
+  private lazy val ergoMainTokensConfig = config.getObject("main-tokens")
+  var mainTokens = mutable.Map.empty[String, MainTokens]
+  ergoMainTokensConfig.keySet().forEach(networkType => {
+    val mainTokenConfig = ergoMainTokensConfig.get(networkType).asInstanceOf[ConfigObject]
+    mainTokens(networkType) = MainTokens(
+      readKeyDynamic(mainTokenConfig, "RepoNFT"),
+      readKeyDynamic(mainTokenConfig, "GuardNFT"),
+      readKeyDynamic(mainTokenConfig, "RSN")
+    )
+  })
 }

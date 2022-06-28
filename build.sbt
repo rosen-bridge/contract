@@ -9,6 +9,7 @@ lazy val appkit = "org.ergoplatform" %% "ergo-appkit" % "4.0.8"
 
 libraryDependencies ++= Seq(
   appkit, (appkit % Test).classifier("tests").classifier("tests-sources"),
+  "com.github.scopt" %% "scopt" % "4.0.1",
   "com.squareup.okhttp3" % "mockwebserver" % "3.12.0",
   "org.scalatest" %% "scalatest" % "3.0.8" % "test",
   "org.scalacheck" %% "scalacheck" % "1.14.1" % "test",
