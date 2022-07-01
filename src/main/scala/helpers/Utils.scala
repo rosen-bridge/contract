@@ -17,6 +17,10 @@ object Utils {
   private val random = Random
   private val secureRandom = new java.security.SecureRandom
 
+  def selectConfig(networkName: String, networkType: String) : (Network, MainTokens) = {
+    (Configs.allNetworksToken((networkName, networkType)), Configs.mainTokens(networkType))
+  }
+
   def randBigInt: BigInt = new BigInteger(256, secureRandom)
 
   def toByteArray(s: String): Array[Byte] = Base16.decode(s).get
