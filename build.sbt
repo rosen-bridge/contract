@@ -19,7 +19,7 @@ libraryDependencies ++= Seq(
   "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test
 )
 
-ThisBuild / scalaVersion := "2.12.15"
+ThisBuild / scalaVersion := "2.12.7"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "rosen.bridge"
 ThisBuild / organizationName := "rosen bridge"
