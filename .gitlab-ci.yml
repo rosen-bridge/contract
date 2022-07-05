@@ -1,0 +1,13 @@
+image: "mozilla/sbt:8u181_1.2.7"
+
+stages:
+  - test
+
+test:
+  stage: test
+  script:
+    - sbt clean coverage test coverageReport
+  artifacts:
+    reports:
+      cobertura: target/scala-2.12/coverage-report/cobertura.xml
+
