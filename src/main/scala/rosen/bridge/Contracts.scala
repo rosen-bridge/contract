@@ -6,6 +6,8 @@ import scorex.crypto.hash.Digest32
 import scorex.util.encode.{Base16, Base64}
 import io.circe.Json
 
+import java.io.PrintWriter
+
 class Contracts(networkConfig: (Network, MainTokens)) {
   lazy val RWTRepo: (ErgoContract, String) = generateRWTRepoContract()
   lazy val WatcherPermit: (ErgoContract, String) = generateWatcherPermitContract()
@@ -29,6 +31,21 @@ class Contracts(networkConfig: (Network, MainTokens)) {
 
   def getContractScriptHash(contract: ErgoContract): Digest32 = {
     scorex.crypto.hash.Blake2b256(contract.getErgoTree.bytes)
+  }
+
+  def createContractsJson(networkName: String, networkType: String, networkVersion: String): Unit = {
+    val result = {
+      Json.fromFields(List(
+        ("addresses", this.toJsonAddresses),
+        ("tokens", networkConfig._1.tokens.toJson().deepMerge(networkConfig._2.toJson())),
+        ("cleanupConfirm", Json.fromInt(networkConfig._1.cleanupConfirm))
+      ))
+    }
+
+    new PrintWriter(s"contracts-${networkName}-${networkType}-${networkVersion}.json") {
+      write(result.toString())
+      close()
+    }
   }
 
   private def generateRWTRepoContract(): (ErgoContract, String) = {

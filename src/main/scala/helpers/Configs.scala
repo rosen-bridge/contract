@@ -83,4 +83,7 @@ object Configs extends ConfigHelper {
       readKeyDynamic(mainTokenConfig, "RSN")
     )
   })
+
+  lazy val tokensMapDirPath: String = readKey("tokensMap.dirPath", "./tokensMap")
+
 }
