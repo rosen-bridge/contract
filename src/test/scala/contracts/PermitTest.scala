@@ -406,94 +406,30 @@ class PermitTest extends TestSuite {
     })
   }
 
-  property("test Lock Script when guard token is at first index") {
-    Configs.ergoClient.execute(ctx => {
-      try {
-        val prover = getProver()
-        val box = Boxes.createCustomBox(ctx, contracts.lock._1, 1e9.toLong)
-        val boxNft = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.GuardNFT, 1L))
-        val outBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 11e8.toLong, new ErgoToken(networkConfig._2.GuardNFT, 1L))
-        val tx = ctx.newTxBuilder().boxesToSpend(Seq(boxNft, box).asJava)
-          .fee(Configs.fee)
-          .outputs(outBox)
-          .sendChangeTo(prover.getAddress.getErgoAddress)
-          .build()
-        prover.sign(tx)
-      } catch {
-        case exp: Throwable =>
-          println(exp.toString)
-          fail(s"transaction not signed")
-      }
-    })
-  }
-
-  property("test Lock Script when guard token is at second index") {
-    Configs.ergoClient.execute(ctx => {
-      try {
-        val prover = getProver()
-        val box = Boxes.createCustomBox(ctx, contracts.lock._1, 1e9.toLong)
-        val boxNft = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.GuardNFT, 1L))
-        val outBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 11e8.toLong, new ErgoToken(networkConfig._2.GuardNFT, 1L))
-        val tx = ctx.newTxBuilder().boxesToSpend(Seq(box, boxNft).asJava)
-          .fee(Configs.fee)
-          .outputs(outBox)
-          .sendChangeTo(prover.getAddress.getErgoAddress)
-          .build()
-        prover.sign(tx)
-      } catch {
-        case exp: Throwable =>
-          println(exp.toString)
-          fail(s"transaction not signed")
-      }
-    })
-  }
-
-  property("test guard nft box spend without update with 5 sign.") {
+  property("test spent lock script when guard token is in data input") {
     Configs.ergoClient.execute(ctx => {
       try {
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
-        val prover = guards(0)
         val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
-        val signBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val box2 = Boxes.createBoxForUser(ctx, guards(0).getAddress, 1e9.toLong)
-        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 5,6)
-        val outBox = Boxes.createBoxCandidateForUser(ctx, guards(1).getAddress, 1e8.toLong)
-        val tx = ctx.newTxBuilder().boxesToSpend(Seq(signBox, box2).asJava)
+        val prover = getProver()
+        val box = Boxes.createCustomBox(ctx, contracts.lock._1, 1e9.toLong)
+        val boxNft = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 32);
+        val outBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 5e8.toLong)
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.slice(0, 5).foreach(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        val tx = ctx.newTxBuilder().boxesToSpend(Seq(box).asJava)
           .fee(Configs.fee)
-          .outputs(outSignBox, outBox)
+          .outputs(outBox)
+          .withDataInputs(Seq(boxNft).asJava)
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .build()
-        val proverBuilder = ctx.newProverBuilder()
-        secrets.slice(0, 5).map(item => proverBuilder.withDLogSecret(item))
-        proverBuilder.build().sign(tx)
+        multiSigProver.sign(tx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
           fail(s"transaction not signed")
-      }
-    })
-  }
-
-  property("test guard nft box cant spend without update with 4 sign") {
-    Configs.ergoClient.execute(ctx => {
-      assertThrows[AnyRef] {
-        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
-        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
-        val prover = guards(0)
-        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
-        val signBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val box2 = Boxes.createBoxForUser(ctx, guards(0).getAddress, 1e9.toLong)
-        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 5,6)
-        val outBox = Boxes.createBoxCandidateForUser(ctx, guards(1).getAddress, 1e8.toLong)
-        val tx = ctx.newTxBuilder().boxesToSpend(Seq(signBox, box2).asJava)
-          .fee(Configs.fee)
-          .outputs(outSignBox, outBox)
-          .sendChangeTo(prover.getAddress.getErgoAddress)
-          .build()
-        val proverBuilder = ctx.newProverBuilder()
-        secrets.slice(0, 4).map(item => proverBuilder.withDLogSecret(item))
-        proverBuilder.build().sign(tx)
       }
     })
   }

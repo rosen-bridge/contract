@@ -341,8 +341,18 @@ object Scripts {
   lazy val LockScript: String =
     s"""{
        |  val GuardNFT = fromBase64("GUARD_NFT");
-       |  val guardExists = INPUTS.exists { (box: Box) => box.tokens.exists { (token: (Coll[Byte], Long)) => token._1 == GuardNFT } }
-       |  sigmaProp(guardExists)
+       |  val GuardBox = CONTEXT.dataInputs(0);
+       |  val paymentSignCount = GuardBox.R5[Coll[Int]].get(0);
+       |  val signedColl = GuardBox.R4[Coll[Coll[Byte]]].get.map { (row: Coll[Byte]) => proveDlog(decodePoint(row)) };
+       |  val verifyGuard = GuardBox.tokens.exists { (token: (Coll[Byte], Long)) => token._1 == GuardNFT };
+       |  sigmaProp(
+       |    allOf(
+       |      Coll(
+       |        verifyGuard,
+       |        atLeast(paymentSignCount, signedColl)
+       |      )
+       |    )
+       |  )
        |}""".stripMargin
 
   lazy val GuardSignScript: String =
@@ -353,30 +363,19 @@ object Scripts {
        |  // ----------------- TOKENS
        |  // 0: GuardNFT
        |  // --------------------
+       |  val GuardBox = INPUTS(0);
        |  val signedColl = SELF.R4[Coll[Coll[Byte]]].get.map { (row: Coll[Byte]) => proveDlog(decodePoint(row)) }
-       |  val paymentSignCount = SELF.R5[Coll[Int]].get(0)
        |  val updateSignCount = SELF.R5[Coll[Int]].get(1)
        |  val updateSignLeast = atLeast(updateSignCount, signedColl)
-       |  val paymentSignLeast = allOf(
-       |    Coll(
-       |      atLeast(paymentSignCount, signedColl),
-       |      OUTPUTS(0).R4[Coll[Coll[Byte]]].get == SELF.R4[Coll[Coll[Byte]]].get,
-       |      OUTPUTS(0).R5[Coll[Int]].get == SELF.R5[Coll[Int]].get,
-       |    )
-       |  )
-       |  val guardSignBoxCheck = allOf(
-       |    Coll(
-       |      OUTPUTS(0).propositionBytes == SELF.propositionBytes,
-       |      OUTPUTS(0).tokens(0)._1 == SELF.tokens(0)._1,
-       |    )
-       |  )
        |  sigmaProp(
-       |      allOf(
-       |        Coll(
-       |          guardSignBoxCheck,
-       |          paymentSignLeast || updateSignLeast
-       |        )
+       |    allOf(
+       |      Coll(
+       |        SELF.propositionBytes == GuardBox.propositionBytes,
+       |        OUTPUTS(0).propositionBytes == SELF.propositionBytes,
+       |        OUTPUTS(0).tokens(0)._1 == SELF.tokens(0)._1,
+       |        updateSignLeast
        |      )
+       |    )
        |  )
        |}""".stripMargin
 
