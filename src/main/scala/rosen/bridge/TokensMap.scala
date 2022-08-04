@@ -1,7 +1,9 @@
 package rosen.bridge
 
-import io.circe.parser
-import java.io.{ File, PrintWriter }
+import helpers.Configs
+import io.circe.{Json, parser}
+
+import java.io.{File, PrintWriter}
 import scala.io.Source
 
 object TokensMap {
@@ -23,7 +25,7 @@ object TokensMap {
    * @param filePath ex: "./tokensMap"
    * @return
    */
-  def readTokensFromFiles(filePath: String): String = {
+  def readTokensFromFiles(filePath: String): Json = {
     try {
       new File(filePath).exists
       val okFileExtensions = List("json")
@@ -35,7 +37,12 @@ object TokensMap {
         else jsonData = jsonData ++ "," ++ Source.fromFile(jsonFile).mkString
       })
       val fixJson = s"""{ \"tokens\": [ $jsonData ] }"""
-      parser.parse(fixJson).getOrElse("{ \"tokens\": [] }").toString
+      parser.parse(fixJson).getOrElse(
+        Json.fromFields(
+          List(
+            ("tokens", Json.fromFields(List.empty))
+          )
+        ))
     }
     catch {
       case _: Exception =>
@@ -59,4 +66,16 @@ object TokensMap {
       close()
     }
   }
+
+  /**
+   * Json of network's idKey
+   */
+  def createIdKeysJson(): Json = {
+    var networkIdKeysObj: List[(String, Json)] = List.empty
+    Configs.allNetworksIdKey.foreach(network => {
+      networkIdKeysObj = networkIdKeysObj :+ (network._1, network._2)
+    })
+    Json.fromFields(List(("idKeys", Json.fromFields(networkIdKeysObj))))
+  }
+
 }
