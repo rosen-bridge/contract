@@ -64,8 +64,9 @@ object RosenContractsExecutor extends App {
         println("Json of Contracts created!")
       }
       else if (config.mode == "tokens") {
-        val data = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath)
-        TokensMap.createTokensMapJsonFile(data, config.networkType, config.networkVersion)
+        val tokensMap = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath)
+        val idKeys = TokensMap.createIdKeysJson()
+        TokensMap.createTokensMapJsonFile(tokensMap.deepMerge(idKeys).toString(), config.networkType, config.networkVersion)
         println("Json of TokensMap created!")
       }
 
