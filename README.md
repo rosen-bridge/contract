@@ -1,16 +1,8 @@
 
 # Rosen Bridge
-This project is used for Test contracts and creating a centralized file for the address of contracts and TokenMaps depending on network and network type, all libraries and projects in Rosen Bridge are compatible with the outputs of these files.
+This project is used for creating a centralized file for the address of contracts and TokenMaps depending on network and network type, all libraries and projects in Rosen Bridge are compatible with the outputs of these files.
 
 ## How to use ?
-For run tests:
-```shell
-sbt run test
-```
-
-For create TokensMap file or address of contracts first you need to complete config of project, for this complete `application.conf` in `src/main/resources`
-
-
 For build:
 ```shell
 sbt run assembly

@@ -43,7 +43,6 @@ trait ConfigHelper {
 
 object Configs extends ConfigHelper {
   object node {
-    lazy val apiKey: String = readKey("node.apiKey")
     lazy val url: String = readKey("node.url")
     lazy val networkType: NetworkType = if (readKey("node.networkType").toLowerCase.equals("mainnet")) NetworkType.MAINNET else NetworkType.TESTNET
   }
@@ -52,7 +51,7 @@ object Configs extends ConfigHelper {
   lazy val fee: Long = readKey("fee.default", "1000000").toLong
   lazy val maxFee: Long = readKey("fee.max", "1000000").toLong
   lazy val minBoxValue: Long = readKey("box.min").toLong
-  val ergoClient: ErgoClient = RestApiErgoClient.create(node.url, node.networkType, node.apiKey, explorer)
+  val ergoClient: ErgoClient = RestApiErgoClient.create(node.url, node.networkType, "", explorer)
   lazy val addressEncoder = new ErgoAddressEncoder(node.networkType.networkPrefix)
 
   private lazy val ergoNetworksConfig = config.getObject("networks")
