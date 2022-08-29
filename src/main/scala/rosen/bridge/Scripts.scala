@@ -276,11 +276,14 @@ object Scripts {
        |  // ----------------- TOKENS
        |  // 0: RWT
        |
-       |  // [TriggerEvent, CleanupToken(if fraud)] => [Fraud1, Fraud2, ...]
+       |  // In case of fraud: [TriggerEvent, CleanupToken] => [Fraud1, Fraud2, ...]
+       |  // In case of payment: [TriggerEvent, Commitments(if exists), LockBox](dataInput: GuardNFTBox) => [Permit1, ..., changeBox]
        |  val cleanupNFT = fromBase64("CLEANUP_NFT");
        |  val guardNFT = fromBase64("GUARD_NFT");
        |  val cleanupConfirmation = CLEANUP_CONFIRMATION;
+       |  val LockScriptHash = fromBase64("LOCK_SCRIPT_HASH");
        |  val FraudScriptHash = fromBase64("FRAUD_SCRIPT_HASH");
+       |  val GuardLockExists = INPUTS.exists { (box: Box) => blake2b256(box.propositionBytes) == LockScriptHash}
        |  val fraudScriptCheck = if(blake2b256(OUTPUTS(0).propositionBytes) == FraudScriptHash) {
        |    allOf(
        |      Coll(
@@ -291,7 +294,7 @@ object Scripts {
        |  } else {
        |    allOf(
        |      Coll(
-       |        INPUTS(1).tokens(0)._1 == guardNFT,
+       |        GuardLockExists,
        |        blake2b256(OUTPUTS(0).propositionBytes) == SELF.R6[Coll[Byte]].get
        |      )
        |    )
