@@ -279,7 +279,6 @@ object Scripts {
        |  // In case of fraud: [TriggerEvent, CleanupToken] => [Fraud1, Fraud2, ...]
        |  // In case of payment: [TriggerEvent, Commitments(if exists), LockBox](dataInput: GuardNFTBox) => [Permit1, ..., changeBox]
        |  val cleanupNFT = fromBase64("CLEANUP_NFT");
-       |  val guardNFT = fromBase64("GUARD_NFT");
        |  val cleanupConfirmation = CLEANUP_CONFIRMATION;
        |  val LockScriptHash = fromBase64("LOCK_SCRIPT_HASH");
        |  val FraudScriptHash = fromBase64("FRAUD_SCRIPT_HASH");

@@ -96,7 +96,6 @@ class Contracts(networkConfig: (Network, MainTokens)) {
       val lock = Base64.encode(getContractScriptHash(Lock._1))
       val triggerScript = Scripts.EventTriggerScript
         .replace("CLEANUP_NFT", Base64.encode(Base16.decode(networkConfig._1.tokens.CleanupNFT).get))
-        .replace("GUARD_NFT", Base64.encode(Base16.decode(networkConfig._2.GuardNFT).get))
         .replace("LOCK_SCRIPT_HASH", lock)
         .replace("FRAUD_SCRIPT_HASH", fraud)
         .replace("CLEANUP_CONFIRMATION", networkConfig._1.cleanupConfirm.toString)
