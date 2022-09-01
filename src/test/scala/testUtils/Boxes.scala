@@ -205,12 +205,29 @@ object Boxes {
     val R4 = guardPks.map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue)
-      .contract(contracts.guardSign._1)
+      .contract(contracts.GuardSign._1)
       .tokens(new ErgoToken(networkConfig._2.GuardNFT, 1))
       .registers(
         ErgoValue.of(R4, ErgoType.collType(ErgoType.byteType())),
         ErgoValue.of(JavaHelpers.SigmaDsl.Colls.fromArray(Seq(requiredSign, requiredUpdate).toArray), ErgoType.integerType()),
       )
+      .build()
+  }
+
+  def createLockBox(ctx: BlockchainContext, amount: Long, tokens: ErgoToken*): OutBox = {
+    val txb = ctx.newTxBuilder();
+    txb.outBoxBuilder()
+      .value(amount)
+      .tokens(tokens: _*)
+      .contract(contracts.Lock._1)
+      .build()
+  }
+
+  def createLockBox(ctx: BlockchainContext, amount: Long): OutBox = {
+    val txb = ctx.newTxBuilder();
+    txb.outBoxBuilder()
+      .value(amount)
+      .contract(contracts.Lock._1)
       .build()
   }
 
