@@ -83,7 +83,8 @@ object Configs extends ConfigHelper {
     mainTokens(networkType) = MainTokens(
       readKeyDynamic(mainTokenConfig, "RepoNFT"),
       readKeyDynamic(mainTokenConfig, "GuardNFT"),
-      readKeyDynamic(mainTokenConfig, "RSN")
+      readKeyDynamic(mainTokenConfig, "RSN"),
+      readKeyDynamic(mainTokenConfig, "RSNRatioNFT")
     )
   })
 

@@ -2,12 +2,13 @@ package helpers
 
 import io.circe.Json
 
-case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String) {
+case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String, RSNRatioNFT: String) {
   def toJson(): Json = {
     Json.fromFields(List(
       ("RepoNFT", Json.fromString(RepoNFT)),
       ("GuardNFT", Json.fromString(GuardNFT)),
-      ("RSN", Json.fromString(RSN))
+      ("RSN", Json.fromString(RSN)),
+      ("RSNRatioNFT", Json.fromString(RSNRatioNFT))
     ))
   }
 }
