@@ -66,8 +66,8 @@ object Configs extends ConfigHelper {
       val networkDataConfig = networkConfig.get(networkType.toString).asInstanceOf[ConfigObject]
       val networkTokensConfig = networkDataConfig.get("tokens").asInstanceOf[ConfigObject]
       val tokens = Tokens(
-        readKeyDynamic(networkTokensConfig, "RWTId"),
-        readKeyDynamic(networkTokensConfig, "CleanupNFT")
+        readKeyDynamic(networkTokensConfig, "CleanupNFT"),
+        readKeyDynamic(networkTokensConfig, "RWTId")
       )
       allNetworksToken((networkName, networkType.toString)) =  Network(
         tokens,
