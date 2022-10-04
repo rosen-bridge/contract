@@ -290,20 +290,31 @@ class PermitTest extends TestSuite {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
-        val wRepo = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(commitment.targetChainTokenId, commitment.fee))
-        val guardBox = Boxes.createBoxForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(networkConfig._2.GuardNFT, 1))
-        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
         val userFee: Long = math.floor((commitment.fee * 0.6) / WIDs.length).toLong
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0);
+        val lockBox = Boxes.createLockBox(
+          ctx,
+          Configs.minBoxValue,
+          new ErgoToken(commitment.targetChainTokenId, userFee * WIDs.length)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 1)
         val newPermits = WIDs.map(item => {
           Boxes.createPermitBox(ctx, 1, item, new ErgoToken(commitment.targetChainTokenId, userFee))
         })
-        val inputs = Seq(eventTrigger, guardBox, wRepo)
+        val inputs = Seq(eventTrigger, lockBox)
         val unsignedTx = ctx.newTxBuilder().boxesToSpend(inputs.asJava)
+          .withDataInputs(Seq(guardBox).asJava)
           .fee(Configs.fee)
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .outputs(newPermits: _*)
           .build()
-        prover.sign(unsignedTx)
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        multiSigProver.sign(unsignedTx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
@@ -321,20 +332,31 @@ class PermitTest extends TestSuite {
         val notMergedWIDs = generateRandomWIDList(3)
         val allWIDs = WIDs ++ notMergedWIDs
         val notMergedCommitments = notMergedWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID)).convertToInputWith(Boxes.getRandomHexString(), 1))
-        val wRepo = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(commitment.targetChainTokenId, commitment.fee))
-        val guardBox = Boxes.createBoxForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(networkConfig._2.GuardNFT, 1))
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
         val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 1)
         val userFee: Long = math.floor((commitment.fee * 0.6) / allWIDs.length).toLong
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0);
+        val lockBox = Boxes.createLockBox(
+          ctx,
+          Configs.minBoxValue,
+          new ErgoToken(commitment.targetChainTokenId, userFee * (WIDs ++ notMergedWIDs).length)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
         val newPermits = (WIDs ++ notMergedWIDs).map(item => {
           Boxes.createPermitBox(ctx, 1, item, new ErgoToken(commitment.targetChainTokenId, userFee))
         })
-        val inputs = Seq(eventTrigger, guardBox, wRepo) ++ notMergedCommitments
+        val inputs = Seq(eventTrigger) ++ notMergedCommitments ++ Seq(lockBox)
         val unsignedTx = ctx.newTxBuilder().boxesToSpend(inputs.asJava)
           .fee(Configs.fee)
+          .withDataInputs(Seq(guardBox).asJava)
           .sendChangeTo(prover.getAddress.getErgoAddress)
           .outputs(newPermits: _*)
           .build()
-        prover.sign(unsignedTx)
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        multiSigProver.sign(unsignedTx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
@@ -413,7 +435,7 @@ class PermitTest extends TestSuite {
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
         val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
         val prover = getProver()
-        val box = Boxes.createCustomBox(ctx, contracts.lock._1, 1e9.toLong)
+        val box = Boxes.createCustomBox(ctx, contracts.Lock._1, 1e9.toLong)
         val boxNft = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 32);
         val outBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 5e8.toLong)
         val multiSigProverBuilder = ctx.newProverBuilder()
