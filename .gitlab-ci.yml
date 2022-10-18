@@ -7,7 +7,9 @@ test:
   stage: test
   script:
     - sbt clean coverage test coverageReport
+  coverage: '/All files[^|]*\|[^|]*\s+([\d\.]+)/'
   artifacts:
     reports:
-      cobertura: target/scala-2.12/coverage-report/cobertura.xml
-
+      coverage_report:
+        coverage_format: cobertura
+        path: target/scala-2.12/coverage-report/cobertura.xml

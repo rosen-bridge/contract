@@ -19,9 +19,13 @@ libraryDependencies ++= Seq(
   "org.scalatestplus" %% "mockito-3-4" % "3.2.10.0" % Test
 )
 
+name := "contract"
 ThisBuild / scalaVersion := "2.12.7"
 ThisBuild / version := "0.1.0-SNAPSHOT"
 ThisBuild / organization := "rosen.bridge"
-ThisBuild / organizationName := "rosen bridge"
+ThisBuild / organizationName := "rosen-bridge"
 ThisBuild / publishMavenStyle := true
 Test / publishArtifact := false
+
+assembly / assemblyJarName := s"${name.value}-${organizationName.value}-${version.value}.jar"
+
