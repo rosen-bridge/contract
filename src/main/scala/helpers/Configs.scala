@@ -42,17 +42,10 @@ trait ConfigHelper {
 
 
 object Configs extends ConfigHelper {
-  object node {
-    lazy val url: String = readKey("node.url")
-    lazy val networkType: NetworkType = if (readKey("node.networkType").toLowerCase.equals("mainnet")) NetworkType.MAINNET else NetworkType.TESTNET
-  }
-  private lazy val explorerUrlConf = readKey("explorer.url", "")
-  lazy val explorer: String = if (explorerUrlConf.isEmpty) RestApiErgoClient.getDefaultExplorerUrl(node.networkType) else explorerUrlConf
+
   lazy val fee: Long = readKey("fee.default", "1000000").toLong
   lazy val maxFee: Long = readKey("fee.max", "1000000").toLong
   lazy val minBoxValue: Long = readKey("box.min").toLong
-  val ergoClient: ErgoClient = RestApiErgoClient.create(node.url, node.networkType, "", explorer)
-  lazy val addressEncoder = new ErgoAddressEncoder(node.networkType.networkPrefix)
 
   private lazy val ergoNetworksConfig = config.getObject("networks")
   // (String, String) => (networkName, networkType)
@@ -76,16 +69,31 @@ object Configs extends ConfigHelper {
     })
   })
 
-  private lazy val ergoMainTokensConfig = config.getObject("main-tokens")
-  var mainTokens = mutable.Map.empty[String, MainTokens]
-  ergoMainTokensConfig.keySet().forEach(networkType => {
-    val mainTokenConfig = ergoMainTokensConfig.get(networkType).asInstanceOf[ConfigObject]
-    mainTokens(networkType) = MainTokens(
-      readKeyDynamic(mainTokenConfig, "RepoNFT"),
-      readKeyDynamic(mainTokenConfig, "GuardNFT"),
-      readKeyDynamic(mainTokenConfig, "RSN"),
-      readKeyDynamic(mainTokenConfig, "RSNRatioNFT")
+  private lazy val networkGeneralConfig = config.getObject("network-general")
+  var generalConfig = mutable.Map.empty[String, (ErgoNetwork, MainTokens)]
+  networkGeneralConfig.keySet().forEach(networkName => {
+    val mainNetworkConfig = networkGeneralConfig.get(networkName).asInstanceOf[ConfigObject]
+    val mainTokensConfig = mainNetworkConfig.get("main-tokens").asInstanceOf[ConfigObject]
+    val ergNetworkConfig = mainNetworkConfig.get("ergo-network").asInstanceOf[ConfigObject]
+
+    // Prepare general tokens
+    val mainTokens = MainTokens(
+      readKeyDynamic(mainTokensConfig, "RepoNFT"),
+      readKeyDynamic(mainTokensConfig, "GuardNFT"),
+      readKeyDynamic(mainTokensConfig, "RSN"),
+      readKeyDynamic(mainTokensConfig, "RSNRatioNFT")
     )
+
+    // Prepare general network config
+    val node = readKeyDynamic(ergNetworkConfig, "node")
+    val networkType: NetworkType = if (readKeyDynamic(ergNetworkConfig, "networkType").toLowerCase.equals("mainnet")) NetworkType.MAINNET else NetworkType.TESTNET
+    val explorerUrlConf = readKeyDynamic(ergNetworkConfig, "explorer-url")
+    val explorer: String = if (explorerUrlConf.isEmpty) RestApiErgoClient.getDefaultExplorerUrl(networkType) else explorerUrlConf
+    val ergoClient: ErgoClient = RestApiErgoClient.create(node, networkType, "", explorer)
+    val addressEncoder = new ErgoAddressEncoder(networkType.networkPrefix)
+    val ergoNetwork = ErgoNetwork(ergoClient, addressEncoder)
+
+    generalConfig(networkName) = (ergoNetwork, mainTokens)
   })
 
   lazy val tokensMapDirPath: String = readKey("tokensMap.dirPath", "./tokensMap")

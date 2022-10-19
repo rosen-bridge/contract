@@ -1,6 +1,6 @@
 package rosen.bridge
 
-import helpers.{Configs, MainTokens, Network, Utils}
+import helpers.{Configs, ErgoNetwork, MainTokens, Network, Utils}
 import scopt.OptionParser
 
 case class Config(
@@ -54,8 +54,8 @@ object RosenContractsExecutor extends App {
   parser.parse(args, Config()) match {
     case Some(config) =>
       if (config.mode == "contracts") {
-        val networkConfig: (Network, MainTokens) = Utils.selectConfig(config.networkName, config.networkType)
-        val contracts = new Contracts(networkConfig)
+        val networkConfig: (ErgoNetwork, Network, MainTokens) = Utils.selectConfig(config.networkName, config.networkType)
+        val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
         contracts.createContractsJson(
           config.networkName,
           config.networkType,
