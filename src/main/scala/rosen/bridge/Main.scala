@@ -62,16 +62,20 @@ object RosenContractsExecutor extends App {
           config.networkVersion,
         )
         println("Json of Contracts created!")
+        scala.sys.exit()
       }
       else if (config.mode == "tokens") {
-        val tokensMap = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath)
+        val fileType = config.networkType ++ ".json"
+        val tokensMap = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath, List(fileType))
         val idKeys = TokensMap.createIdKeysJson()
         TokensMap.createTokensMapJsonFile(tokensMap.deepMerge(idKeys).toString(), config.networkType, config.networkVersion)
         println("Json of TokensMap created!")
+        scala.sys.exit()
       }
 
     case None =>
-    // arguments are bad, error message will have been displayed
+      // arguments are bad, error message will have been displayed
+      scala.sys.exit()
   }
 }
 
