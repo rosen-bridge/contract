@@ -4,4 +4,4 @@ project/target/
 target/
 .bsp/
 *.json
-tokensMap/
+!tokensMap/*.json
