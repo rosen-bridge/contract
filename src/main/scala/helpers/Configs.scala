@@ -71,8 +71,8 @@ object Configs extends ConfigHelper {
 
   private lazy val networkGeneralConfig = config.getObject("network-general")
   var generalConfig = mutable.Map.empty[String, (ErgoNetwork, MainTokens)]
-  networkGeneralConfig.keySet().forEach(networkName => {
-    val mainNetworkConfig = networkGeneralConfig.get(networkName).asInstanceOf[ConfigObject]
+  networkGeneralConfig.keySet().forEach(networkTypeName => {
+    val mainNetworkConfig = networkGeneralConfig.get(networkTypeName).asInstanceOf[ConfigObject]
     val mainTokensConfig = mainNetworkConfig.get("main-tokens").asInstanceOf[ConfigObject]
     val ergNetworkConfig = mainNetworkConfig.get("ergo-network").asInstanceOf[ConfigObject]
 
@@ -86,14 +86,14 @@ object Configs extends ConfigHelper {
 
     // Prepare general network config
     val node = readKeyDynamic(ergNetworkConfig, "node")
-    val networkType: NetworkType = if (readKeyDynamic(ergNetworkConfig, "networkType").toLowerCase.equals("mainnet")) NetworkType.MAINNET else NetworkType.TESTNET
+    val networkType: NetworkType = if (readKeyDynamic(ergNetworkConfig, "type").toLowerCase.equals("mainnet")) NetworkType.MAINNET else NetworkType.TESTNET
     val explorerUrlConf = readKeyDynamic(ergNetworkConfig, "explorer-url")
     val explorer: String = if (explorerUrlConf.isEmpty) RestApiErgoClient.getDefaultExplorerUrl(networkType) else explorerUrlConf
     val ergoClient: ErgoClient = RestApiErgoClient.create(node, networkType, "", explorer)
     val addressEncoder = new ErgoAddressEncoder(networkType.networkPrefix)
     val ergoNetwork = ErgoNetwork(ergoClient, addressEncoder)
 
-    generalConfig(networkName) = (ergoNetwork, mainTokens)
+    generalConfig(networkTypeName) = (ergoNetwork, mainTokens)
   })
 
   lazy val tokensMapDirPath: String = readKey("tokensMap.dirPath", "./tokensMap")

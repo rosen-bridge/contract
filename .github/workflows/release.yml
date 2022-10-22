@@ -91,9 +91,7 @@ jobs:
         if: github.event_name == 'release'
         run: |
           ROSEN=$(find . -name 'contract-rosen-bridge-*.jar')
-          java -jar $ROSEN tokens --type mainnet-alpha-1 --version ${{ github.event.release.tag_name }}
-          java -jar $ROSEN contracts --network ergo --type mainnet-alpha-1 --version ${{ github.event.release.tag_name }}
-          java -jar $ROSEN contracts --network cardano --type mainnet-alpha-1 --version ${{ github.event.release.tag_name }}
+          java -jar $ROSEN all --version ${{ github.event.release.tag_name }}
 
       - name: Upload JSON files
         uses: softprops/action-gh-release@v1
@@ -118,9 +116,7 @@ jobs:
         if: github.event_name != 'release'
         run: |
           ROSEN=$(find . -name 'contract-rosen-bridge-*.jar')
-          java -jar $ROSEN tokens --type mainnet-alpha-1 --version Latest
-          java -jar $ROSEN contracts --network ergo --type mainnet-alpha-1 --version Latest
-          java -jar $ROSEN contracts --network cardano --type mainnet-alpha-1 --version Latest
+          java -jar $ROSEN all --version Latest
 
       - name: Upload JSON files
         uses: softprops/action-gh-release@v1
