@@ -69,7 +69,7 @@ object RosenContractsExecutor extends App {
   parser.parse(args, Config()) match {
     case Some(config) =>
       if (config.mode == "contracts") {
-        Utils.createContracts(config.networkVersion, config.networkVersion, config.networkType)
+        Utils.createContracts(config.networkVersion, config.networkName, config.networkType)
         System.exit(0)
       }
       else if (config.mode == "tokens") {
@@ -77,7 +77,7 @@ object RosenContractsExecutor extends App {
         System.exit(0)
       }
       else if (config.mode == "all") {
-        Utils.createContracts(config.networkVersion, config.networkVersion, config.networkType)
+        Utils.createContracts(config.networkVersion, networkType = config.networkType)
         Utils.createTokenMap(config.networkVersion, config.networkType)
         System.exit(0)
       }
