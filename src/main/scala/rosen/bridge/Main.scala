@@ -1,14 +1,14 @@
 package rosen.bridge
 
-import helpers.{Configs, MainTokens, Network, Utils}
+import helpers.Utils
 import scopt.OptionParser
 
 case class Config(
-                         networkName: String = "",
-                         networkType: String = "",
-                         networkVersion: String = "",
-                         mode: String = ""
-                       )
+                   networkName: String = "",
+                   networkType: String = "",
+                   networkVersion: String = "",
+                   mode: String = ""
+                 )
 
 object RosenContractsExecutor extends App {
 
@@ -27,7 +27,7 @@ object RosenContractsExecutor extends App {
           .text("network type")
           .required(),
 
-          opt[String]('v', "version")
+        opt[String]('v', "version")
           .action((x, c) => c.copy(networkVersion = x))
           .text("Contracts file version")
           .required()
@@ -48,34 +48,43 @@ object RosenContractsExecutor extends App {
           .required()
       )
 
+    cmd("all")
+      .action((_, c) => c.copy(mode = "all"))
+      .text("generate contracts and tokens file for all or specific type.")
+      .children(
+        opt[String]('f', "filter")
+          .action((x, c) => c.copy(networkType = x.toLowerCase()))
+          .text("network type filter")
+          .optional(),
+
+        opt[String]('v', "version")
+          .action((x, c) => c.copy(networkVersion = x))
+          .text("files version")
+          .required()
+      )
+
     help("help").text("prints this usage text")
   }
 
   parser.parse(args, Config()) match {
     case Some(config) =>
       if (config.mode == "contracts") {
-        val networkConfig: (Network, MainTokens) = Utils.selectConfig(config.networkName, config.networkType)
-        val contracts = new Contracts(networkConfig)
-        contracts.createContractsJson(
-          config.networkName,
-          config.networkType,
-          config.networkVersion,
-        )
-        println("Json of Contracts created!")
-        scala.sys.exit()
+        Utils.createContracts(config.networkVersion, config.networkName, config.networkType)
+        System.exit(0)
       }
       else if (config.mode == "tokens") {
-        val fileType = config.networkType ++ ".json"
-        val tokensMap = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath, List(fileType))
-        val idKeys = TokensMap.createIdKeysJson()
-        TokensMap.createTokensMapJsonFile(tokensMap.deepMerge(idKeys).toString(), config.networkType, config.networkVersion)
-        println("Json of TokensMap created!")
-        scala.sys.exit()
+        Utils.createTokenMap(config.networkVersion, config.networkType)
+        System.exit(0)
+      }
+      else if (config.mode == "all") {
+        Utils.createContracts(config.networkVersion, networkType = config.networkType)
+        Utils.createTokenMap(config.networkVersion, config.networkType)
+        System.exit(0)
       }
 
     case None =>
       // arguments are bad, error message will have been displayed
-      scala.sys.exit()
+      System.exit(0)
   }
 }
 

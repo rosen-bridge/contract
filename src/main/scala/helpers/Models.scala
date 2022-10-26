@@ -1,6 +1,8 @@
 package helpers
 
 import io.circe.Json
+import org.ergoplatform.ErgoAddressEncoder
+import org.ergoplatform.appkit.{ErgoClient, NetworkType}
 
 case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String, RSNRatioNFT: String) {
   def toJson(): Json = {
@@ -12,6 +14,8 @@ case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String, RSNRatioNF
     ))
   }
 }
+
+case class ErgoNetwork(ergoClient: ErgoClient, addressEncoder: ErgoAddressEncoder)
 
 case class Tokens(CleanupNFT: String, RWTId: String) {
   def toJson(): Json = {
