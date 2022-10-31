@@ -23,13 +23,14 @@ object TokensMap {
   /**
    * read file of Tokens from a dir and create Json
    * @param filePath ex: "./tokensMap"
+   * @param supportedFileTypes list of string ex: List("testnet.json")
    * @return
    */
-  def readTokensFromFiles(filePath: String): Json = {
+  def readTokensFromFiles(filePath: String, supportedFileTypes: List[String]): Json = {
     try {
       new File(filePath).exists
-      val okFileExtensions = List("json")
-      val files = getListOfFiles(new File(filePath), okFileExtensions)
+      val files = getListOfFiles(new File(filePath), supportedFileTypes)
+      if(files.isEmpty) throw new Throwable(s"""There aren't file with these ${supportedFileTypes} extensions.""")
       var jsonData: String = ""
       files.foreach(file => {
         val jsonFile: String = file.toString

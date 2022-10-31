@@ -1,6 +1,6 @@
 package contracts
 
-import helpers.{Configs, MainTokens, Network, Tokens, Utils}
+import helpers.{Configs, ErgoNetwork, MainTokens, Network, Utils}
 import org.ergoplatform.appkit.{ErgoProver, ErgoToken}
 import rosen.bridge.Contracts
 import scorex.util.encode.Base16
@@ -10,11 +10,12 @@ import scala.collection.JavaConverters._
 
 class PermitTest extends TestSuite {
   val sk = Utils.randBigInt
-  val networkConfig: (Network, MainTokens) = Utils.selectConfig("cardano", "testnet")
-  val contracts = new Contracts(networkConfig)
 
+  val networkConfig: (ErgoNetwork, Network, MainTokens) = Utils.selectConfig("cardano", "mainnet")
+  val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
+  
   def getProver(): ErgoProver = {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       ctx.newProverBuilder().withDLogSecret(sk.bigInteger).build()
     })
   }
@@ -28,10 +29,10 @@ class PermitTest extends TestSuite {
   }
 
   property("test get permit when there is no other permit on network") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
-        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.RSN, 10000L))
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._3.RSN, 10000L))
         val repoBox = Boxes.createRepo(ctx, 100000, 1L, Seq(), Seq(), 0).convertToInputWith(Boxes.getRandomHexString(), 0);
         val repoOut = Boxes.createRepo(ctx, 99900, 10001L, Seq(repoBox.getId.getBytes), Seq(100L), 0)
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -50,10 +51,10 @@ class PermitTest extends TestSuite {
   }
 
   property("test get permit when there is another permit on network") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
-        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.RSN, 10000L))
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._3.RSN, 10000L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val repoBox = Boxes.createRepo(ctx, 100000, 5801L, Seq(otherWID), Seq(58L), 0).convertToInputWith(Boxes.getRandomHexString(), 0);
         val repoOut = Boxes.createRepo(ctx, 99900, 15801L, Seq(otherWID, repoBox.getId.getBytes), Seq(58L, 100L), 0)
@@ -73,7 +74,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test partially return permits") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
         val userWID = Base16.decode(Boxes.getRandomHexString()).get
@@ -88,7 +89,7 @@ class PermitTest extends TestSuite {
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
         val repoOut = Boxes.createRepo(ctx, 100020, 30001L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
         val permitOut = Boxes.createPermitBox(ctx, 40L, userWID)
-        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._2.RSN, 2000))
+        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, 2000))
         val tx = ctx.newTxBuilder().boxesToSpend(Seq(repoBox, permitBox, WIDBox).asJava)
           .fee(Configs.fee)
           .outputs(repoOut, permitOut, userOut)
@@ -103,7 +104,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test complete return permits") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       var userIndex = 0
       try {
         val prover = getProver()
@@ -118,7 +119,7 @@ class PermitTest extends TestSuite {
           val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1)
           val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1)
           val repoOut = Boxes.createRepo(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) * 100 + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
-          val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._2.RSN, 2000))
+          val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, 2000))
           val tx = ctx.newTxBuilder().boxesToSpend(Seq(repoBox, permitBox, WIDBox).asJava)
             .fee(Configs.fee)
             .outputs(repoOut, userOut)
@@ -135,12 +136,12 @@ class PermitTest extends TestSuite {
   }
 
   property("test redeem repo") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
         val repoBox = Boxes.createRepo(ctx, 100000, 32001L, WIDs, Seq(100L, 120L, 140L, 20L, 40L, 250L, 123L), 0).convertToInputWith(Boxes.getRandomHexString(), 0);
-        val guardBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.GuardNFT, 1L));
+        val guardBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._3.GuardNFT, 1L));
         val inputs = Seq(repoBox, guardBox)
         val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
           .contract(ctx.newContract(prover.getAddress.asP2PK().script))
@@ -166,7 +167,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test create new commitment") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
         val prover = getProver()
@@ -190,7 +191,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test redeem commitment") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
         val prover = getProver()
@@ -214,7 +215,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test create event trigger for all watcher") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
         val prover = getProver()
@@ -239,7 +240,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test create event trigger for minimum required watcher") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
         val prover = getProver()
@@ -264,7 +265,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test cant create event trigger for lower than minimum required watcher") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       assertThrows[AnyRef] {
         val commitment = new Commitment()
         val prover = getProver()
@@ -285,7 +286,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test guard payment without not merged commitment") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
         val prover = getProver()
@@ -324,7 +325,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test guard payment with not merged commitment") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val commitment = new Commitment()
         val prover = getProver()
@@ -366,13 +367,13 @@ class PermitTest extends TestSuite {
   }
 
   property("test create fraud from event trigger") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
         val commitment = new Commitment()
         val WIDs = generateRandomWIDList(7)
         val triggerEvent = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._1.tokens.CleanupNFT, 1L))
+        val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.tokens.CleanupNFT, 1L))
         val newFraud = WIDs.indices.map(index => {
           Boxes.createFraudBox(ctx, WIDs(index))
         })
@@ -391,7 +392,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test redeem fraud to repo") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       var userIndex = 0;
       try {
         val prover = getProver()
@@ -402,7 +403,7 @@ class PermitTest extends TestSuite {
           var amounts = globalAmounts.map(item => item).toArray
           var WIDs = globalWIDs.map(item => item).toArray
           val WID = WIDs(userIndex)
-          val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._1.tokens.CleanupNFT, 1L))
+          val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.tokens.CleanupNFT, 1L))
           val fraud = Boxes.createFraudBox(ctx, WID).convertToInputWith(Boxes.getRandomHexString(), 1)
           val RWTCount = repo.getTokens.get(1).getValue.toLong + 1
           val RSNCount = repo.getTokens.get(2).getValue.toLong - 100
@@ -429,7 +430,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test spent lock script when guard token is in data input") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
@@ -457,7 +458,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test guard nft box spend with update with 6 sign.") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       try {
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
@@ -484,7 +485,7 @@ class PermitTest extends TestSuite {
   }
 
   property("test guard nft box cant spend with update with 5 sign") {
-    Configs.ergoClient.execute(ctx => {
+    networkConfig._1.ergoClient.execute(ctx => {
       assertThrows[AnyRef] {
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())

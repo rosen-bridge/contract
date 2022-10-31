@@ -264,6 +264,11 @@ To create address of all contracts run this command (this is an example for card
 java -jar target/scala-2.12/contract-assembly-0.1.0-SNAPSHOT.jar contracts --network cardano --type testnet --version 1.0.0
 ```
 
+To create both TokenMaps and address of contracts for each network type run this command (there's a `-f` flag for filter networkTypes):
+```shell
+java -jar target/scala-2.12/contract-assembly-0.1.0-SNAPSHOT.jar all --version 1.0.0
+```
+
 You can see all commands with:
 ```shell
 java -jar target/scala-2.12/contract-assembly-0.1.0-SNAPSHOT.jar --help 

@@ -1,89 +1,86 @@
 package helpers
 
-import org.ergoplatform.ErgoAddress
-import org.ergoplatform.appkit.{Address, BlockchainContext, ConstantsBuilder, ErgoContract, ErgoType, ErgoValue, JavaHelpers}
+import org.ergoplatform.ErgoAddressEncoder
+import org.ergoplatform.appkit.ErgoContract
+import rosen.bridge.{Contracts, TokensMap}
 import scorex.crypto.hash.Digest32
-import scorex.util.encode.Base16
-import sigmastate.serialization.ErgoTreeSerializer
-import special.collection.Coll
-import sigmastate.eval._
-import sigmastate.interpreter.CryptoConstants
-import special.sigma.GroupElement
 
 import java.math.BigInteger
-import scala.util.Random
 
 object Utils {
-  private val random = Random
   private val secureRandom = new java.security.SecureRandom
 
-  def selectConfig(networkName: String, networkType: String) : (Network, MainTokens) = {
-    (Configs.allNetworksToken((networkName, networkType)), Configs.mainTokens(networkType))
+  def selectConfig(networkName: String, networkType: String) : (ErgoNetwork, Network, MainTokens) = {
+    (
+      Configs.generalConfig(networkType)._1,
+      Configs.allNetworksToken((networkName, networkType)),
+      Configs.generalConfig(networkType)._2
+    )
+  }
+
+  /**
+   * Create json of TokenMap
+   * @param networkVersion String ex: 1.0.0
+   * @param networkType String ex: mainnet-alpha-1
+   */
+  def createTokenMap(networkVersion: String, networkType: String = ""): Unit = {
+    val generalConfig = Configs.generalConfig
+    generalConfig.keys.toSeq.foreach(conf => {
+      if ((conf contains networkType) || networkType.isEmpty){
+        val fileType = conf ++ ".json"
+        val tokensMap = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath, List(fileType))
+        val idKeys = TokensMap.createIdKeysJson()
+        TokensMap.createTokensMapJsonFile(tokensMap.deepMerge(idKeys).toString(), conf, networkVersion)
+        println(s"Json of TokensMap created for network type $conf!")
+      }
+    })
+  }
+
+  /**
+   * Create json of contracts
+   * @param networkVersion String ex: 1.0.0
+   * @param networkName String ex: cardano
+   * @param networkType String ex: mainnet-alpha-1
+   */
+  def createContracts(networkVersion: String, networkName: String = "", networkType: String = ""): Unit = {
+    if(networkName.nonEmpty) {
+      val networkConfig: (ErgoNetwork, Network, MainTokens) = selectConfig(networkName, networkType)
+      val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
+      contracts.createContractsJson(
+        networkName,
+        networkType,
+        networkVersion,
+      )
+      println("Json of Contracts created!")
+    }
+    else{
+      val generalConfig = Configs.generalConfig
+      val allNetworksToken = Configs.allNetworksToken
+
+      allNetworksToken.keys.toSeq.foreach(network => {
+        if ((network._2 contains networkType) || networkType.isEmpty){
+          val networkObj = allNetworksToken(network)
+          val generalObj = generalConfig(network._2)
+          val contracts = new Contracts(generalObj._1, (networkObj, generalObj._2))
+          contracts.createContractsJson(
+            network._1,
+            network._2,
+            networkVersion,
+          )
+          println(s"Json of Contracts created for network ${network._1} with type ${network._2}!")
+        }
+      })
+    }
   }
 
   def randBigInt: BigInt = new BigInteger(256, secureRandom)
-
-  def toByteArray(s: String): Array[Byte] = Base16.decode(s).get
-
-  def toHexString(array: Array[Byte]): String = Base16.encode(array)
-
-  def hexToGroupElement(data: String): GroupElement = {
-    SigmaDsl.decodePoint(JavaHelpers.collFrom(toByteArray(data)))
-  }
-
-  def getAddress(addressBytes: Array[Byte]): ErgoAddress = {
-    val ergoTree = ErgoTreeSerializer.DefaultSerializer.deserializeErgoTree(addressBytes)
-    Configs.addressEncoder.fromProposition(ergoTree).get
-  }
-
-  def addressGetBytes(address: Address):Array[Byte] ={
-    address.getErgoAddress.script.bytes
-  }
-
-  def getContractAddress(contract: ErgoContract): String = {
-    val ergoTree = contract.getErgoTree
-    Configs.addressEncoder.fromProposition(ergoTree).get.toString
-  }
 
   def getContractScriptHash(contract: ErgoContract): Digest32 = {
     scorex.crypto.hash.Blake2b256(contract.getErgoTree.bytes)
   }
 
-  def longListToErgoValue(elements: Array[Long]): ErgoValue[Coll[Long]] = {
-    val longColl = JavaHelpers.SigmaDsl.Colls.fromArray(elements)
-    ErgoValue.of(longColl, ErgoType.longType())
-  }
-
-  def randDouble: Double = random.nextDouble()
-
-  def randLong(min: Long, max: Long): Long = {
-    val range = max - min
-    (randDouble * range).toLong + min
-  }
-
-
-  def randomId(): String = {
-    val randomBytes = Array.fill(32)((scala.util.Random.nextInt(256) - 128).toByte)
-    randomBytes.map("%02x" format _).mkString
-  }
-
-  def getProveDlogAddress(z: BigInt, ctx: BlockchainContext): String = {
-    val g: GroupElement = CryptoConstants.dlogGroup.generator
-    val gZ: GroupElement = g.exp(z.bigInteger)
-    val contract = ctx.compileContract(
-      ConstantsBuilder.create()
-        .item(
-          "gZ", gZ
-        ).build(), "{proveDlog(gZ)}"
-    )
-    Configs.addressEncoder.fromProposition(contract.getErgoTree).get.toString
-  }
-
-  def randomAddr(): Address = {
-    Configs.ergoClient.execute((ctx: BlockchainContext) => {
-      val rnd = randBigInt
-      val add = getProveDlogAddress(rnd, ctx)
-      Address.create(add)
-    })
+  def getContractAddress(contract: ErgoContract, addressEncoder: ErgoAddressEncoder): String = {
+    val ergoTree = contract.getErgoTree
+    addressEncoder.fromProposition(ergoTree).get.toString
   }
 }
