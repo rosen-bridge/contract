@@ -1,12 +1,12 @@
 {
   "ergo": {
-    "tokenId": "ERG",
-    "tokenName": "ERG"
+    "tokenId": "erg",
+    "tokenName": "erg",
+    "decimals": 9
   },
   "cardano": {
     "fingerprint": "asset1p40r0eun2alszlxhj7k4uylya4cj54lxkjjmsm",
     "policyId": "0dad352d8f0d5ce3f5be8b025d6a16141ecceab5a921871792d91f47",
-    "assetName": "5273455247",
-    "unit": ""
+    "assetName": "5273455247"
   }
 }
