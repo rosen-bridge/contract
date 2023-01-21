@@ -2,11 +2,20 @@
   "ergo": {
     "tokenId": "fc6c2070eb004fc08fcde1514dee56b1d0587477748d8af647179b098f52f559",
     "tokenName": "RsADA",
-    "decimals": 6
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
   },
   "cardano": {
     "fingerprint": "lovelace",
     "policyId": "",
-    "assetName": "414441"
+    "assetName": "414441",
+    "decimals": 6,
+    "metaData": {
+      "type": "",
+      "residency": "native"
+    }
   }
 }
