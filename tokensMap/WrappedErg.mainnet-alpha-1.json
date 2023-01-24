@@ -4,7 +4,7 @@
     "tokenName": "erg",
     "decimals": 9,
     "metaData": {
-      "type": "",
+      "type": "ERG",
       "residency": "native"
     }
   },
