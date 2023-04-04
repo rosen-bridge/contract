@@ -121,6 +121,33 @@ object Boxes {
                   RWTCount: Long,
                   RSNCount: Long,
                   users: Seq[Array[Byte]],
+                  userRWT: Seq[Long]
+                ): OutBox = {
+    val txB = ctx.newTxBuilder()
+    val R4 = (Seq("ADA".getBytes()) ++ users).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray
+    val repoBuilder = txB.outBoxBuilder()
+      .value(Configs.minBoxValue)
+      .tokens(
+        new ErgoToken(networkConfig._3.RepoNFT, 1),
+        new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount)
+      )
+      .contract(contracts.RWTRepo._1)
+      .registers(
+        ErgoValue.of(R4, ErgoType.collType(ErgoType.byteType())),
+        ErgoValue.of(JavaHelpers.SigmaDsl.Colls.fromArray((Seq(0L) ++ userRWT).toArray), ErgoType.longType()),
+        ErgoValue.of(JavaHelpers.SigmaDsl.Colls.fromArray(Array(100L, 51L, 0L, 9999L)), ErgoType.longType()),
+      )
+    if (RSNCount > 0) {
+      repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
+    }
+    repoBuilder.build()
+  }
+
+  def createRepoWithR7(
+                  ctx: BlockchainContext,
+                  RWTCount: Long,
+                  RSNCount: Long,
+                  users: Seq[Array[Byte]],
                   userRWT: Seq[Long],
                   R7: Int
                 ): OutBox = {
