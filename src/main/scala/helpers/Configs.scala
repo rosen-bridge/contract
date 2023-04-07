@@ -31,7 +31,7 @@ trait ConfigHelper {
     try {
       if(config.containsKey(key)) config.toConfig.getString(key)
       else if(default.nonEmpty) default
-      else throw new Throwable(s"${key} not found!")
+      else throw new Throwable(s"$key not found!")
     } catch {
       case ex: Throwable =>
         println(ex.getMessage)
