@@ -2,7 +2,7 @@ package helpers
 
 import io.circe.Json
 import org.ergoplatform.ErgoAddressEncoder
-import org.ergoplatform.appkit.{ErgoClient, NetworkType}
+import org.ergoplatform.appkit.ErgoClient
 
 case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String, RSNRatioNFT: String) {
   def toJson(): Json = {
