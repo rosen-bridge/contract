@@ -32,7 +32,10 @@
   val mergeBoxes = OUTPUTS.slice(0, WIDs.size)
   val checkAllWIDs = WIDs.zip(mergeBoxes).forall {
     (data: (Coll[Byte], Box)) => {
-      Coll(data._1) == data._2.R4[Coll[Coll[Byte]]].get && data._2.propositionBytes == OUTPUTS(0).propositionBytes
+      Coll(data._1) == data._2.R4[Coll[Coll[Byte]]].get && 
+      data._2.propositionBytes == OUTPUTS(0).propositionBytes &&
+      data._2.tokens(0)._1 == SELF.tokens(0)._1 &&
+      data._2.tokens(0)._2 == SELF.tokens(0)._2 / WIDs.size
     }
   }
   sigmaProp(

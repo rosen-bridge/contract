@@ -394,8 +394,8 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val WIDs = generateRandomWIDList(5)
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l).convertToInputWith(Boxes.getRandomHexString(), 1))
-        val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment)
+        val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
         val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
           .fee(Configs.fee)
@@ -419,8 +419,8 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val commitments = WIDs.slice(0, 4).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l).convertToInputWith(Boxes.getRandomHexString(), 1))
-        val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 4), commitment)
+        val commitments = WIDs.slice(0, 4).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 4), commitment, 40L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
         val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
           .fee(Configs.fee)
@@ -444,8 +444,8 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l).convertToInputWith(Boxes.getRandomHexString(), 1))
-        val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment)
+        val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
         val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
           .fee(Configs.fee)
@@ -474,9 +474,9 @@ class ContractTest extends TestSuite {
           Configs.minBoxValue,
           new ErgoToken(commitment.targetChainTokenId, userFee * WIDs.length)
         ).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
         val newPermits = WIDs.map(item => {
-          Boxes.createPermitBox(ctx, 1, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+          Boxes.createPermitBox(ctx, 10, item, new ErgoToken(commitment.targetChainTokenId, userFee))
         })
         val inputs = Seq(eventTrigger, lockBox)
         val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
@@ -497,6 +497,45 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test guard payment with wrong permit RWT count") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      try {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(7)
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val userFee: Long = math.floor((commitment.fee * 0.6) / WIDs.length).toLong
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val lockBox = Boxes.createLockBox(
+          ctx,
+          1e9.toLong,
+          new ErgoToken(commitment.targetChainTokenId, userFee * WIDs.length)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val newPermits = WIDs.map(item => {
+          Boxes.createPermitBox(ctx, 9, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+        })
+        val inputs = Seq(eventTrigger, lockBox)
+        val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
+          .addDataInputs(guardBox)
+          .fee(Configs.fee)
+          .sendChangeTo(prover.getAddress)
+          .addOutputs(newPermits: _*)
+          .build()
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        multiSigProver.sign(unsignedTx)
+        fail("transaction should not be signed, the permits have wrong amount of RWTs")
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+      }
+    })
+  }
+
   property("test guard payment with not merged commitment") {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
@@ -505,11 +544,11 @@ class ContractTest extends TestSuite {
         val WIDs = generateRandomWIDList(7)
         val notMergedWIDs = generateRandomWIDList(3)
         val allWIDs = WIDs ++ notMergedWIDs
-        val notMergedCommitments = notMergedWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val notMergedCommitments = notMergedWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
         val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
-        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
         val userFee: Long = math.floor((commitment.fee * 0.6) / allWIDs.length).toLong
         val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
         val lockBox = Boxes.createLockBox(
@@ -518,7 +557,7 @@ class ContractTest extends TestSuite {
           new ErgoToken(commitment.targetChainTokenId, userFee * (WIDs ++ notMergedWIDs).length)
         ).convertToInputWith(Boxes.getRandomHexString(), 0)
         val newPermits = (WIDs ++ notMergedWIDs).map(item => {
-          Boxes.createPermitBox(ctx, 1, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+          Boxes.createPermitBox(ctx, 10, item, new ErgoToken(commitment.targetChainTokenId, userFee))
         })
         val inputs = Seq(eventTrigger) ++ notMergedCommitments ++ Seq(lockBox)
         val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
@@ -539,16 +578,58 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test guard payment with not merged wrong commitment") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      try {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(7)
+        val notMergedWIDs = generateRandomWIDList(1)
+        val allWIDs = WIDs ++ notMergedWIDs
+        val notMergedCommitments = notMergedWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 11L).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val userFee: Long = math.floor((commitment.fee * 0.6) / allWIDs.length).toLong
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val lockBox = Boxes.createLockBox(
+          ctx,
+          1e9.toLong,
+          new ErgoToken(commitment.targetChainTokenId, userFee * (WIDs ++ notMergedWIDs).length)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val newPermits = (WIDs ++ notMergedWIDs).map(item => {
+          Boxes.createPermitBox(ctx, 10, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+        })
+        val inputs = Seq(eventTrigger) ++ notMergedCommitments ++ Seq(lockBox)
+        val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
+          .fee(Configs.fee)
+          .addDataInputs(guardBox)
+          .sendChangeTo(prover.getAddress)
+          .addOutputs(newPermits: _*)
+          .build()
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        multiSigProver.sign(unsignedTx)
+        fail("transaction should not be signed, the added commitment have different number of RWTs")
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+      }
+    })
+  }
+
   property("test create fraud from event trigger") {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
         val commitment = new Commitment()
         val WIDs = generateRandomWIDList(7)
-        val triggerEvent = Boxes.createTriggerEventBox(ctx, WIDs, commitment).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val triggerEvent = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 0)
         val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.tokens.CleanupNFT, 1L))
         val newFraud = WIDs.indices.map(index => {
-          Boxes.createFraudBox(ctx, WIDs(index))
+          Boxes.createFraudBox(ctx, WIDs(index), 10L)
         })
         val unsignedTx = ctx.newTxBuilder().addInputs(triggerEvent, box1)
           .fee(Configs.fee)
@@ -570,18 +651,18 @@ class ContractTest extends TestSuite {
       try {
         val prover = getProver()
         val globalWIDs = generateRandomWIDList(3)
-        val globalAmounts = Seq(10L, 1L, 2L)
+        val globalAmounts = Seq(100L, 10L, 20L)
         val repo = Boxes.createRepo(ctx, 1000L, globalAmounts.sum + 1, globalWIDs, globalAmounts).convertToInputWith(Boxes.getRandomHexString(), 1)
         for (userIndex <- 0 until globalWIDs.length) {
           var amounts = globalAmounts.map(item => item).toArray
           var WIDs = globalWIDs.map(item => item).toArray
           val WID = WIDs(userIndex)
           val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.tokens.CleanupNFT, 1L))
-          val fraud = Boxes.createFraudBox(ctx, WID).convertToInputWith(Boxes.getRandomHexString(), 1)
-          val RWTCount = repo.getTokens.get(1).getValue.toLong + 1
-          val RSNCount = repo.getTokens.get(2).getValue.toLong - 1
-          if (amounts(userIndex) > 1) {
-            amounts(userIndex) -= 1
+          val fraud = Boxes.createFraudBox(ctx, WID, 10L).convertToInputWith(Boxes.getRandomHexString(), 1)
+          val RWTCount = repo.getTokens.get(1).getValue.toLong + 10
+          val RSNCount = repo.getTokens.get(2).getValue.toLong - 10
+          if (amounts(userIndex) > 10) {
+            amounts(userIndex) -= 10
           } else {
             amounts = amounts.patch(userIndex, Nil, 1)
             WIDs = WIDs.patch(userIndex, Nil, 1)
