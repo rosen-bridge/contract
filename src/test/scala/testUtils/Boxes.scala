@@ -136,6 +136,7 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(100L, 51L, 0L, 9999L))),
       )
     if (RSNCount > 0) {
       repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
@@ -143,14 +144,14 @@ object Boxes {
     repoBuilder.build()
   }
 
-  def createRepoWithR6(
-                  ctx: BlockchainContext,
-                  RWTCount: Long,
-                  RSNCount: Long,
-                  users: Seq[Array[Byte]],
-                  userRWT: Seq[Long],
-                  R6: Int
-                ): OutBox = {
+  def createRepoWithR7(
+                        ctx: BlockchainContext,
+                        RWTCount: Long,
+                        RSNCount: Long,
+                        users: Seq[Array[Byte]],
+                        userRWT: Seq[Long],
+                        R7: Int
+                      ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
       .value(Configs.minBoxValue)
@@ -162,7 +163,8 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(R6)
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(100L, 51L, 0L, 9999L))),
+        ErgoValueBuilder.buildFor(R7)
       )
     if (RSNCount > 0) {
       repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
