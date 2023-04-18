@@ -34,8 +34,8 @@
     )
   }else{
     // Event Commitment Creation
-    // [Permit, WID] => [Permit(Optional), Commitment, WID]
-    val outputCommitmentCheck = if(secondBoxHasRWT){
+    // [Permit, WID] => [Permit, Commitment, WID]
+    sigmaProp(
       allOf(
         Coll(
           OUTPUTS(1).tokens(0)._1 == SELF.tokens(0)._1,
@@ -44,20 +44,10 @@
           OUTPUTS(1).R6[Coll[Byte]].isDefined,
           OUTPUTS(1).R7[Coll[Byte]].get == blake2b256(SELF.propositionBytes),
           OUTPUTS(1).R4[Coll[Coll[Byte]]].get == WID,
-          OUTPUTS(1).tokens(0)._2 == 1,
-        )
-      )
-    }else{
-      true
-    }
-    sigmaProp(
-      allOf(
-        Coll(
           outputWithRWT == false,
           OUTPUTS(0).propositionBytes == SELF.propositionBytes,
           OUTPUTS(0).R4[Coll[Coll[Byte]]].get == WID,
           INPUTS(1).tokens(0)._1 == WID(0),
-          outputCommitmentCheck,
         )
       )
     )

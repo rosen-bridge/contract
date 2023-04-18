@@ -197,11 +197,11 @@ object Boxes {
       .build()
   }
 
-  def createCommitment(ctx: BlockchainContext, WID: Array[Byte], RequestId: Array[Byte], commitment: Array[Byte]): OutBox = {
+  def createCommitment(ctx: BlockchainContext, WID: Array[Byte], RequestId: Array[Byte], commitment: Array[Byte], RWTCount: Long): OutBox = {
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.Commitment._1)
-      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, 1))
+      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(RequestId).map(item => Colls.fromArray(item)).toArray)),
