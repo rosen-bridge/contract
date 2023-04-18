@@ -150,7 +150,7 @@ class ContractTest extends TestSuite {
 
   property("test extend permit while mutating other permits amount on repo") {
     networkConfig._1.ergoClient.execute(ctx => {
-      try {
+      assertThrows[AnyRef] {
         val prover = getProver()
         val WID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
@@ -166,17 +166,14 @@ class ContractTest extends TestSuite {
           .sendChangeTo(prover.getAddress)
           .build()
         prover.sign(tx)
-        fail("transaction should not sign, the permit amounts have changed")
-      } catch {
-        case exp: Throwable =>
-          println(exp.toString)
+        println("transaction should not sign, the permit amounts have changed")
       }
     })
   }
 
   property("test extend permit while mutating other permits WID on repo") {
     networkConfig._1.ergoClient.execute(ctx => {
-      try {
+      assertThrows[AnyRef] {
         val prover = getProver()
         val WID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
@@ -193,9 +190,6 @@ class ContractTest extends TestSuite {
           .build()
         prover.sign(tx)
         fail("transaction should not sign, the permit WID have changed")
-      } catch {
-        case exp: Throwable =>
-          println(exp.toString)
       }
     })
   }
@@ -458,6 +452,28 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test create event trigger for all watchers with wrong trigger RWT sum") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(5)
+        val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 48L)
+        val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+        val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+          .fee(Configs.fee)
+          .addOutputs(trigger)
+          .addDataInputs(repo)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+        println("transaction should not be signed, the RWTs had been stolen")
+      }
+    })
+  }
+
   property("test guard payment without not merged commitment") {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
@@ -499,7 +515,7 @@ class ContractTest extends TestSuite {
 
   property("test guard payment with wrong permit RWT count") {
     networkConfig._1.ergoClient.execute(ctx => {
-      try {
+      assertThrows[AnyRef] {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
@@ -528,10 +544,7 @@ class ContractTest extends TestSuite {
         secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
         val multiSigProver = multiSigProverBuilder.build()
         multiSigProver.sign(unsignedTx)
-        fail("transaction should not be signed, the permits have wrong amount of RWTs")
-      } catch {
-        case exp: Throwable =>
-          println(exp.toString)
+        println("transaction should not be signed, the permits have wrong amount of RWTs")
       }
     })
   }
@@ -580,7 +593,7 @@ class ContractTest extends TestSuite {
 
   property("test guard payment with not merged wrong commitment") {
     networkConfig._1.ergoClient.execute(ctx => {
-      try {
+      assertThrows[AnyRef] {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
@@ -612,10 +625,7 @@ class ContractTest extends TestSuite {
         secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
         val multiSigProver = multiSigProverBuilder.build()
         multiSigProver.sign(unsignedTx)
-        fail("transaction should not be signed, the added commitment have different number of RWTs")
-      } catch {
-        case exp: Throwable =>
-          println(exp.toString)
+        println("transaction should not be signed, the added commitment have different number of RWTs")
       }
     })
   }
