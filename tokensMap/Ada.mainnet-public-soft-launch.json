@@ -1,0 +1,21 @@
+{
+  "ergo": {
+    "tokenId": "38cb230f68a28436fb3b73ae4b927626673e4620bc7c94896178567d436e416b",
+    "tokenName": "RstAdaVTest2",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "fingerprint": "lovelace",
+    "policyId": "",
+    "assetName": "414441",
+    "decimals": 6,
+    "metaData": {
+      "type": "ADA",
+      "residency": "native"
+    }
+  }
+}

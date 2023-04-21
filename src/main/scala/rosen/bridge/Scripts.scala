@@ -273,6 +273,8 @@ object Scripts {
        |          SELF.R5[Coll[Coll[Byte]]].get == Coll(requestId),
        |          // check commitment count
        |          commitmentBoxes.size > requiredCommitment,
+       |          event.tokens(0)._1 == SELF.tokens(0)._1,
+       |          event.tokens(0)._2 >= SELF.tokens(0)._2 * WIDs.size,
        |        )
        |      )
        |    )
