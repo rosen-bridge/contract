@@ -273,6 +273,8 @@ object Scripts {
        |          SELF.R5[Coll[Coll[Byte]]].get == Coll(requestId),
        |          // check commitment count
        |          commitmentBoxes.size > requiredCommitment,
+       |          event.tokens(0)._1 == SELF.tokens(0)._1,
+       |          event.tokens(0)._2 >= SELF.tokens(0)._2 * WIDs.size,
        |        )
        |      )
        |    )
@@ -395,16 +397,17 @@ object Scripts {
        |  // 0: GuardNFT
        |  // --------------------
        |  // [GuardSign (sign atleast update required sign on it)] => [GuardSign]
-       |  val GuardBox = INPUTS(0);
+       |  val guardBoxes = INPUTS.filter { (box: Box) => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1 }
        |  val signedColl = SELF.R4[Coll[Coll[Byte]]].get.map { (row: Coll[Byte]) => proveDlog(decodePoint(row)) }
        |  val updateSignCount = SELF.R5[Coll[Int]].get(1)
        |  val updateSignLeast = atLeast(updateSignCount, signedColl)
        |  sigmaProp(
        |    allOf(
        |      Coll(
-       |        SELF.propositionBytes == GuardBox.propositionBytes,
+       |        guardBoxes.size == 1,
        |        OUTPUTS(0).propositionBytes == SELF.propositionBytes,
        |        OUTPUTS(0).tokens(0)._1 == SELF.tokens(0)._1,
+       |        OUTPUTS(0).tokens(0)._2 == SELF.tokens(0)._2,
        |        updateSignLeast
        |      )
        |    )
