@@ -5,7 +5,7 @@ lazy val circeVersion = "0.14.1"
 
 resolvers ++= Seq(Resolver.mavenLocal, sonatypeReleases, sonatypeSnapshots, Resolver.mavenCentral)
 
-lazy val appkit = "org.ergoplatform" %% "ergo-appkit" % "4.0.8"
+lazy val appkit = "org.ergoplatform" %% "ergo-appkit" % "5.0.0"
 
 libraryDependencies ++= Seq(
   appkit, (appkit % Test).classifier("tests").classifier("tests-sources"),

@@ -1,9 +1,11 @@
 package testUtils
 
 import helpers.{Configs, ErgoNetwork, MainTokens, Network, Utils}
-import org.ergoplatform.appkit.{Address, BlockchainContext, ErgoContract, ErgoToken, ErgoType, ErgoValue, InputBox, JavaHelpers, OutBox}
+import org.ergoplatform.appkit.scalaapi.ErgoValueBuilder
+import org.ergoplatform.appkit.{Address, BlockchainContext, ErgoContract, ErgoToken, InputBox, OutBox}
 import rosen.bridge.Contracts
 import scorex.util.encode.Base16
+import sigmastate.eval.Colls
 
 import java.nio.ByteBuffer
 import scala.collection.JavaConverters._
@@ -81,7 +83,7 @@ object Boxes {
   }
 
   def createBoxCandidateForUser(ctx: BlockchainContext, address: Address, amount: Long, tokens: ErgoToken*): OutBox = {
-    val txb = ctx.newTxBuilder();
+    val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
       .value(amount)
       .tokens(tokens: _*)
@@ -90,7 +92,7 @@ object Boxes {
   }
 
   def createBoxCandidateForUser(ctx: BlockchainContext, address: Address, amount: Long): OutBox = {
-    val txb = ctx.newTxBuilder();
+    val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
       .value(amount)
       .contract(ctx.newContract(address.asP2PK().script))
@@ -98,7 +100,7 @@ object Boxes {
   }
 
   def createCustomBox(ctx: BlockchainContext, contract: ErgoContract, amount: Long, tokens: ErgoToken*): InputBox = {
-    val txb = ctx.newTxBuilder();
+    val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
       .value(amount)
       .tokens(tokens: _*)
@@ -108,7 +110,7 @@ object Boxes {
   }
 
   def createCustomBox(ctx: BlockchainContext, contract: ErgoContract, amount: Long): InputBox = {
-    val txb = ctx.newTxBuilder();
+    val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
       .value(amount)
       .contract(contract)
@@ -121,11 +123,9 @@ object Boxes {
                   RWTCount: Long,
                   RSNCount: Long,
                   users: Seq[Array[Byte]],
-                  userRWT: Seq[Long],
-                  R7: Int
+                  userRWT: Seq[Long]
                 ): OutBox = {
     val txB = ctx.newTxBuilder()
-    val R4 = (Seq("ADA".getBytes()) ++ users).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray
     val repoBuilder = txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .tokens(
@@ -134,10 +134,37 @@ object Boxes {
       )
       .contract(contracts.RWTRepo._1)
       .registers(
-        ErgoValue.of(R4, ErgoType.collType(ErgoType.byteType())),
-        ErgoValue.of(JavaHelpers.SigmaDsl.Colls.fromArray((Seq(0L) ++ userRWT).toArray), ErgoType.longType()),
-        ErgoValue.of(JavaHelpers.SigmaDsl.Colls.fromArray(Array(100L, 51L, 0L, 9999L)), ErgoType.longType()),
-        ErgoValue.of(R7)
+        ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(100L, 51L, 0L, 9999L))),
+      )
+    if (RSNCount > 0) {
+      repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
+    }
+    repoBuilder.build()
+  }
+
+  def createRepoWithR7(
+                  ctx: BlockchainContext,
+                  RWTCount: Long,
+                  RSNCount: Long,
+                  users: Seq[Array[Byte]],
+                  userRWT: Seq[Long],
+                  R7: Int
+                ): OutBox = {
+    val txB = ctx.newTxBuilder()
+    val repoBuilder = txB.outBoxBuilder()
+      .value(Configs.minBoxValue)
+      .tokens(
+        new ErgoToken(networkConfig._3.RepoNFT, 1),
+        new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount)
+      )
+      .contract(contracts.RWTRepo._1)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(100L, 51L, 0L, 9999L))),
+        ErgoValueBuilder.buildFor(R7)
       )
     if (RSNCount > 0) {
       repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
@@ -153,9 +180,9 @@ object Boxes {
       .contract(contracts.WatcherPermit._1)
       .tokens(tokensSeq: _*)
       .registers(
-        ErgoValue.of(Seq(WID).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
         // this value must exists in case of redeem commitment.
-        ErgoValue.of(Seq(Array(0.toByte)).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(Array(0.toByte)).map(item => Colls.fromArray(item)).toArray)),
       )
       .build()
   }
@@ -167,7 +194,7 @@ object Boxes {
       .contract(contracts.Fraud._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, 1))
       .registers(
-        ErgoValue.of(Seq(WID).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
       )
       .build()
   }
@@ -178,43 +205,40 @@ object Boxes {
       .contract(contracts.Commitment._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, 1))
       .registers(
-        ErgoValue.of(Seq(WID).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
-        ErgoValue.of(Seq(RequestId).map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray, ErgoType.collType(ErgoType.byteType())),
-        ErgoValue.of(commitment),
-        ErgoValue.of(Utils.getContractScriptHash(contracts.WatcherPermit._1)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(RequestId).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(commitment)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
       ).build()
   }
 
   def createTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment): OutBox = {
-    val R4 = WID.map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray
-    val R5 = commitment.partsArray().map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item))
     val size = WID.length
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue * size)
       .contract(contracts.WatcherTriggerEvent._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, size))
       .registers(
-        ErgoValue.of(R4, ErgoType.collType(ErgoType.byteType())),
-        ErgoValue.of(R5, ErgoType.collType(ErgoType.byteType())),
-        ErgoValue.of(Utils.getContractScriptHash(contracts.WatcherPermit._1))
+        ErgoValueBuilder.buildFor(Colls.fromArray(WID.map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1)))
       ).build()
   }
 
   def createGuardNftBox(ctx: BlockchainContext, guardPks: Array[Array[Byte]], requiredSign: Int, requiredUpdate: Int): OutBox = {
-    val R4 = guardPks.map(item => JavaHelpers.SigmaDsl.Colls.fromArray(item)).toArray
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.GuardSign._1)
       .tokens(new ErgoToken(networkConfig._3.GuardNFT, 1))
       .registers(
-        ErgoValue.of(R4, ErgoType.collType(ErgoType.byteType())),
-        ErgoValue.of(JavaHelpers.SigmaDsl.Colls.fromArray(Seq(requiredSign, requiredUpdate).toArray), ErgoType.integerType()),
+        ErgoValueBuilder.buildFor(Colls.fromArray(guardPks.map(item => Colls.fromArray(item)))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(requiredSign, requiredUpdate).toArray)),
       )
       .build()
   }
 
   def createLockBox(ctx: BlockchainContext, amount: Long, tokens: ErgoToken*): OutBox = {
-    val txb = ctx.newTxBuilder();
+    val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
       .value(amount)
       .tokens(tokens: _*)
@@ -223,7 +247,7 @@ object Boxes {
   }
 
   def createLockBox(ctx: BlockchainContext, amount: Long): OutBox = {
-    val txb = ctx.newTxBuilder();
+    val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
       .value(amount)
       .contract(contracts.Lock._1)
@@ -231,7 +255,7 @@ object Boxes {
   }
 
   def getTokenCount(TokenId: String, box: InputBox): Long = {
-    val RWT = box.getTokens.asScala.filter(token => token.getId.toString == TokenId).toArray;
+    val RWT = box.getTokens.asScala.filter(token => token.getId.toString == TokenId).toArray
     if (RWT.length == 0) 0 else RWT(0).getValue
   }
 
@@ -243,8 +267,8 @@ object Boxes {
         val tokenId = token.getId.toString
         tokens.update(tokenId, tokens.getOrElse(tokenId, 0L) + token.getValue)
       })
-    });
-    tokens.update("", totalErg);
+    })
+    tokens.update("", totalErg)
     tokens
   }
 

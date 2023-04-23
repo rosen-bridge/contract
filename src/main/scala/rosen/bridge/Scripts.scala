@@ -9,7 +9,7 @@ object Scripts {
        |  // R5: Coll[Long] = [0, X-RWT_0, X-RWT_1, ...] (The first element is zero and the rest indicates X-RWT count for watcher i)
        |  // R6: Coll[Long] = [RSN/X-RWT factor, Watcher quorum percentage, minimum needed approval, maximum needed approval]
        |  // (Minimum number of commitments needed for an event is: min(R6[3], R6[1] * (len(R4) - 1) / 100 + R6[2]) )
-       |  // R7: Int = Watcher index (only used in returning permits phase)
+       |  // R7: Int = Watcher index (only used in returning or extending permits)
        |  // ----------------- TOKENS
        |  // 0: X-RWT Repo NFT
        |  // 1: X-RWT
@@ -36,28 +36,57 @@ object Scripts {
        |    )
        |    if(repo.tokens(1)._2 > repoOut.tokens(1)._2){
        |      // Getting Watcher Permit
-       |      // [Repo, UserInputs] => [Repo, watcherPermit, WIDToken]
+       |      val WIDIndex = repoOut.R7[Int].getOrElse(-1)
        |      val permit = OUTPUTS(1)
-       |      val WID = OUTPUTS(2)
+       |      val outWIDBox = OUTPUTS(2)
        |      val RWTOut = repo.tokens(1)._2 - repoOut.tokens(1)._2
-       |      sigmaProp(
-       |        allOf(
-       |          Coll(
-       |            repoReplication,
-       |            repoOut.R4[Coll[Coll[Byte]]].get.size == widListSize + 1,
-       |            repoOut.R4[Coll[Coll[Byte]]].get.slice(0, widOutListSize - 1) == repo.R4[Coll[Coll[Byte]]].get,
-       |            repoOut.R4[Coll[Coll[Byte]]].get(widOutListSize - 1) == repo.id,
-       |            repoOut.R5[Coll[Long]].get.size == widListSize + 1,
-       |            repoOut.R5[Coll[Long]].get.slice(0, widOutListSize - 1) == repo.R5[Coll[Long]].get,
-       |            repoOut.R5[Coll[Long]].get(widOutListSize - 1) == RWTOut,
-       |            RWTOut * repo.R6[Coll[Long]].get(0) == repoOut.tokens(2)._2 - repo.tokens(2)._2,
-       |            permit.tokens(0)._2 == RWTOut,
-       |            blake2b256(permit.propositionBytes) == permitScriptHash,
-       |            permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
-       |            WID.tokens(0)._1 == repo.id
-       |          )
+       |      val permitCreation = allOf(
+       |        Coll(
+       |          repoReplication,
+       |          RWTOut * repo.R6[Coll[Long]].get(0) == repoOut.tokens(2)._2 - repo.tokens(2)._2,
+       |          permit.tokens(0)._2 == RWTOut,
+       |          blake2b256(permit.propositionBytes) == permitScriptHash,
        |        )
        |      )
+       |      if(WIDIndex == -1){
+       |        // Getting initial permit
+       |        // [Repo, UserInputs] => [Repo, watcherPermit, WIDBox]
+       |        sigmaProp(
+       |          allOf(
+       |            Coll(
+       |              permitCreation,
+       |              repoOut.R4[Coll[Coll[Byte]]].get.size == widListSize + 1,
+       |              repoOut.R4[Coll[Coll[Byte]]].get.slice(0, widOutListSize - 1) == repo.R4[Coll[Coll[Byte]]].get,
+       |              repoOut.R4[Coll[Coll[Byte]]].get(widOutListSize - 1) == repo.id,
+       |              repoOut.R5[Coll[Long]].get.size == widListSize + 1,
+       |              repoOut.R5[Coll[Long]].get.slice(0, widOutListSize - 1) == repo.R5[Coll[Long]].get,
+       |              repoOut.R5[Coll[Long]].get(widOutListSize - 1) == RWTOut,
+       |              permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
+       |              outWIDBox.tokens(0)._1 == repo.id,
+       |            )
+       |          )
+       |        )
+       |      } else {
+       |        // Extending Permit
+       |        // [Repo, WIDBox] => [Repo, watcherPermit, WIDBox]
+       |        val WID = repo.R4[Coll[Coll[Byte]]].get(WIDIndex)
+       |        val currentRWT = repo.R5[Coll[Long]].get(WIDIndex)
+       |        val WIDBox = INPUTS(1)
+       |        sigmaProp(
+       |          allOf(
+       |            Coll(
+       |              permitCreation,
+       |              WID == WIDBox.tokens(0)._1,
+       |              repoOut.R4[Coll[Coll[Byte]]].get == repo.R4[Coll[Coll[Byte]]].get,
+       |              repoOut.R5[Coll[Long]].get(WIDIndex) == currentRWT + RWTOut,
+       |              repoOut.R5[Coll[Long]].get.slice(0, WIDIndex) == repo.R5[Coll[Long]].get.slice(0, WIDIndex),
+       |              repoOut.R5[Coll[Long]].get.slice(WIDIndex + 1, widOutListSize) == repo.R5[Coll[Long]].get.slice(WIDIndex + 1, widOutListSize),
+       |              permit.R4[Coll[Coll[Byte]]].get == Coll(WID),
+       |              outWIDBox.tokens(0)._1 == WID,
+       |            )
+       |          )
+       |        )
+       |      }
        |    }else{
        |      // Returning Watcher Permit
        |      // [repo, Permit, WIDToken] => [repo, Permit(Optional), WIDToken(+userChange)]
@@ -244,6 +273,8 @@ object Scripts {
        |          SELF.R5[Coll[Coll[Byte]]].get == Coll(requestId),
        |          // check commitment count
        |          commitmentBoxes.size > requiredCommitment,
+       |          event.tokens(0)._1 == SELF.tokens(0)._1,
+       |          event.tokens(0)._2 >= SELF.tokens(0)._2 * WIDs.size,
        |        )
        |      )
        |    )
@@ -366,16 +397,17 @@ object Scripts {
        |  // 0: GuardNFT
        |  // --------------------
        |  // [GuardSign (sign atleast update required sign on it)] => [GuardSign]
-       |  val GuardBox = INPUTS(0);
+       |  val guardBoxes = INPUTS.filter { (box: Box) => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1 }
        |  val signedColl = SELF.R4[Coll[Coll[Byte]]].get.map { (row: Coll[Byte]) => proveDlog(decodePoint(row)) }
        |  val updateSignCount = SELF.R5[Coll[Int]].get(1)
        |  val updateSignLeast = atLeast(updateSignCount, signedColl)
        |  sigmaProp(
        |    allOf(
        |      Coll(
-       |        SELF.propositionBytes == GuardBox.propositionBytes,
+       |        guardBoxes.size == 1,
        |        OUTPUTS(0).propositionBytes == SELF.propositionBytes,
        |        OUTPUTS(0).tokens(0)._1 == SELF.tokens(0)._1,
+       |        OUTPUTS(0).tokens(0)._2 == SELF.tokens(0)._2,
        |        updateSignLeast
        |      )
        |    )
