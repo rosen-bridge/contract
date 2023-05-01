@@ -25,6 +25,7 @@
         repoOut.propositionBytes == repo.propositionBytes,
         repoOut.R6[Coll[Long]].get == repo.R6[Coll[Long]].get,
         repoOut.tokens(0)._1 == repo.tokens(0)._1,
+        repoOut.tokens(0)._2 == repo.tokens(0)._2,
         repoOut.tokens(1)._1 == repo.tokens(1)._1,
         repoOut.tokens(2)._1 == repo.tokens(2)._1,
       )
