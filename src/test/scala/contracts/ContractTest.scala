@@ -293,8 +293,9 @@ class ContractTest extends TestSuite {
             repoBox.getRegisters.get(0),
             repoBox.getRegisters.get(1),
           )
+          .tokens(new ErgoToken(networkConfig._3.GuardNFT, 1L))
         boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
-        inputs.foreach(box => box.getTokens.forEach(token => boxBuilder.tokens(token)))
+        repoBox.getTokens.forEach(token => boxBuilder.tokens(token))
         val tx = ctx.newTxBuilder().addInputs(repoBox, guardBox)
           .fee(Configs.fee)
           .addOutputs(boxBuilder.build())
@@ -319,10 +320,11 @@ class ContractTest extends TestSuite {
         val permit = Boxes.createPermitBox(ctx, 10L, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitOut = Boxes.createPermitBox(ctx, 9L, WID)
         val commitmentBox = Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l)
+        val WIDOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID, 1))
         val tx = ctx.newTxBuilder().addInputs(permit, box1)
           .fee(Configs.fee)
           .sendChangeTo(prover.getAddress)
-          .addOutputs(permitOut, commitmentBox)
+          .addOutputs(permitOut, commitmentBox, WIDOut)
           .build()
         prover.sign(tx)
       } catch {
@@ -343,10 +345,37 @@ class ContractTest extends TestSuite {
         val permit = Boxes.createPermitBox(ctx, 10L, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitOut = Boxes.createPermitBox(ctx, 8L, WID)
         val commitmentBox = Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 2l)
+        val WIDOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID, 1))
         val tx = ctx.newTxBuilder().addInputs(permit, box1)
           .fee(Configs.fee)
           .sendChangeTo(prover.getAddress)
-          .addOutputs(permitOut, commitmentBox)
+          .addOutputs(permitOut, commitmentBox, WIDOut)
+          .build()
+        prover.sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("transaction not signed")
+      }
+    })
+  }
+
+  property("test create new commitment with more than one permit") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      try {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WID = Base16.decode(Boxes.getRandomHexString()).get
+        val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 1))
+        val permit = Boxes.createPermitBox(ctx, 10L, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permit2 = Boxes.createPermitBox(ctx, 20L, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitOut = Boxes.createPermitBox(ctx, 25L, WID)
+        val commitmentBox = Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 5l)
+        val WIDOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID, 1))
+        val tx = ctx.newTxBuilder().addInputs(permit, permit2, box1)
+          .fee(Configs.fee)
+          .sendChangeTo(prover.getAddress)
+          .addOutputs(permitOut, commitmentBox, WIDOut)
           .build()
         prover.sign(tx)
       } catch {

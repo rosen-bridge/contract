@@ -34,7 +34,7 @@
     )
   }else{
     // Event Commitment Creation
-    // [Permit, WID] => [Permit, Commitment, WID]
+    // [Permit(s), WID] => [Permit, Commitment, WID]
     sigmaProp(
       allOf(
         Coll(
@@ -47,7 +47,7 @@
           outputWithRWT == false,
           OUTPUTS(0).propositionBytes == SELF.propositionBytes,
           OUTPUTS(0).R4[Coll[Coll[Byte]]].get == WID,
-          INPUTS(1).tokens(0)._1 == WID(0),
+          OUTPUTS(2).tokens(0)._1 == WID(0),
         )
       )
     )

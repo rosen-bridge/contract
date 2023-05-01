@@ -11,7 +11,7 @@
   // 2: RSN
 
   val GuardNFT = fromBase64("GUARD_NFT");
-  if(INPUTS(1).tokens(0)._1 == GuardNFT){
+  if(OUTPUTS(0).tokens(0)._1 == GuardNFT){
     // RWT Repo Update transaction
     sigmaProp(true)
   } else {
@@ -94,7 +94,9 @@
         allOf(
           Coll(
             repo.R5[Coll[Long]].get(WIDIndex) == repoOut.R5[Coll[Long]].get(WIDIndex) + RWTIn,
-            repo.R4[Coll[Coll[Byte]]].get == repoOut.R4[Coll[Coll[Byte]]].get
+            repo.R4[Coll[Coll[Byte]]].get == repoOut.R4[Coll[Coll[Byte]]].get,
+            repo.R5[Coll[Long]].get.slice(0, WIDIndex) == repoOut.R5[Coll[Long]].get.slice(0, WIDIndex),
+            repo.R5[Coll[Long]].get.slice(WIDIndex + 1, watcherCount) == repoOut.R5[Coll[Long]].get.slice(WIDIndex + 1, watcherCount)
           )
         )
       }else{
