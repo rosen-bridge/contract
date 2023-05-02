@@ -166,7 +166,6 @@ class ContractTest extends TestSuite {
           .sendChangeTo(prover.getAddress)
           .build()
         prover.sign(tx)
-        println("transaction should not sign, the permit amounts have changed")
       }
     })
   }
@@ -498,7 +497,6 @@ class ContractTest extends TestSuite {
           .sendChangeTo(prover.getAddress)
           .build()
         prover.sign(tx)
-        println("transaction should not be signed, the RWTs had been stolen")
       }
     })
   }
@@ -573,7 +571,6 @@ class ContractTest extends TestSuite {
         secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
         val multiSigProver = multiSigProverBuilder.build()
         multiSigProver.sign(unsignedTx)
-        println("transaction should not be signed, the permits have wrong amount of RWTs")
       }
     })
   }
@@ -654,7 +651,6 @@ class ContractTest extends TestSuite {
         secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
         val multiSigProver = multiSigProverBuilder.build()
         multiSigProver.sign(unsignedTx)
-        println("transaction should not be signed, the added commitment have different number of RWTs")
       }
     })
   }
