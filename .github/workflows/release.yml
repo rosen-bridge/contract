@@ -4,22 +4,21 @@ on:
   push:
     branches:
       - master
+    tags:
+      - *
   pull_request:
     types:
       - opened
       - synchronize
-  release:
-    types: [published]
-  
 
 jobs:
   tests:
     name: Tests
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        scala: [2.12.7]
-        java: [adopt@1.8]
+        os: [ ubuntu-latest ]
+        scala: [ 2.12.7 ]
+        java: [ adopt@1.8 ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -52,9 +51,9 @@ jobs:
     needs: tests
     strategy:
       matrix:
-        os: [ubuntu-latest]
-        scala: [2.12.7]
-        java: [adopt@1.8]
+        os: [ ubuntu-latest ]
+        scala: [ 2.12.7 ]
+        java: [ adopt@1.8 ]
     runs-on: ${{ matrix.os }}
 
     steps:
@@ -77,45 +76,39 @@ jobs:
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
       - name: Build App
+        id: build-app
         run: |
           sbt ++${{ matrix.scala }} assembly
+          echo "APP_VERSION=$(sbt -Dsbt.supershell=false -error "print version")-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
-      - name: RUN Jar File release
-        if: github.event_name == 'release'
+      - name: RUN Jar File for push to master
+        if: github.ref_type == 'branch'
         run: |
           ROSEN=$(find . -name 'contract-rosen-bridge-*.jar')
-          java -jar $ROSEN all --version ${{ github.event.release.tag_name }}
+          java -jar $ROSEN all --version ${{ steps.build-app.outputs.APP_VERSION }}
 
       - name: Upload JSON files
         uses: softprops/action-gh-release@v1
-        if: github.event_name == 'release'
-        with: 
+        if: github.ref_type == 'branch'
+        with:
+          tag_name: ${{ steps.build-app.outputs.APP_VERSION }}
+          prerelease: true
           files: |
             contracts-*.json
             tokensMap-*.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-
-      - uses: dev-drprasad/delete-tag-and-release@v0.2.1
-        if: github.event_name != 'release'
-        with:
-          delete_release: true
-          tag_name: Latest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: RUN Jar File for push to master
-        if: github.event_name != 'release'
+      - name: RUN Jar File release
+        if: github.ref_type == 'tag'
         run: |
           ROSEN=$(find . -name 'contract-rosen-bridge-*.jar')
-          java -jar $ROSEN all --version Latest
+          java -jar $ROSEN all --version ${{ github.ref_name }}
 
       - name: Upload JSON files
         uses: softprops/action-gh-release@v1
-        if: github.event_name != 'release'
-        with: 
-          tag_name: Latest
+        if: github.ref_type == 'tag'
+        with:
           files: |
             contracts-*.json
             tokensMap-*.json
