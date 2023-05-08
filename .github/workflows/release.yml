@@ -5,7 +5,7 @@ on:
     branches:
       - master
     tags:
-      - *
+      - '*'
   pull_request:
     types:
       - opened
@@ -76,16 +76,18 @@ jobs:
           key: ${{ runner.os }}-sbt-cache-v2-${{ hashFiles('**/*.sbt') }}-${{ hashFiles('project/build.properties') }}
 
       - name: Build App
-        id: build-app
         run: |
           sbt ++${{ matrix.scala }} assembly
-          echo "APP_VERSION=$(sbt -Dsbt.supershell=false -error "print version")-$(git rev-parse --short HEAD)" >> "$GITHUB_OUTPUT"
 
       - name: RUN Jar File for push to master
         if: github.ref_type == 'branch'
+        id: set-version
         run: |
+          VERSION_STRING=$(sbt -Dsbt.supershell=false -error "print version")
+          APP_VERSION_STRING=$(echo "${VERSION_STRING:0:5}")-$(git rev-parse --short HEAD)
+          echo APP_VERSION=$APP_VERSION_STRING >> "$GITHUB_OUTPUT"
           ROSEN=$(find . -name 'contract-rosen-bridge-*.jar')
-          java -jar $ROSEN all --version ${{ steps.build-app.outputs.APP_VERSION }}
+          java -jar $ROSEN all --version $APP_VERSION_STRING
 
       - name: Upload JSON files
         uses: softprops/action-gh-release@v1
