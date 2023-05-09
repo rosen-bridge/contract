@@ -93,7 +93,7 @@ jobs:
         uses: softprops/action-gh-release@v1
         if: github.ref_type == 'branch'
         with:
-          tag_name: ${{ steps.build-app.outputs.APP_VERSION }}
+          tag_name: ${{ steps.set-version.outputs.APP_VERSION }}
           prerelease: true
           files: |
             contracts-*.json
