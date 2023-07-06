@@ -9,6 +9,7 @@ import java.io.PrintWriter
 import scala.io.{BufferedSource, Source}
 
 class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTokens)) {
+  lazy val WatcherLock: (ErgoContract, String) = generateWatcherLockContract()
   lazy val RWTRepo: (ErgoContract, String) = generateRWTRepoContract()
   lazy val WatcherPermit: (ErgoContract, String) = generateWatcherPermitContract()
   lazy val Commitment: (ErgoContract, String) = generateCommitmentContract()
@@ -51,13 +52,26 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
     }
   }
 
+  private def generateWatcherLockContract(): (ErgoContract, String) = {
+    ergoGeneralConfig.ergoClient.execute(ctx => {
+      val watcherLockScript = readScript("WatcherLock.es")
+        .replace("REPO_NFT", Base64.encode(Base16.decode(networkConfig._2.RepoNFT).get))
+      val contract = ctx.compileContract(ConstantsBuilder.create().build(), watcherLockScript)
+      val address = Utils.getContractAddress(contract, ergoGeneralConfig.addressEncoder)
+      println(s"Watcher lock address is : \t\t\t$address")
+      (contract, address)
+    })
+  }
+
   private def generateRWTRepoContract(): (ErgoContract, String) = {
     ergoGeneralConfig.ergoClient.execute(ctx => {
       val watcherPermitHash = Base64.encode(Utils.getContractScriptHash(WatcherPermit._1))
+      val watcherLock = Base64.encode(Utils.getContractScriptHash(WatcherLock._1))
       val RwtRepoScript = readScript("RwtRepo.es")
         .replace("GUARD_NFT", Base64.encode(Base16.decode(networkConfig._2.GuardNFT).get))
         .replace("RSN_TOKEN", Base64.encode(Base16.decode(networkConfig._2.RSN).get))
         .replace("PERMIT_SCRIPT_HASH", watcherPermitHash)
+        .replace("WATCHER_LOCK_SCRIPT_HASH", watcherLock)
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), RwtRepoScript)
       val address = Utils.getContractAddress(contract, ergoGeneralConfig.addressEncoder)
       println(s"Watcher repo address is : \t\t\t$address")

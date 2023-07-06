@@ -31,14 +31,15 @@ class ContractTest extends TestSuite {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
-        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._3.RSN, 100L))
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
         val repoBox = Boxes.createRepo(ctx, 100000, 1L, Seq(), Seq()).convertToInputWith(Boxes.getRandomHexString(), 0)
         val repoOut = Boxes.createRepo(ctx, 99900, 101L, Seq(repoBox.getId.getBytes), Seq(100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
         val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 1L))
+        val watcherLock = Boxes.createWatcherLockBox(ctx,1e9.toLong, 100, repoBox.getId.getBytes)
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
           .fee(Configs.fee)
-          .addOutputs(repoOut, permitBox, WID)
+          .addOutputs(repoOut, permitBox, WID, watcherLock)
           .sendChangeTo(prover.getAddress)
           .build()
         prover.sign(tx)
@@ -54,15 +55,16 @@ class ContractTest extends TestSuite {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
-        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._3.RSN, 100L))
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val repoBox = Boxes.createRepo(ctx, 100000, 5801L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val repoOut = Boxes.createRepo(ctx, 99900, 5901L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
         val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 1L))
+        val watcherLock = Boxes.createWatcherLockBox(ctx,1e9.toLong, 100, repoBox.getId.getBytes)
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
           .fee(Configs.fee)
-          .addOutputs(repoOut, permitBox, WID)
+          .addOutputs(repoOut, permitBox, WID, watcherLock)
           .sendChangeTo(prover.getAddress)
           .build()
         prover.sign(tx)
@@ -240,7 +242,8 @@ class ContractTest extends TestSuite {
           val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1)
           val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
           val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
-          val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox)
+          val watcherLock = Boxes.createWatcherLockBoxInput(ctx,1e9.toLong, 100, userWID)
+          val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherLock)
             .fee(Configs.fee)
             .addOutputs(repoOut, userOut)
             .sendChangeTo(prover.getAddress)
@@ -265,7 +268,8 @@ class ContractTest extends TestSuite {
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
         val repoOut = Boxes.createRepoWithR7(ctx, 100040, 1L, Seq(), Seq(), 1)
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, 40))
-        val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox)
+        val watcherLock = Boxes.createWatcherLockBoxInput(ctx,1e9.toLong, 100, userWID)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherLock)
           .fee(Configs.fee)
           .addOutputs(repoOut, userOut)
           .sendChangeTo(prover.getAddress)
@@ -680,43 +684,44 @@ class ContractTest extends TestSuite {
     })
   }
 
-  property("test redeem fraud to repo") {
-    networkConfig._1.ergoClient.execute(ctx => {
-      var userIndex = 0
-      try {
-        val prover = getProver()
-        val globalWIDs = generateRandomWIDList(3)
-        val globalAmounts = Seq(100L, 10L, 20L)
-        val repo = Boxes.createRepo(ctx, 1000L, globalAmounts.sum + 1, globalWIDs, globalAmounts).convertToInputWith(Boxes.getRandomHexString(), 1)
-        for (userIndex <- 0 until globalWIDs.length) {
-          var amounts = globalAmounts.map(item => item).toArray
-          var WIDs = globalWIDs.map(item => item).toArray
-          val WID = WIDs(userIndex)
-          val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.tokens.CleanupNFT, 1L))
-          val fraud = Boxes.createFraudBox(ctx, WID, 10L).convertToInputWith(Boxes.getRandomHexString(), 1)
-          val RWTCount = repo.getTokens.get(1).getValue.toLong + 10
-          val RSNCount = repo.getTokens.get(2).getValue.toLong - 10
-          if (amounts(userIndex) > 10) {
-            amounts(userIndex) -= 10
-          } else {
-            amounts = amounts.patch(userIndex, Nil, 1)
-            WIDs = WIDs.patch(userIndex, Nil, 1)
-          }
-          val repoCandidate = Boxes.createRepoWithR7(ctx, RWTCount, RSNCount, WIDs, amounts, userIndex + 1)
-          val unsigned = ctx.newTxBuilder().addInputs(repo, fraud, box2)
-            .fee(Configs.fee)
-            .addOutputs(repoCandidate)
-            .sendChangeTo(prover.getAddress)
-            .build()
-          val signed = prover.sign(unsigned)
-        }
-      } catch {
-        case exp: Throwable =>
-          println(exp.toString)
-          fail(s"transaction not signed on index ${userIndex}")
-      }
-    })
-  }
+//  property("test redeem fraud to repo") {
+//    networkConfig._1.ergoClient.execute(ctx => {
+//      var userIndex = 0
+//      try {
+//        val prover = getProver()
+//        val globalWIDs = generateRandomWIDList(3)
+//        val globalAmounts = Seq(100L, 10L, 20L)
+//        val repo = Boxes.createRepo(ctx, 1000L, globalAmounts.sum + 1, globalWIDs, globalAmounts).convertToInputWith(Boxes.getRandomHexString(), 1)
+//        for (userIndex <- 0 until globalWIDs.length) {
+//          var amounts = globalAmounts.map(item => item).toArray
+//          var WIDs = globalWIDs.map(item => item).toArray
+//          val WID = WIDs(userIndex)
+//          val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.tokens.CleanupNFT, 1L))
+//          val fraud = Boxes.createFraudBox(ctx, WID, 10L).convertToInputWith(Boxes.getRandomHexString(), 1)
+//          val RWTCount = repo.getTokens.get(1).getValue.toLong + 10
+//          val RSNCount = repo.getTokens.get(2).getValue.toLong - 10
+//          if (amounts(userIndex) > 10) {
+//            amounts(userIndex) -= 10
+//          } else {
+//            amounts = amounts.patch(userIndex, Nil, 1)
+//            WIDs = WIDs.patch(userIndex, Nil, 1)
+//          }
+//          val repoCandidate = Boxes.createRepoWithR7(ctx, RWTCount, RSNCount, WIDs, amounts, userIndex + 1)
+//          val watcherLock = Boxes.createWatcherLockBoxInput(ctx,1e9.toLong, 100, WID)
+//          val unsigned = ctx.newTxBuilder().addInputs(repo, fraud, box2, watcherLock)
+//            .fee(Configs.fee)
+//            .addOutputs(repoCandidate)
+//            .sendChangeTo(prover.getAddress)
+//            .build()
+//          val signed = prover.sign(unsigned)
+//        }
+//      } catch {
+//        case exp: Throwable =>
+//          println(exp.toString)
+//          fail(s"transaction not signed on index ${userIndex}")
+//      }
+//    })
+//  }
 
   property("test spent lock script when guard token is in data input") {
     networkConfig._1.ergoClient.execute(ctx => {

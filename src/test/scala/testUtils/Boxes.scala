@@ -118,12 +118,28 @@ object Boxes {
 
   }
 
+
+  def createWatcherLockBoxInput(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): InputBox = {
+    Boxes.createWatcherLockBox(ctx, erg, rsn, wid).convertToInputWith(getRandomHexString(), 3)
+  }
+  def createWatcherLockBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
+    ctx.newTxBuilder().outBoxBuilder()
+      .value(erg)
+      .tokens(
+        new ErgoToken(networkConfig._3.RSN, rsn)
+      )
+      .contract(contracts.WatcherLock._1)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
+      ).build()
+  }
+
   def createRepo(
                   ctx: BlockchainContext,
                   RWTCount: Long,
                   RSNCount: Long,
                   users: Seq[Array[Byte]],
-                  userRWT: Seq[Long]
+                  userRWT: Seq[Long],
                 ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
@@ -136,7 +152,7 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
       )
     if (RSNCount > 0) {
       repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
@@ -163,7 +179,7 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
         ErgoValueBuilder.buildFor(R7)
       )
     if (RSNCount > 0) {
