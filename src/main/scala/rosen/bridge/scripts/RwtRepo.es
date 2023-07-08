@@ -106,7 +106,7 @@
       val watcherCount = repo.R5[Coll[Long]].get.size
       val WIDCheckInRepo = if(repo.R5[Coll[Long]].get(WIDIndex) > RWTIn) {
         // Returning some RWTs
-        // [repo, (Permit | Fraud), WIDToken] => [repo, Permit(Optional), WIDToken(+userChange)]
+        // [repo, (Permit | Fraud), (WIDToken | Cleanup)] => [repo, Permit(Optional), WIDToken(+userChange)]
         allOf(
           Coll(
             repo.R5[Coll[Long]].get(WIDIndex) == repoOut.R5[Coll[Long]].get(WIDIndex) + RWTIn,

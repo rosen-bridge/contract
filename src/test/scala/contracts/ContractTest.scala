@@ -684,6 +684,39 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test redeem fraud to repo") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      var userIndex = 0
+      try {
+        val prover = getProver()
+        val globalWIDs = generateRandomWIDList(3)
+        val globalAmounts = Seq(100L, 11L, 20L)
+        val repo = Boxes.createRepo(ctx, 1000L, globalAmounts.sum + 1, globalWIDs, globalAmounts).convertToInputWith(Boxes.getRandomHexString(), 1)
+        for (userIndex <- 0 until globalWIDs.length) {
+          var amounts = globalAmounts.map(item => item).toArray
+          var WIDs = globalWIDs.map(item => item).toArray
+          val WID = WIDs(userIndex)
+          val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._2.tokens.CleanupNFT, 1L))
+          val fraud = Boxes.createFraudBox(ctx, WID, 10L).convertToInputWith(Boxes.getRandomHexString(), 1)
+          val RWTCount = repo.getTokens.get(1).getValue.toLong + 10
+          val RSNCount = repo.getTokens.get(2).getValue.toLong - 10
+          amounts(userIndex) -= 10
+          val repoCandidate = Boxes.createRepoWithR7(ctx, RWTCount, RSNCount, WIDs, amounts, userIndex + 1)
+          val unsigned = ctx.newTxBuilder().addInputs(repo, fraud, box2)
+            .fee(Configs.fee)
+            .addOutputs(repoCandidate)
+            .sendChangeTo(prover.getAddress)
+            .build()
+          val signed = prover.sign(unsigned)
+        }
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail(s"transaction not signed on index ${userIndex}")
+      }
+    })
+  }
+
   property("test spent lock script when guard token is in data input") {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
