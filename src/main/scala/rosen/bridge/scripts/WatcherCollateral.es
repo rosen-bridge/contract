@@ -14,7 +14,7 @@
       Coll(
         widBox.tokens(0)._1 == watcherWID,
         repo.R4[Coll[Coll[Byte]]].get(watcherIndex) == watcherWID,
-        repoOut.R4[Coll[Coll[Byte]]].get.size <= watcherIndex || repoOut.R4[Coll[Coll[Byte]]].get(watcherIndex) != watcherWID,
+        repoOut.R4[Coll[Coll[Byte]]].get.size == watcherIndex || repoOut.R4[Coll[Coll[Byte]]].get(watcherIndex) != watcherWID,
         repo.tokens(0)._1 == repoNFT
       )
     )
