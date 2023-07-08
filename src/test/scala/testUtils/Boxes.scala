@@ -119,16 +119,16 @@ object Boxes {
   }
 
 
-  def createWatcherLockBoxInput(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): InputBox = {
-    Boxes.createWatcherLockBox(ctx, erg, rsn, wid).convertToInputWith(getRandomHexString(), 3)
+  def createWatcherCollateralBoxInput(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): InputBox = {
+    Boxes.createWatcherCollateralBox(ctx, erg, rsn, wid).convertToInputWith(getRandomHexString(), 3)
   }
-  def createWatcherLockBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
+  def createWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
     ctx.newTxBuilder().outBoxBuilder()
       .value(erg)
       .tokens(
         new ErgoToken(networkConfig._3.RSN, rsn)
       )
-      .contract(contracts.WatcherLock._1)
+      .contract(contracts.watcherCollateral._1)
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
       ).build()

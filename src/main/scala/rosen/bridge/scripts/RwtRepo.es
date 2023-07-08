@@ -11,7 +11,7 @@
   // 2: RSN
 
   val GuardNFT = fromBase64("GUARD_NFT");
-  val WatcherLockScriptHash = fromBase64("WATCHER_LOCK_SCRIPT_HASH");
+  val watcherCollateralScriptHash = fromBase64("WATCHER_COLLATERAL_SCRIPT_HASH");
   if(OUTPUTS(0).tokens(0)._1 == GuardNFT){
     // RWT Repo Update transaction
     sigmaProp(true)
@@ -47,8 +47,8 @@
       )
       if(WIDIndex == -1){
         // Getting initial permit
-        // [Repo, UserInputs] => [Repo, watcherPermit, WIDBox, watcherLock]
-        val watcherLock = OUTPUTS(3)
+        // [Repo, UserInputs] => [Repo, watcherPermit, WIDBox, watcherCollateral]
+        val watcherCollateral = OUTPUTS(3)
         sigmaProp(
           allOf(
             Coll(
@@ -61,14 +61,14 @@
               repoOut.R5[Coll[Long]].get(widOutListSize - 1) == RWTOut,
               permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
               outWIDBox.tokens(0)._1 == repo.id,
-              blake2b256(watcherLock.propositionBytes) == WatcherLockScriptHash,
-              watcherLock.R4[Coll[Byte]].get == repo.id,
-              watcherLock.value >= repo.R6[Coll[Long]].get(4),
+              blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
+              watcherCollateral.R4[Coll[Byte]].get == repo.id,
+              watcherCollateral.value >= repo.R6[Coll[Long]].get(4),
               if(repo.R6[Coll[Long]].get(5) > 0){
                 allOf(
                   Coll(
-                    watcherLock.tokens(0)._1 == repo.tokens(2)._1,
-                    watcherLock.tokens(0)._2 >= repo.R6[Coll[Long]].get(5)
+                    watcherCollateral.tokens(0)._1 == repo.tokens(2)._1,
+                    watcherCollateral.tokens(0)._2 >= repo.R6[Coll[Long]].get(5)
                   )
                 )
               }else{
@@ -106,7 +106,7 @@
       val watcherCount = repo.R5[Coll[Long]].get.size
       val WIDCheckInRepo = if(repo.R5[Coll[Long]].get(WIDIndex) > RWTIn) {
         // Returning some RWTs
-        // [repo, Permit, WIDToken] => [repo, Permit(Optional), WIDToken(+userChange)]
+        // [repo, (Permit | Fraud), WIDToken] => [repo, Permit(Optional), WIDToken(+userChange)]
         allOf(
           Coll(
             repo.R5[Coll[Long]].get(WIDIndex) == repoOut.R5[Coll[Long]].get(WIDIndex) + RWTIn,
@@ -117,8 +117,8 @@
         )
       }else{
         // Returning the permit
-        // [repo, Permit, WIDToken, WatcherLock] => [repo, Permit(Optional), WIDToken(+userChange)]
-        val watcherLock = INPUTS(3);
+        // [repo, Permit, WIDToken, watcherCollateral] => [repo, Permit(Optional), WIDToken(+userChange)]
+        val watcherCollateral = INPUTS(3);
         allOf(
           Coll(
             repo.R5[Coll[Long]].get(WIDIndex) == RWTIn,
@@ -126,7 +126,7 @@
             repo.R4[Coll[Coll[Byte]]].get.slice(WIDIndex + 1, watcherCount) == repoOut.R4[Coll[Coll[Byte]]].get.slice(WIDIndex, watcherCount - 1),
             repo.R5[Coll[Long]].get.slice(0, WIDIndex) == repoOut.R5[Coll[Long]].get.slice(0, WIDIndex),
             repo.R5[Coll[Long]].get.slice(WIDIndex + 1, watcherCount) == repoOut.R5[Coll[Long]].get.slice(WIDIndex, watcherCount - 1),
-            blake2b256(watcherLock.propositionBytes) == WatcherLockScriptHash,
+            blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
           )
         )
       }
