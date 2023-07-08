@@ -2,7 +2,7 @@
   // ----------------- REGISTERS
   // R4: Coll[Byte] = Owner WID
   // ----------------- TOKENS
-  // [repo, Permit, WIDToken, Lock] => [repo, Permit(Optional), WIDToken(+userChange)]
+  // [repo, Permit, WIDToken, Collateral] => [repo, WIDToken(+userChange)]
   val repoNFT = fromBase64("REPO_NFT");
   val repo = INPUTS(0);
   val repoOut = OUTPUTS(0);
