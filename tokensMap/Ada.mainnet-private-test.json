@@ -1,7 +1,7 @@
 {
   "ergo": {
-    "tokenId": "4ed6449240d166b0e44c529b5bf06d210796473d3811b9aa0e15329599164c24",
-    "tokenName": "RST-ADA.V-test",
+    "tokenId": "6cbeec04af6a5047d8818eac2ac6e2b28e1e74a0d339cff96f7641a1a0c3ca9b",
+    "tokenName": "rptWAdaV1",
     "decimals": 6,
     "metaData": {
       "type": "EIP-004",
@@ -14,7 +14,7 @@
     "assetName": "414441",
     "decimals": 6,
     "metaData": {
-      "type": "ADA",
+      "type": "native",
       "residency": "native"
     }
   }

@@ -1,0 +1,21 @@
+{
+  "ergo": {
+    "tokenId": "erg",
+    "tokenName": "erg",
+    "decimals": 9,
+    "metaData": {
+      "type": "native",
+      "residency": "native"
+    }
+  },
+  "cardano": {
+    "fingerprint": "asset12dzcylmey8mzqf4lqx7lu3tlnevwrtq4vurj82",
+    "policyId": "684dd3236fb0b0088bba20710bb8374ec0e933f80a3151cb6051864a",
+    "assetName": "7270745745726756310a",
+    "decimals": 9,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}
