@@ -9,9 +9,9 @@
     }
   },
   "cardano": {
-    "fingerprint": "asset1epz7gzjqg5py4xrgps6ccv25gz7gd6v8e5gmxx",
-    "policyId": "d2f6eb37450a3d568de93d623e69bd0ba1238daacc883d75736abd23",
-    "assetName": "527374457267565465737432",
+    "fingerprint": "asset12dzcylmey8mzqf4lqx7lu3tlnevwrtq4vurj82",
+    "policyId": "684dd3236fb0b0088bba20710bb8374ec0e933f80a3151cb6051864a",
+    "assetName": "7270745745726756310a",
     "decimals": 9,
     "metaData": {
       "type": "CIP26",
