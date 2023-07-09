@@ -9,7 +9,7 @@ import java.io.PrintWriter
 import scala.io.{BufferedSource, Source}
 
 class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTokens)) {
-  lazy val watcherCollateral: (ErgoContract, String) = generateWatcherCollateralContract()
+  lazy val WatcherCollateral: (ErgoContract, String) = generateWatcherCollateralContract()
   lazy val RWTRepo: (ErgoContract, String) = generateRWTRepoContract()
   lazy val WatcherPermit: (ErgoContract, String) = generateWatcherPermitContract()
   lazy val Commitment: (ErgoContract, String) = generateCommitmentContract()
@@ -33,7 +33,8 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
       ("lock", Json.fromString(Lock._2)),
       ("guardSign", Json.fromString(GuardSign._2)),
       ("Commitment", Json.fromString(Commitment._2)),
-      ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2))
+      ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2)),
+      ("WatcherCollateral", Json.fromString(WatcherCollateral._2))
     ))
   }
 
@@ -58,7 +59,7 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
         .replace("REPO_NFT", Base64.encode(Base16.decode(networkConfig._2.RepoNFT).get))
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), watcherCollateralScript)
       val address = Utils.getContractAddress(contract, ergoGeneralConfig.addressEncoder)
-      println(s"Watcher lock address is : \t\t\t$address")
+      println(s"Watcher collateral address is : \t\t\t$address")
       (contract, address)
     })
   }
@@ -66,7 +67,7 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
   private def generateRWTRepoContract(): (ErgoContract, String) = {
     ergoGeneralConfig.ergoClient.execute(ctx => {
       val watcherPermitHash = Base64.encode(Utils.getContractScriptHash(WatcherPermit._1))
-      val watcherCollateralHash = Base64.encode(Utils.getContractScriptHash(watcherCollateral._1))
+      val watcherCollateralHash = Base64.encode(Utils.getContractScriptHash(WatcherCollateral._1))
       val RwtRepoScript = readScript("RwtRepo.es")
         .replace("GUARD_NFT", Base64.encode(Base16.decode(networkConfig._2.GuardNFT).get))
         .replace("RSN_TOKEN", Base64.encode(Base16.decode(networkConfig._2.RSN).get))

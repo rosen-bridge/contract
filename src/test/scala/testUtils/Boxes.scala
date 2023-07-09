@@ -128,7 +128,7 @@ object Boxes {
       .tokens(
         new ErgoToken(networkConfig._3.RSN, rsn)
       )
-      .contract(contracts.watcherCollateral._1)
+      .contract(contracts.WatcherCollateral._1)
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
       ).build()
