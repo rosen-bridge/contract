@@ -25,12 +25,13 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
     script
   }
 
-  def toJsonAddresses: Json = {
+  def toJsonAddresses(networkName: String): Json = {
+    val lockAddress = if (networkName != "ergo") "" else Lock._2
     Json.fromFields(List(
       ("RWTRepo", Json.fromString(RWTRepo._2)),
       ("WatcherPermit", Json.fromString(WatcherPermit._2)),
       ("Fraud", Json.fromString(Fraud._2)),
-      ("lock", Json.fromString(Lock._2)),
+      ("lock", Json.fromString(lockAddress)),
       ("guardSign", Json.fromString(GuardSign._2)),
       ("Commitment", Json.fromString(Commitment._2)),
       ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2)),
@@ -41,7 +42,7 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
   def createContractsJson(networkName: String, networkType: String, networkVersion: String): Unit = {
     val result = {
       Json.fromFields(List(
-        ("addresses", this.toJsonAddresses),
+        ("addresses", this.toJsonAddresses(networkName)),
         ("tokens", networkConfig._1.tokens.toJson().deepMerge(networkConfig._2.toJson())),
         ("cleanupConfirm", Json.fromInt(networkConfig._1.cleanupConfirm))
       ))
