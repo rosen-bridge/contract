@@ -26,4 +26,4 @@ case class Tokens(CleanupNFT: String, RWTId: String) {
   }
 }
 
-case class Network(tokens: Tokens, cleanupConfirm: Int)
+case class Network(tokens: Tokens, lockAddress: String, cleanupConfirm: Int)
