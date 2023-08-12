@@ -26,7 +26,7 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
   }
 
   def toJsonAddresses(networkName: String): Json = {
-    val lockAddress = if (networkName != "ergo") "" else Lock._2
+    val lockAddress = if (networkName != "ergo") networkConfig._1.lockAddress else Lock._2
     Json.fromFields(List(
       ("RWTRepo", Json.fromString(RWTRepo._2)),
       ("WatcherPermit", Json.fromString(WatcherPermit._2)),
