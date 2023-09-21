@@ -1,42 +1,54 @@
 
 # Rosen Bridge
-Rosen bridge is an Ergo-centric bridge enabling users to send and receive coins and tokens between Ergo and any other chain. In this document, we will explain the Rosen bridge design technically. You may also want to read about Rosen bridge's high-level concepts [here](https://github.com/rosen-bridge).
+The Rosen Bridge is an Ergo-centric bridge designed to facilitate the seamless exchange of coins and tokens between the Ergo blockchain and other supported chains. In this document, we will delve into the technical intricacies of the Rosen Bridge's design. For a broader understanding of the Rosen Bridge's high-level concepts, you can refer to this [link](https://github.com/rosen-bridge).
 
 ## Rosen Bridge Components
-Before explaining the main idea and procedures, it's better to get familiar with its components and concepts:
+To gain a comprehensive understanding of the Rosen Bridge and its operations, it's essential to get familiar with its core components and concepts:
 
 ### Roles
-1. **Guard:** A guard is a trusted party performing final actions in the system. Actually, a set of trusted guards are needed to transfer money between chains. The guard set is a small set including real parties. Each guard individually verifies the events and performs the required action. However, all (or a quorum of) guards should agree on one event to make the final operation.
+1. **Guard:** A guard serves as a trusted entity responsible for executing final actions within the system. In practice, a set of trusted guards is essential for facilitating cross-chain transfers. Each guard independently verifies events and carries out the necessary actions. However, for a final operation to proceed, all guards (or a quorum) must reach a consensus on a specific event.
 
-2. **Watcher:** As the name suggests, watchers are some volunteer participants who watch two chains to create the transfer events. After a quorum of watchers reported the same event, a watcher will make an event trigger for guards. Watchers are not trusted and may have faults, intentionally or unintentionally. Anyway, the guilty watcher will be fined for his faulty action, and on the other hand, honest watchers will be rewarded.
-
+2. **Watcher:** As the name implies, watchers are volunteer participants tasked with watching chains to create transfer reports. Once a quorum of watchers reported the same event, a watcher initiates the event trigger for the guards. Watchers are not trusted and may exhibit faults, whether intentionally or accidentally. In such cases, the responsible watcher is subject to penalties for their erroneous actions, while honest watchers are duly rewarded after each report.
 
 ### Tokens
-1. **Rosen Bridge Token (RSN):** The Rosen bridge token defines the bridge participation rights. Each person who has a portion of this token can participate in the bridge as a watcher.
+As previously mentioned, Rosen operates as an Ergo-centric bridge, with the primary procedures designed to run on the Ergo network. In addition to tokens that are transferred on the bridge, transfer procedures involve the use of administrative tokens on the Ergo network, each serving distinct functions:
 
-2. **X-Rosen Watcher Token (X-RWT):** Each watcher volunteer needs to lock his RSN tokens to be a watcher of a specific bridge. The legitimate watchers receive X-RWT tokens on behalf of their RSN. Each of these tokens can be used to create new events, and if the event were true, guards would return the X-RWT to the watcher. RWT is a chain-specific token; thus, chain X watchers will use X-RWTs for event creation.
+1. **Rosen Bridge Token (RSN):** The Rosen bridge token defines the bridge participation rights. Holders of this token are eligible to engage as watchers within the bridge ecosystem.
 
-3. **Guard NFT:** This NFT belongs to the bridge wallet, a multi-sig address of guards. Thus, if it was spent in a transaction input, it means that guards agreed on that transaction. This NFT is used for system update transactions.
+2. **Guard NFT:** This NFT  is collectively owned by the guards and its expenditure represents a consensus among guards on a transaction. This NFT resides in a multi-signature address controlled by the guards, then its presence in a transaction input signifies the approval of the guards. It is used for transfer payments and system update transactions.
 
-4. **X-Cleanup NFT:** This token is the cleanup service identifier. We have different cleanup services for each registered bridge.
+3. **RWT Repo NFT:** Each chain has unique configuration for watchers, all of which are stored in the RWT-Repo box. This NFT serves as an identifier for verified repos associated with each chain.
 
-5. **Watcher Identifier Token (WID Token):** After locking RSNs by a volunteer, the X-RWT tokens are paid to the watcher as well as a newly issued token that identifies the watcher. A watcher may have multiple X-RWT tokens, enabling him to simultaneously create different events on one bridge. Though, the WID token is a unique token that identifies the watcher (we may decide to use a set of WID tokens to handle the concurrency, but it won't damage its uniqueness concept). The watcher must use his WID token to authenticate every new event generation, reward reception, or X-RWT token redemption actions.
+4. **X-Rosen Watcher Token (X-RWT):** Watcher volunteers are required to lock their RSN tokens to become watchers of a specific chain. The legitimate watchers receive X-RWT tokens in exchange of their RSN tokens. Each pack of these tokens can be used to create a new action report. If the report was correct, guards will return the X-RWT tokens to the respective watcher. RWT is a chain-specific token; thus, chain X watchers will employ X-RWT tokens for report creation.
 
+5. **X-Cleanup NFT:** This token is the cleanup service identifier. Different cleanup services are available for each registered chain, responsible for eliminating older, unused boxes, which may potentially involve fraudulent activity.
+
+6. **Watcher Identifier Token (WID Token):** After a volunteer locks their RSN tokens, they receive X-RWT tokens as well as a newly issued token that serves as their unique watcher identifier. A watcher may possess multiple X-RWT tokens, allowing them to concurrently create various reports for a chain. However, the WID Token is a unique token assigned to each watcher, which they must utilize to authenticate actions like new report generation, reward receipt, or X-RWT token redemption (we may decide to use a set of WID tokens to handle the concurrency, but it won't damage its uniqueness concept).
 
 ### Contracts
 
-1. **X-Bridge Wallet:** This is a simple multi-sig address storing all X-wrapped tokens. All guards must agree on a payment transaction in order to spend this box and pay the requested tokens to the user.
+To execute bridge operations, Rosen utilizes a straightforward multi-signature wallet on each supported chain. This wallet (X-Chain Wallet), contains all X-native and X-wrapped tokens.
+To transfer assets from this wallet and issue the requested tokens to users, an agreement among all guards is required (signing the same transaction).
+Rather than these simple multi-sig wallets, more complicated procedures are designed on ergo which requires ergo-side contracts. These contracts include:
 
-1. **X-RWT Repo:** This contract is the system configuration for each chain. This contract is responsible for tracking the corresponding X-RWT tokens and locking RSNs to emit new X-RWTs. It stores the X-RWT/RSN factor, the quorum percentage of watchers, and the maximum needed event commitment count for this chain. It also stores the list of available watcher WIDs alongside their X-RWT token count.
+1. **Ergo-Chain Wallet:** Similar to other X-Chain Wallets, all ergo-wrapped tokens resist in this wallet. However, in order to simplify ergo-side bridge config updates its not a simple multi-sig wallet. 
+Boxes governed by this contract can only be spent when the Guard NFT is included in the spending transaction.
 
-2. **X-Watcher Permit:** When a new watcher is registered, his X-RWT tokens would be locked in this contract. It also stores the WID in the registers. It can be spent only if the WID token exists in the spending transaction.
+2. **Guard Sign:** Guard sign is a box that stores all guard pks, required sign thresholds, and the guard NFT.
+To perform asset transfers and configuration updates, guards must spend this box by signing transactions with their secrets. 
+As guard public keys are stored within this box's registers, updating the guard set in the Ergo network is as straightforward as executing a standard multi-signature transaction. This eliminates the need to alter bridge addresses or transfer assets to a new wallet.
 
-3. **X-Event Commitment:** When a watcher detects a new event on the target chain, it creates an event commitment.
+3. **X-RWT Repo:** This contract governs the system configuration for each supported chain. It is responsible for tracking the corresponding X-RWT tokens and locking RSNs to emit new X-RWTs. It stores the number of required X-RWTs for each event commitment, the quorum percentage of watchers, the maximum needed event commitment count for this chain, and needed watcher collateral in ERG and RSN. Additionally, it maintains a list of available watcher WIDs alongside their respective X-RWT token counts.
 
-4. **X-Event Trigger:** A watcher creates the event trigger after a quorum of watchers reported the same event. He will spend all commitments and reveals the event contents to generate the event trigger. It also stores the reporter WIDs in the event trigger that the guards will process.
+4. **Watcher Collateral:** Watchers are required to provide a security deposit or collateral as part of their participation in the bridge. This collateral is safely kept in this contract. Whenever the watcher redeemed its permits, the collateral will automatically returned to their address.
 
-5. **X-Fraud:** Some watchers may create faulty events. The guards will process the faulty events if a quorum of watchers created that event (resulting in an event trigger), but guards will ignore these triggers since they are not verifiable. After a while, the cleanup service collects all these faulty events and moves their X-RWT tokens to the fraud contract as punishment. The fraud contract will be spent to redeem RSNs from the X-RWT repo.
+5. **X-Watcher Permit:** When a new watcher registers, their X-RWT tokens are locked within this contract. Furthermore, the contract stores the WID (Watcher Identifier) in its registers. It can only be spent if the corresponding WID token exists within the spending transaction.
 
+6. **X-Event Commitment:** This contract comes into play when a watcher detects a new event on the observing chain. Then, the watcher creates a report commitment with the event data digest.
+
+7. **X-Event Trigger:** A watcher creates the event trigger after a quorum of watchers reported the same event. This action involves spending all commitments and revealing the event's contents. The event trigger also stores the WIDs of the reporting watchers.
+
+8. **X-Fraud:** Occasionally, watchers may create erroneous or fraudulent reports. Guards will process these events if a watcher generate the event trigger (after a quorum of watchers generated the corresponding commitment). However, guards will disregard these triggers as they are not verifiable. After a while, the cleanup service collects these faulty triggers and transfers their associated X-RWT tokens to the fraud contract as a form of penalty.
 
 
 ### Data
@@ -60,19 +72,20 @@ Before explaining the main idea and procedures, it's better to get familiar with
     3. Event id (hash of related txId on source chain)
 
 ## Rosen Bridge Life Cycle
-In this section, we will review the introduced procedures, stored data, and component dependence in detail. These phases are the life cycle of a bridge, but the Rosen bridge is the collection of different such bridges connecting Ergo to the outside world.
+In this section, we will delve into a comprehensive examination of the introduced procedures, stored data, and component interdependencies. These phases collectively represent the life cycle of a bridge (between two chains). It's important to note that the Rosen Bridge comprises a collection of such bridges that connect Ergo to the external world.
 
 ### A. Watcher Registration Procedure
-Each person who has enough portion of X-RWT tokens can be an X bridge watcher. Thus watcher registration has these steps:
+Any individual possessing a sufficient amount of X-RWT tokens can become a X-chain watcher. Thus watcher registration has these steps:
 
 #### 1- Get Watcher Permit
 As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to receive corresponding X-RWTs to obtain the watcher permit. So in this transaction, these requirements must be satisfied:
 
 * X-RWT repo data should be updated:
-    * Append his WID to the WID list
+    * Append the new WID to the WID list
     * Append the number of receiving X-RWT tokens to the token count list
-    * based on X-RWT/RSN factor, pay RSN to the repo and get the X-RWTs
+    * Pay RSN to the repo and get the respective X-RWTs tokens
 * A watcher permit box is created containing all X-RWT tokens. It also stores the WID in its registers.
+* Collateral box is created containing the required collateral for the watcher.
 * Issue the WID token and send it to the watcher's address.
 
 <p align="center">
@@ -81,18 +94,26 @@ As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to rec
 
 
 #### 2- Merge Watcher Permits
-In the payment procedure-reward distribution phase (B.4), we will see guards will pay back the X-RWT token besides the watcher reward after accepting the event triggers. A watcher can spend all these boxes with his WID token as authentication. He may want to merge these boxes and extract the collected rewards. Also, he can create a new event commitment while merging boxes (See B.2).
+In the payment procedure-reward distribution phase (B.4), we will see guards will pay back the X-RWT token besides the watcher reward after accepting the event triggers. A watcher can spend all these boxes with their WID token as authentication. He may want to merge these boxes and extract the collected rewards. Also, he can create a new commitment report while merging boxes (See B.2).
 
 <p align="center">
 <img src="images/Merge_Permits.png">
 </p>
 
 #### 3- Return Watcher Permit
-At any time, a watcher may want to redeem his RSNs (to sell them or to change his bridge). Thus, he should return his watcher permits to unlock the X-RWTs and redeem the RSNs based on the X-RWT/RSN factor stored in the X-RWT repo.
-In this transaction, the watcher should update the token count corresponding to his WID, and if he is returning all X-RWTs, he must remove his WID from the registered watchers list.
+At any given time, a watcher may wish to withdraw their RSN tokens, whether for the purpose of selling them or watching a different chain. To facilitate this, the watcher must return their watcher permits to unlock the X-RWTs and initiate the withdrawal of RSN tokens.
+
+In this transaction, the watcher is required to update the token count associated with their WID (Watcher Identifier Token).
 
 <p align="center">
 <img src="images/Return_Permit.png">
+</p>
+
+
+If a watcher returns all the corresponding X-RWT tokens, then the collateral can be withdrawn accordingly.
+
+<p align="center">
+<img src="images/Return_Total_Permit.png">
 </p>
 
 ### B. Payment Procedure
@@ -107,22 +128,22 @@ A transfer request starts by sending the funds to the bridge wallet on the sourc
 </p>
 
 #### 2- Event Commitment Creation
-Each watcher observes both chains and, in case of detecting any valid transfer requests, creates the event commitment in the Ergo network. It also stores the request information in its local database for future usage.
+Each watcher observing chain X, upon detecting valid transfer requests, generates a commitment report within the Ergo network. Additionally, it maintains the request information in its local database for potential future use.
 In this transaction:
 
-* Inputs are:
+* Inputs include:
     * Watcher permit box containing X-RWT
     * A box containing his WID token as the first token
     * (Optional) Any other watcher permit boxes in the network can be merged in this transaction (A.2)
-* Only one new watcher permit box is created so that all remaining X-RWTs will be aggregated.
-* The created commitment box has exactly one X-RWT. It also stores all commitment information in its registers.
+* Only one new watcher permit box is created, containing all remaining X-RWTs.
+* The newly created commitment box contains a quantity of X-RWT tokens based on the specified amount required in X-RWT-Repo. It also stores all commitment-related information within its registers.
 
 <p align="center">
 <img src="images/Commitment_Creation.png">
 </p>
 
 #### 3- Event Trigger Creation
-In this phase, a watcher creates the event trigger after a quorum of watchers reported the same event. He will spend all commitments and reveals the event contents to generate the event trigger.
+In this phase, a watcher creates the event trigger after a quorum of watchers reported the same event. The watcher will spend all commitments and reveals the event contents to generate the event trigger.
 
 At first, the watcher finds all commitments with the same id. Then, he verifies the commitments with the event data and the issuer's WID. Finally, if there are sufficient verified commitments, he spends them all and creates the event trigger. Created event trigger stores:
 
