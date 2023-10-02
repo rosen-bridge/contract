@@ -1,7 +1,7 @@
 {
   "ergo": {
     "tokenId": "6cbeec04af6a5047d8818eac2ac6e2b28e1e74a0d339cff96f7641a1a0c3ca9b",
-    "tokenName": "rptWAdaV1",
+    "name": "rptWAdaV1",
     "decimals": 6,
     "metaData": {
       "type": "EIP-004",
@@ -12,6 +12,7 @@
     "fingerprint": "lovelace",
     "policyId": "",
     "assetName": "414441",
+    "name": "ada",
     "decimals": 6,
     "metaData": {
       "type": "native",
