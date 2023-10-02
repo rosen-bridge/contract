@@ -57,9 +57,8 @@
       allOf(
         Coll(
           //check repo
-          repo.exists,
           repo.tokens(0)._1 == repoNFT,
-          repo.tokens(1)._1 == SELF.tokens(0)._1
+          repo.tokens(1)._1 == SELF.tokens(0)._1,
 
           OUTPUTS(0).value >= EventBoxErgs,
           myWIDCommitments.size == 1,
