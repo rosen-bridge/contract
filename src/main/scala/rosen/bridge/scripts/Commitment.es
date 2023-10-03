@@ -65,7 +65,7 @@
           myWIDExists,
           event.R6[Coll[Byte]].get == SELF.R7[Coll[Byte]].get,
           WIDs.size == commitmentBoxes.size,
-          // TODO verify commitment to be correct
+          // verify commitment to be correct
           blake2b256(eventData ++ myWID(0)) == SELF.R6[Coll[Byte]].get,
           // check event id
           SELF.R5[Coll[Coll[Byte]]].get == Coll(requestId),
