@@ -134,19 +134,21 @@ object Boxes {
       ).build()
   }
 
-  def createRepo(
-                  ctx: BlockchainContext,
-                  RWTCount: Long,
-                  RSNCount: Long,
-                  users: Seq[Array[Byte]],
-                  userRWT: Seq[Long],
-                ): OutBox = {
+  def createRepoWithTokens(
+                            ctx: BlockchainContext,
+                            RWTCount: Long,
+                            RSNCount: Long,
+                            users: Seq[Array[Byte]],
+                            userRWT: Seq[Long],
+                            nftId: String,
+                            rwtId: String
+                          ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .tokens(
-        new ErgoToken(networkConfig._3.RepoNFT, 1),
-        new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount)
+        new ErgoToken(nftId, 1),
+        new ErgoToken(rwtId, RWTCount)
       )
       .contract(contracts.RWTRepo._1)
       .registers(
@@ -158,6 +160,16 @@ object Boxes {
       repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
     }
     repoBuilder.build()
+  }
+
+  def createRepo(
+                  ctx: BlockchainContext,
+                  RWTCount: Long,
+                  RSNCount: Long,
+                  users: Seq[Array[Byte]],
+                  userRWT: Seq[Long],
+                ): OutBox = {
+    return createRepoWithTokens(ctx, RWTCount, RSNCount, users, userRWT, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId)
   }
 
   def createRepoWithR7(
