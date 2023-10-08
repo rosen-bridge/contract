@@ -8,6 +8,7 @@
   // 0: X-RWT
 
   val eventTriggerHash = fromBase64("EVENT_TRIGGER_SCRIPT_HASH");
+  val repoNFT = fromBase64("REPO_NFT");
   val event = if (blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash) INPUTS(0) else OUTPUTS(0)
   val myWID = SELF.R4[Coll[Coll[Byte]]].get
   val WIDs = event.R4[Coll[Coll[Byte]]].get
@@ -55,12 +56,16 @@
     sigmaProp(
       allOf(
         Coll(
+          //check repo
+          repo.tokens(0)._1 == repoNFT,
+          repo.tokens(1)._1 == SELF.tokens(0)._1,
+
           OUTPUTS(0).value >= EventBoxErgs,
           myWIDCommitments.size == 1,
           myWIDExists,
           event.R6[Coll[Byte]].get == SELF.R7[Coll[Byte]].get,
           WIDs.size == commitmentBoxes.size,
-          // TODO verify commitment to be correct
+          // verify commitment to be correct
           blake2b256(eventData ++ myWID(0)) == SELF.R6[Coll[Byte]].get,
           // check event id
           SELF.R5[Coll[Coll[Byte]]].get == Coll(requestId),
