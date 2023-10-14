@@ -42,6 +42,7 @@
           repoReplication,
           RWTOut == repoOut.tokens(2)._2 - repo.tokens(2)._2,
           permit.tokens(0)._2 == RWTOut,
+          permit.tokens(0)._1 == SELF.tokens(1)._1,
           blake2b256(permit.propositionBytes) == permitScriptHash,
         )
       )
