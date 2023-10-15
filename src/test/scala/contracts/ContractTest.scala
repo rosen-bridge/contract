@@ -382,6 +382,28 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test create new commitment with RWT second place of permit tokens") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WID = Base16.decode(Boxes.getRandomHexString()).get
+        val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 1), new ErgoToken(networkConfig._3.RSN, 9))
+        val permit = Boxes.createPermitBox(ctx, 10L, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitOut = Boxes.createInvalidMixedPermitBox(ctx, 9L, WID)
+        val commitmentBox = Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l)
+        val WIDOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID, 1))
+        val tx = ctx.newTxBuilder().addInputs(permit, box1)
+          .fee(Configs.fee)
+          .sendChangeTo(prover.getAddress)
+          .addOutputs(permitOut, commitmentBox, WIDOut)
+          .build()
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
+      }
+    })
+  }
+
   property("test create new commitment with more than one RWT") {
     networkConfig._1.ergoClient.execute(ctx => {
       try {

@@ -215,6 +215,23 @@ object Boxes {
       .build()
   }
 
+  def createInvalidMixedPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
+    val txB = ctx.newTxBuilder()
+    val tokensSeq = Seq(
+      new ErgoToken(networkConfig._3.RSN, RWTCount),
+      new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount),
+    ) ++ tokens.toSeq
+    txB.outBoxBuilder()
+      .value(Configs.minBoxValue)
+      .contract(contracts.WatcherPermit._1)
+      .tokens(tokensSeq: _*)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+        // this value must exists in case of redeem commitment.
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(Array(0.toByte)).map(item => Colls.fromArray(item)).toArray)),
+      )
+      .build()
+  }
   def createInvalidPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
     val txB = ctx.newTxBuilder()
     val tokensSeq = Seq(new ErgoToken(networkConfig._3.RSN, RWTCount)) ++ tokens.toSeq

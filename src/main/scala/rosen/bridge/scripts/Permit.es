@@ -35,9 +35,16 @@
   }else{
     // Event Commitment Creation
     // [Permit(s), WID] => [Permit, Commitment, WID]
+    val totalPermits = INPUTS.filter{(box:Box)
+       => box.tokens(0)._1 == SELF.tokens(0)._1
+       }
+       .map{(box:Box) => box.tokens(0)._2}
+       .fold(0L, { (a: Long, b: Long) => a + b })
     sigmaProp(
       allOf(
         Coll(
+          OUTPUTS(0).tokens(0)._1 == SELF.tokens(0)._1,
+          OUTPUTS(1).tokens(0)._2 == totalPermits - OUTPUTS(0).tokens(0)._2,
           OUTPUTS(1).tokens(0)._1 == SELF.tokens(0)._1,
           blake2b256(OUTPUTS(1).propositionBytes) == commitmentScriptHash,
           OUTPUTS(1).R5[Coll[Coll[Byte]]].isDefined,
