@@ -353,6 +353,87 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test complete return permit while extending the wid list in repo") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(6)
+        val amounts = Seq(100L, 120L, 140L, 20L, 40L, 250L)
+        val userIndex = 0
+        val userWID = WIDs(userIndex)
+        val totalPermitOut = amounts.sum
+        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
+        val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1) ++ Seq(WIDs(userIndex))
+        val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
+        val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx,1e9.toLong, 100, userWID)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+      }
+    })
+  }
+
+  property("test complete return permit while extending the rwt count list in repo") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(6)
+        val amounts = Seq(100L, 120L, 140L, 20L, 40L, 250L)
+        val userIndex = 0
+        val userWID = WIDs(userIndex)
+        val totalPermitOut = amounts.sum
+        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
+        val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1)
+        val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1) ++ Seq(100L)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
+        val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+      }
+    })
+  }
+
+  property("test complete return permit while extending both rwt count and wid list in repo") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(6)
+        val amounts = Seq(100L, 120L, 140L, 20L, 40L, 250L)
+        val userIndex = 0
+        val userWID = WIDs(userIndex)
+        val totalPermitOut = amounts.sum
+        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
+        val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1) ++ Seq(WIDs(userIndex))
+        val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1) ++ Seq(100L)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
+        val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+      }
+    })
+  }
+
   property("test complete return of last permit") {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
