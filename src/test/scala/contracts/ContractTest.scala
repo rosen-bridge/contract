@@ -172,6 +172,28 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test extend first permit while extended permit wid has changed") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val WID = Base16.decode(Boxes.getRandomHexString()).get
+        val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 1L), new ErgoToken(networkConfig._3.RSN, 100L))
+        val repoBox = Boxes.createRepo(ctx, 100000, 6459L, Seq(WID, otherWID), Seq(58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 6559L, Seq(WID, otherWID), Seq(158L, 6400L), 1)
+        val permitBox = Boxes.createPermitBox(ctx, 100L, otherWID)
+        val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 1L))
+        val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, permitBox, WIDBox)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
+      }
+    })
+  }
+
   property("test extend first permit while extended permit first token is not RWT") {
     networkConfig._1.ergoClient.execute(ctx => {
       assertThrows[AnyRef] {
@@ -265,6 +287,35 @@ class ContractTest extends TestSuite {
       } catch {
         case exp: Throwable =>
           fail("transaction not signed")
+      }
+    })
+  }
+
+  property("test partially return permits when output permit WID has changed") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val userWID = Base16.decode(Boxes.getRandomHexString()).get
+        val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+        val WIDs = Seq(
+          Base16.decode(Boxes.getRandomHexString()).get,
+          otherWID,
+          userWID,
+          Base16.decode(Boxes.getRandomHexString()).get
+        )
+        val repoBox = Boxes.createRepo(ctx, 100000, 321L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitBox = Boxes.createPermitBox(ctx, 60L, userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
+        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
+        val permitOut = Boxes.createPermitBox(ctx, 40L, otherWID)
+        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, 20))
+        val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, permitOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
       }
     })
   }

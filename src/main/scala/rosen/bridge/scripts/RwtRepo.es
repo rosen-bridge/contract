@@ -29,6 +29,7 @@
         repoOut.tokens(0)._2 == repo.tokens(0)._2,
         repoOut.tokens(1)._1 == repo.tokens(1)._1,
         repoOut.tokens(2)._1 == repo.tokens(2)._1,
+        repoOut.R4[Coll[Coll[Byte]]].get.size == repoOut.R5[Coll[Long]].get.size,
       )
     )
     if(repo.tokens(1)._2 > repoOut.tokens(1)._2){

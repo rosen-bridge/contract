@@ -18,6 +18,7 @@
         Coll(
           OUTPUTS(1).tokens(0)._1 == SELF.tokens(0)._1,
           OUTPUTS(1).propositionBytes == SELF.propositionBytes,
+          SELF.R4[Coll[Coll[Byte]]].get == OUTPUTS(1).R4[Coll[Coll[Byte]]].get
         )
       )
     }else{
