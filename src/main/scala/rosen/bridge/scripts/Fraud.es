@@ -14,6 +14,7 @@
     allOf(
       Coll(
         outputWithRWT == false,
+        SELF.id == INPUTS(1).id,
         INPUTS(0).tokens(0)._1 == repoNFT,
         INPUTS(2).tokens(0)._1 == cleanupNFT,
       )
