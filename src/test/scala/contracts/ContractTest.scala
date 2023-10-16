@@ -320,6 +320,36 @@ class ContractTest extends TestSuite {
     })
   }
 
+  property("test partially return permits when changing other wid permits in repo") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val userWID = Base16.decode(Boxes.getRandomHexString()).get
+        val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+        val WIDs = Seq(
+          Base16.decode(Boxes.getRandomHexString()).get,
+          otherWID,
+          userWID,
+          Base16.decode(Boxes.getRandomHexString()).get
+        )
+        val repoBox = Boxes.createRepo(ctx, 100000, 321L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, otherWID)
+        val permitBox = Boxes.createPermitBox(ctx, 60L, userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
+        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, WIDs, Seq(100L, 100L, 60L, 40L), 2)
+        val permitOut = Boxes.createPermitBox(ctx, 40L, userWID)
+        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1), new ErgoToken(networkConfig._3.RSN, 20))
+        val tx = ctx.newTxBuilder().addInputs(repoBox, userBox, WIDBox, permitBox)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, permitOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
+      }
+    })
+  }
+
   property("test complete return permits") {
     networkConfig._1.ergoClient.execute(ctx => {
       var userIndex = 0

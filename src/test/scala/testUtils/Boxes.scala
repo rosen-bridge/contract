@@ -82,6 +82,10 @@ object Boxes {
     createBoxCandidateForUser(ctx, address, amount).convertToInputWith(getRandomHexString(), 0)
   }
 
+  def createBoxForUser(ctx: BlockchainContext, address: Address, amount: Long, WID: Array[Byte]): InputBox = {
+    createBoxCandidateForUser(ctx, address, amount, WID).convertToInputWith(getRandomHexString(), 0)
+  }
+
   def createBoxCandidateForUser(ctx: BlockchainContext, address: Address, amount: Long, tokens: ErgoToken*): OutBox = {
     val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
@@ -96,6 +100,17 @@ object Boxes {
     txb.outBoxBuilder()
       .value(amount)
       .contract(ctx.newContract(address.asP2PK().script))
+      .build()
+  }
+
+  def createBoxCandidateForUser(ctx: BlockchainContext, address: Address, amount: Long, WID: Array[Byte]): OutBox = {
+    val txb = ctx.newTxBuilder()
+    txb.outBoxBuilder()
+      .value(amount)
+      .contract(ctx.newContract(address.asP2PK().script))
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+      )
       .build()
   }
 
