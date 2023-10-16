@@ -29,6 +29,7 @@
         repoOut.tokens(0)._2 == repo.tokens(0)._2,
         repoOut.tokens(1)._1 == repo.tokens(1)._1,
         repoOut.tokens(2)._1 == repo.tokens(2)._1,
+        repoOut.R4[Coll[Coll[Byte]]].get.size == repoOut.R5[Coll[Long]].get.size,
       )
     )
     if(repo.tokens(1)._2 > repoOut.tokens(1)._2){
@@ -42,6 +43,7 @@
           repoReplication,
           RWTOut == repoOut.tokens(2)._2 - repo.tokens(2)._2,
           permit.tokens(0)._2 == RWTOut,
+          permit.tokens(0)._1 == SELF.tokens(1)._1,
           blake2b256(permit.propositionBytes) == permitScriptHash,
         )
       )
@@ -53,10 +55,9 @@
           allOf(
             Coll(
               permitCreation,
-              repoOut.R4[Coll[Coll[Byte]]].get.size == widListSize + 1,
+              widOutListSize == widListSize + 1,
               repoOut.R4[Coll[Coll[Byte]]].get.slice(0, widOutListSize - 1) == repo.R4[Coll[Coll[Byte]]].get,
               repoOut.R4[Coll[Coll[Byte]]].get(widOutListSize - 1) == repo.id,
-              repoOut.R5[Coll[Long]].get.size == widListSize + 1,
               repoOut.R5[Coll[Long]].get.slice(0, widOutListSize - 1) == repo.R5[Coll[Long]].get,
               repoOut.R5[Coll[Long]].get(widOutListSize - 1) == RWTOut,
               permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
@@ -103,7 +104,6 @@
       val permit = INPUTS(1)
       val RWTIn = repoOut.tokens(1)._2 - repo.tokens(1)._2
       val WIDIndex = repoOut.R7[Int].get
-      val watcherCount = repo.R5[Coll[Long]].get.size
       val WIDCheckInRepo = if(repo.R5[Coll[Long]].get(WIDIndex) > RWTIn) {
         // Returning some RWTs
         // [repo, Permit, WIDToken] => [repo, Permit(Optional), WIDToken(+userChange)]
@@ -113,7 +113,7 @@
             repo.R5[Coll[Long]].get(WIDIndex) == repoOut.R5[Coll[Long]].get(WIDIndex) + RWTIn,
             repo.R4[Coll[Coll[Byte]]].get == repoOut.R4[Coll[Coll[Byte]]].get,
             repo.R5[Coll[Long]].get.slice(0, WIDIndex) == repoOut.R5[Coll[Long]].get.slice(0, WIDIndex),
-            repo.R5[Coll[Long]].get.slice(WIDIndex + 1, watcherCount) == repoOut.R5[Coll[Long]].get.slice(WIDIndex + 1, watcherCount)
+            repo.R5[Coll[Long]].get.slice(WIDIndex + 1, widListSize) == repoOut.R5[Coll[Long]].get.slice(WIDIndex + 1, widListSize)
           )
         )
       }else{
@@ -122,11 +122,12 @@
         val watcherCollateral = INPUTS(3);
         allOf(
           Coll(
+            widOutListSize == widListSize - 1,
             repo.R5[Coll[Long]].get(WIDIndex) == RWTIn,
             repo.R4[Coll[Coll[Byte]]].get.slice(0, WIDIndex) == repoOut.R4[Coll[Coll[Byte]]].get.slice(0, WIDIndex),
-            repo.R4[Coll[Coll[Byte]]].get.slice(WIDIndex + 1, watcherCount) == repoOut.R4[Coll[Coll[Byte]]].get.slice(WIDIndex, watcherCount - 1),
+            repo.R4[Coll[Coll[Byte]]].get.slice(WIDIndex + 1, widListSize) == repoOut.R4[Coll[Coll[Byte]]].get.slice(WIDIndex, widOutListSize),
             repo.R5[Coll[Long]].get.slice(0, WIDIndex) == repoOut.R5[Coll[Long]].get.slice(0, WIDIndex),
-            repo.R5[Coll[Long]].get.slice(WIDIndex + 1, watcherCount) == repoOut.R5[Coll[Long]].get.slice(WIDIndex, watcherCount - 1),
+            repo.R5[Coll[Long]].get.slice(WIDIndex + 1, widListSize) == repoOut.R5[Coll[Long]].get.slice(WIDIndex, widOutListSize),
             blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
           )
         )
