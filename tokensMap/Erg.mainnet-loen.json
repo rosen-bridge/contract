@@ -1,7 +1,7 @@
 {
   "ergo": {
     "tokenId": "erg",
-    "name": "erg",
+    "name": "ERG",
     "decimals": 9,
     "metaData": {
       "type": "native",
