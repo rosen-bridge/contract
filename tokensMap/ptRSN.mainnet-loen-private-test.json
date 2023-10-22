@@ -1,0 +1,22 @@
+{
+  "ergo": {
+    "tokenId": "f8fe64d3d94d4eb193ea9d6304646db67bd914ed42cebd3a4f614d9d9de75cf0",
+    "name": "rptconfRSNV1",
+    "decimals": 3,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "cardano": {
+    "fingerprint": "asset18wa72zmh35gwunryq0ynaqrr66deckl99yr79k",
+    "policyId": "e0c24b2010068e55bc8f860978d52ee8e62d9af06f106f1fa0d0fd0b",
+    "assetName": "727074574e4556310a",
+    "name": "rptWNEV1",
+    "decimals": 3,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}

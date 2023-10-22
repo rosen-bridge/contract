@@ -5,7 +5,7 @@
     "decimals": 2,
     "metaData": {
       "type": "EIP-004",
-      "residency": "native"
+      "residency": "wrapped"
     }
   },
   "cardano": {
@@ -16,7 +16,7 @@
     "decimals": 2,
     "metaData": {
       "type": "CIP26",
-      "residency": "wrapped"
+      "residency": "native"
     }
   }
 }
