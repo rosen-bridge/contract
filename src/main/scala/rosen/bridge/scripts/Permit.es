@@ -38,7 +38,7 @@
     // Event Commitment Creation
     // [Permit(s), WID] => [Permit, Commitment, WID]
     val totalPermits = INPUTS.filter{(box:Box)
-       => box.tokens(0)._1 == SELF.tokens(0)._1
+       => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
        }
        .map{(box:Box) => box.tokens(0)._2}
        .fold(0L, { (a: Long, b: Long) => a + b })

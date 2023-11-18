@@ -5,6 +5,7 @@ import org.ergoplatform.appkit.{ErgoProver, ErgoToken}
 import rosen.bridge.Contracts
 import scorex.util.encode.Base16
 import testUtils.{Boxes, Commitment, TestSuite}
+import java.io.{PrintWriter, StringWriter}
 
 
 class ContractTest extends TestSuite {
@@ -531,6 +532,32 @@ class ContractTest extends TestSuite {
         val commitmentBox = Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l)
         val WIDOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID, 1))
         val tx = ctx.newTxBuilder().addInputs(permit, box1)
+          .fee(Configs.fee)
+          .sendChangeTo(prover.getAddress)
+          .addOutputs(permitOut, commitmentBox, WIDOut)
+          .build()
+        prover.sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("transaction not signed")
+      }
+    })
+  }
+
+  property("test create new commitment with extra fee box") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      try {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WID = Base16.decode(Boxes.getRandomHexString()).get
+        val box1 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e5.toLong, new ErgoToken(WID, 1))
+        val box2 = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+        val permit = Boxes.createPermitBox(ctx, 10L, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitOut = Boxes.createPermitBox(ctx, 9L, WID)
+        val commitmentBox = Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 1l)
+        val WIDOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID, 1))
+        val tx = ctx.newTxBuilder().addInputs(permit, box1, box2)
           .fee(Configs.fee)
           .sendChangeTo(prover.getAddress)
           .addOutputs(permitOut, commitmentBox, WIDOut)
