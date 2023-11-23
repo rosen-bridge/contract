@@ -9,7 +9,7 @@
     }
   },
   "cardano": {
-    "fingerprint": "ada",
+    "tokenId": "ada",
     "policyId": "",
     "assetName": "414441",
     "name": "ADA",
