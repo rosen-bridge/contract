@@ -1,0 +1,23 @@
+{
+    "ergo": {
+      "tokenId": "003bd19d0187117f130b62e1bcab0939929ff5c7709f843c5c4dd158949285d0",
+      "name": "SigRSV",
+      "decimals": 0,
+      "metaData": {
+        "type": "EIP-004",
+        "residency": "native"
+      }
+    },
+    "cardano": {
+      "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273536967525356",
+      "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
+      "assetName": "7273536967525356",
+      "name": "rsRSN",
+      "decimals": 3,
+      "metaData": {
+        "type": "CIP26",
+        "residency": "wrapped"
+      }
+    }
+  }
+  
