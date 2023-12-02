@@ -1,23 +1,22 @@
 {
-    "ergo": {
-      "tokenId": "8b08cdd5449a9592a9e79711d7d79249d7a03c535d17efaee83e216e80a44c4b",
-      "name": "RSN",
-      "decimals": 3,
-      "metaData": {
-        "type": "EIP-004",
-        "residency": "native"
-      }
-    },
-    "cardano": {
-      "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.727352534e",
-      "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
-      "assetName": "727352534e",
-      "name": "rsRSN",
-      "decimals": 3,
-      "metaData": {
-        "type": "CIP26",
-        "residency": "wrapped"
-      }
+  "ergo": {
+    "tokenId": "8b08cdd5449a9592a9e79711d7d79249d7a03c535d17efaee83e216e80a44c4b",
+    "name": "RSN",
+    "decimals": 3,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "cardano": {
+    "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.727352534e",
+    "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
+    "assetName": "727352534e",
+    "name": "rsRSN",
+    "decimals": 3,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
     }
   }
-  
+}

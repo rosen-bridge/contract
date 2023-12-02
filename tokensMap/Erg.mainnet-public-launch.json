@@ -1,23 +1,22 @@
 {
-    "ergo": {
-      "tokenId": "erg",
-      "name": "ERG",
-      "decimals": 9,
-      "metaData": {
-        "type": "native",
-        "residency": "native"
-      }
-    },
-    "cardano": {
-      "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273455247",
-      "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
-      "assetName": "7273455247",
-      "name": "rsERG",
-      "decimals": 9,
-      "metaData": {
-        "type": "CIP26",
-        "residency": "wrapped"
-      }
+  "ergo": {
+    "tokenId": "erg",
+    "name": "ERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "native",
+      "residency": "native"
+    }
+  },
+  "cardano": {
+    "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273455247",
+    "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
+    "assetName": "7273455247",
+    "name": "rsERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
     }
   }
-  
+}

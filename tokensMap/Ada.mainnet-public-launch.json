@@ -1,23 +1,22 @@
 {
-    "ergo": {
-      "tokenId": "e023c5f382b6e96fbd878f6811aac73345489032157ad5affb84aefd4956c297",
-      "name": "rsADA",
-      "decimals": 6,
-      "metaData": {
-        "type": "EIP-004",
-        "residency": "wrapped"
-      }
-    },
-    "cardano": {
-      "tokenId": "ada",
-      "policyId": "",
-      "assetName": "414441",
-      "name": "ADA",
-      "decimals": 6,
-      "metaData": {
-        "type": "native",
-        "residency": "native"
-      }
+  "ergo": {
+    "tokenId": "e023c5f382b6e96fbd878f6811aac73345489032157ad5affb84aefd4956c297",
+    "name": "rsADA",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "ada",
+    "policyId": "",
+    "assetName": "414441",
+    "name": "ADA",
+    "decimals": 6,
+    "metaData": {
+      "type": "native",
+      "residency": "native"
     }
   }
-  
+}
