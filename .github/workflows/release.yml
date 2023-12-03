@@ -3,7 +3,7 @@ name: RELEASE
 on:
   push:
     branches:
-      - master
+      - dev
     tags:
       - '*'
   pull_request:
@@ -100,6 +100,14 @@ jobs:
             tokensMap-*.json
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: git-sync
+        uses: wei/git-sync@v3
+        with:
+          source_repo: ${GITHUB_REPOSITORY}
+          source_branch: "refs/tags/*"
+          destination_repo: 'https://${{ secrets.DESTINATION_USER }}:${{ secrets.DESTINATION_TOKEN }}@${{ secrets.DESTINATION_SERVER }}/ergo/${GITHUB_REPOSITORY}.git'
+          destination_branch: "refs/tags/*"
 
       - name: RUN Jar File release
         if: github.ref_type == 'tag'

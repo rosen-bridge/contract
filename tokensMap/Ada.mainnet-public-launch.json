@@ -1,7 +1,7 @@
 {
   "ergo": {
-    "tokenId": "4ed6449240d166b0e44c529b5bf06d210796473d3811b9aa0e15329599164c24",
-    "tokenName": "RST-ADA.V-test",
+    "tokenId": "e023c5f382b6e96fbd878f6811aac73345489032157ad5affb84aefd4956c297",
+    "name": "rsADA",
     "decimals": 6,
     "metaData": {
       "type": "EIP-004",
@@ -9,12 +9,13 @@
     }
   },
   "cardano": {
-    "fingerprint": "lovelace",
+    "tokenId": "ada",
     "policyId": "",
     "assetName": "414441",
+    "name": "ADA",
     "decimals": 6,
     "metaData": {
-      "type": "ADA",
+      "type": "native",
       "residency": "native"
     }
   }

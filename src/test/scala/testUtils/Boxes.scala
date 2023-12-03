@@ -82,6 +82,10 @@ object Boxes {
     createBoxCandidateForUser(ctx, address, amount).convertToInputWith(getRandomHexString(), 0)
   }
 
+  def createBoxForUser(ctx: BlockchainContext, address: Address, amount: Long, WID: Array[Byte]): InputBox = {
+    createBoxCandidateForUser(ctx, address, amount, WID).convertToInputWith(getRandomHexString(), 0)
+  }
+
   def createBoxCandidateForUser(ctx: BlockchainContext, address: Address, amount: Long, tokens: ErgoToken*): OutBox = {
     val txb = ctx.newTxBuilder()
     txb.outBoxBuilder()
@@ -96,6 +100,17 @@ object Boxes {
     txb.outBoxBuilder()
       .value(amount)
       .contract(ctx.newContract(address.asP2PK().script))
+      .build()
+  }
+
+  def createBoxCandidateForUser(ctx: BlockchainContext, address: Address, amount: Long, WID: Array[Byte]): OutBox = {
+    val txb = ctx.newTxBuilder()
+    txb.outBoxBuilder()
+      .value(amount)
+      .contract(ctx.newContract(address.asP2PK().script))
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+      )
       .build()
   }
 
@@ -118,25 +133,43 @@ object Boxes {
 
   }
 
-  def createRepo(
-                  ctx: BlockchainContext,
-                  RWTCount: Long,
-                  RSNCount: Long,
-                  users: Seq[Array[Byte]],
-                  userRWT: Seq[Long]
-                ): OutBox = {
+
+  def createWatcherCollateralBoxInput(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): InputBox = {
+    Boxes.createWatcherCollateralBox(ctx, erg, rsn, wid).convertToInputWith(getRandomHexString(), 3)
+  }
+  def createWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
+    ctx.newTxBuilder().outBoxBuilder()
+      .value(erg)
+      .tokens(
+        new ErgoToken(networkConfig._3.RSN, rsn)
+      )
+      .contract(contracts.WatcherCollateral._1)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
+      ).build()
+  }
+
+  def createRepoWithTokens(
+                            ctx: BlockchainContext,
+                            RWTCount: Long,
+                            RSNCount: Long,
+                            users: Seq[Array[Byte]],
+                            userRWT: Seq[Long],
+                            nftId: String,
+                            rwtId: String
+                          ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .tokens(
-        new ErgoToken(networkConfig._3.RepoNFT, 1),
-        new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount)
+        new ErgoToken(nftId, 1),
+        new ErgoToken(rwtId, RWTCount)
       )
       .contract(contracts.RWTRepo._1)
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(100L, 51L, 0L, 9999L))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
       )
     if (RSNCount > 0) {
       repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
@@ -144,14 +177,24 @@ object Boxes {
     repoBuilder.build()
   }
 
-  def createRepoWithR7(
+  def createRepo(
                   ctx: BlockchainContext,
                   RWTCount: Long,
                   RSNCount: Long,
                   users: Seq[Array[Byte]],
                   userRWT: Seq[Long],
-                  R7: Int
                 ): OutBox = {
+    return createRepoWithTokens(ctx, RWTCount, RSNCount, users, userRWT, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId)
+  }
+
+  def createRepoWithR7(
+                        ctx: BlockchainContext,
+                        RWTCount: Long,
+                        RSNCount: Long,
+                        users: Seq[Array[Byte]],
+                        userRWT: Seq[Long],
+                        R7: Int
+                      ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
       .value(Configs.minBoxValue)
@@ -163,7 +206,7 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(100L, 51L, 0L, 9999L))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
         ErgoValueBuilder.buildFor(R7)
       )
     if (RSNCount > 0) {
@@ -187,23 +230,55 @@ object Boxes {
       .build()
   }
 
-  def createFraudBox(ctx: BlockchainContext, WID: Array[Byte]): OutBox = {
+  def createInvalidMixedPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
+    val txB = ctx.newTxBuilder()
+    val tokensSeq = Seq(
+      new ErgoToken(networkConfig._3.RSN, RWTCount),
+      new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount),
+    ) ++ tokens.toSeq
+    txB.outBoxBuilder()
+      .value(Configs.minBoxValue)
+      .contract(contracts.WatcherPermit._1)
+      .tokens(tokensSeq: _*)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+        // this value must exists in case of redeem commitment.
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(Array(0.toByte)).map(item => Colls.fromArray(item)).toArray)),
+      )
+      .build()
+  }
+  def createInvalidPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
+    val txB = ctx.newTxBuilder()
+    val tokensSeq = Seq(new ErgoToken(networkConfig._3.RSN, RWTCount)) ++ tokens.toSeq
+    txB.outBoxBuilder()
+      .value(Configs.minBoxValue)
+      .contract(contracts.WatcherPermit._1)
+      .tokens(tokensSeq: _*)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+        // this value must exists in case of redeem commitment.
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(Array(0.toByte)).map(item => Colls.fromArray(item)).toArray)),
+      )
+      .build()
+  }
+
+  def createFraudBox(ctx: BlockchainContext, WID: Array[Byte], RWTCount: Long): OutBox = {
     val txB = ctx.newTxBuilder()
     txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.Fraud._1)
-      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, 1))
+      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
       )
       .build()
   }
 
-  def createCommitment(ctx: BlockchainContext, WID: Array[Byte], RequestId: Array[Byte], commitment: Array[Byte]): OutBox = {
+  def createCommitment(ctx: BlockchainContext, WID: Array[Byte], RequestId: Array[Byte], commitment: Array[Byte], RWTCount: Long): OutBox = {
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.Commitment._1)
-      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, 1))
+      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(RequestId).map(item => Colls.fromArray(item)).toArray)),
@@ -212,12 +287,12 @@ object Boxes {
       ).build()
   }
 
-  def createTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment): OutBox = {
+  def createTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment, RWTCount: Long): OutBox = {
     val size = WID.length
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue * size)
       .contract(contracts.WatcherTriggerEvent._1)
-      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, size))
+      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(WID.map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),

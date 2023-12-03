@@ -1,7 +1,7 @@
 {
   "ergo": {
     "tokenId": "erg",
-    "tokenName": "erg",
+    "name": "ERG",
     "decimals": 9,
     "metaData": {
       "type": "native",
@@ -9,9 +9,10 @@
     }
   },
   "cardano": {
-    "fingerprint": "asset1epz7gzjqg5py4xrgps6ccv25gz7gd6v8e5gmxx",
-    "policyId": "d2f6eb37450a3d568de93d623e69bd0ba1238daacc883d75736abd23",
-    "assetName": "527374457267565465737432",
+    "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273455247",
+    "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
+    "assetName": "7273455247",
+    "name": "rsERG",
     "decimals": 9,
     "metaData": {
       "type": "CIP26",
