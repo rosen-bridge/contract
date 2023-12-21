@@ -12,7 +12,7 @@
     "tokenId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14.7273536967555344",
     "policyId": "04b95368393c821f180deee8229fbd941baaf9bd748ebcdbf7adbb14",
     "assetName": "7273536967555344",
-    "name": "rsRSN",
+    "name": "rsSigUSD",
     "decimals": 2,
     "metaData": {
       "type": "CIP26",
