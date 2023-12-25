@@ -30,6 +30,7 @@
         Coll(
           outputWithRWT == false,
           INPUTS(2).tokens(0)._1 == WID(0),
+          INPUTS(2).tokens(0)._2 >= 2,
           outputPermitCheck,
         )
       )

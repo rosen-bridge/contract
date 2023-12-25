@@ -62,6 +62,7 @@
               repoOut.R5[Coll[Long]].get(widOutListSize - 1) == RWTOut,
               permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
               outWIDBox.tokens(0)._1 == repo.id,
+              outWIDBox.tokens(0)._2 >= 3,
               blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
               watcherCollateral.R4[Coll[Byte]].get == repo.id,
               watcherCollateral.value >= repo.R6[Coll[Long]].get(4),
@@ -89,6 +90,7 @@
             Coll(
               permitCreation,
               WID == WIDBox.tokens(0)._1,
+              WIDBox.tokens(0)._2 >= 2,
               repoOut.R4[Coll[Coll[Byte]]].get == repo.R4[Coll[Coll[Byte]]].get,
               repoOut.R5[Coll[Long]].get(WIDIndex) == currentRWT + RWTOut,
               repoOut.R5[Coll[Long]].get.slice(0, WIDIndex) == repo.R5[Coll[Long]].get.slice(0, WIDIndex),
