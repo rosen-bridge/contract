@@ -23,7 +23,7 @@ As previously mentioned, Rosen operates as an Ergo-centric bridge, with the prim
 
 5. **X-Cleanup NFT:** This token is the cleanup service identifier. Different cleanup services are available for each registered chain, responsible for eliminating older, unused boxes, which may potentially involve fraudulent activity.
 
-6. **Watcher Identifier Token (WID Token):** After a volunteer locks their RSN tokens, they receive X-RWT tokens as well as a newly issued token that serves as their unique watcher identifier. A watcher may possess multiple X-RWT tokens, allowing them to concurrently create various reports for a chain. However, the WID Token is a unique token assigned to each watcher, which they must utilize to authenticate actions like new report generation, reward receipt, or X-RWT token redemption (we may decide to use a set of WID tokens to handle the concurrency, but it won't damage its uniqueness concept).
+6. **Watcher Identifier Token (WID Token):** After a volunteer locks their RSN tokens, they receive X-RWT tokens as well as a newly issued token that serves as their unique watcher identifier. A watcher may possess multiple X-RWT tokens, allowing them to concurrently create various reports for a chain. However, the WID Token is a unique token assigned to each watcher, which they must utilize to authenticate actions like new report generation, reward receipt, or X-RWT token redemption. Despite its uniqueness, it's minted in three instances. To mitigate the risk of watcher wallet exposure, the watcher employs only one of these tokens for routine watcher operations, but the watcher is required to use at least two of them for lock or unlock actions (the watcher owner has the option to store two WID tokens in a separate secure wallet).
 
 ### Contracts
 
@@ -86,7 +86,7 @@ As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to rec
     * Pay RSN to the repo and get the respective X-RWTs tokens
 * A watcher permit box is created containing all X-RWT tokens. It also stores the WID in its registers.
 * Collateral box is created containing the required collateral for the watcher.
-* Issue the WID token and send it to the watcher's address.
+* Issue at least 3 WID tokens and send them to the watcher's address.
 
 <p align="center">
 <img src="images/Get_Permit.png">
@@ -94,7 +94,7 @@ As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to rec
 
 
 #### 2- Merge Watcher Permits
-In the payment procedure-reward distribution phase (B.4), we will see guards will pay back the X-RWT token besides the watcher reward after accepting the event triggers. A watcher can spend all these boxes with their WID token as authentication. He may want to merge these boxes and extract the collected rewards. Also, he can create a new commitment report while merging boxes (See B.2).
+In the payment procedure-reward distribution phase (B.4), you can see guards will pay back the X-RWT token besides the watcher reward after accepting the event triggers. A watcher can spend all these boxes with their WID token as authentication. He may want to merge these boxes and extract the collected rewards. Also, he can create a new commitment report while merging boxes (See B.2).
 
 <p align="center">
 <img src="images/Merge_Permits.png">
