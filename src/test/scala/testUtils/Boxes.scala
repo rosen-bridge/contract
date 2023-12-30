@@ -6,6 +6,7 @@ import org.ergoplatform.appkit.{Address, BlockchainContext, ErgoContract, ErgoTo
 import rosen.bridge.Contracts
 import scorex.util.encode.Base16
 import sigmastate.eval.Colls
+import scorex.util.encode.{Base16, Base64}
 
 import java.nio.ByteBuffer
 import scala.collection.JavaConverters._
@@ -300,8 +301,8 @@ object Boxes {
       .contract(contracts.WatcherTriggerEvent._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(WID.map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(scorex.crypto.hash.Blake2b256(WID.reduce((a, b) => a ++ b)))),
         ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
         ErgoValueBuilder.buildFor(WID.size)
       ).build()

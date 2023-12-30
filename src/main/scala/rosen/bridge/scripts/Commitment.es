@@ -11,7 +11,7 @@
   val repoNFT = fromBase64("REPO_NFT");
   val trigger = if (blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash) INPUTS(0) else OUTPUTS(0)
   val myWID = SELF.R4[Coll[Coll[Byte]]].get
-  val eventData = trigger.R5[Coll[Coll[Byte]]].get.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b})
+  val eventData = trigger.R4[Coll[Coll[Byte]]].get.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b})
   if(blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash){
     val WIDs = OUTPUTS.filter{(box:Box) 
         => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
@@ -43,16 +43,18 @@
   } else if (blake2b256(OUTPUTS(0).propositionBytes) == eventTriggerHash){
     // Event Trigger Creation
     // [Commitments[]] + [Repo(DataInput)] => [EventTrigger]
-    val WIDs = INPUTS.filter{
-      (box:Box) => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
+    val commitmentBoxes = INPUTS.filter{ 
+      (box: Box) => 
+        SELF.propositionBytes == box.propositionBytes && 
+        box.tokens.size > 0 && 
+        box.tokens(0)._1 == SELF.tokens(0)._1 
       }
-      .map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
-    val commitmentBoxes = INPUTS.filter { (box: Box) => SELF.propositionBytes == box.propositionBytes }
+    val WIDs = commitmentBoxes.map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
+    val widListDigest = blake2b256(WIDs.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b}))
     val myWIDCommitments = commitmentBoxes.filter{ (box: Box) => box.R4[Coll[Coll[Byte]]].get == myWID }
     val EventBoxErgs = commitmentBoxes.map { (box: Box) => box.value }.fold(0L, { (a: Long, b: Long) => a + b })
-    val myWIDExists = WIDs.exists{ (WID: Coll[Byte]) => Coll(WID) == myWID }
     val repo = CONTEXT.dataInputs(0)
-    val requestId = blake2b256(trigger.R5[Coll[Coll[Byte]]].get(0))
+    val requestId = blake2b256(trigger.R4[Coll[Coll[Byte]]].get(0))
     val repoR6 = repo.R6[Coll[Long]].get
     val maxCommitment = repoR6(3)
     val requiredCommitmentFromFormula: Long = repoR6(2) + repoR6(1) * (repo.R4[Coll[Coll[Byte]]].get.size - 1L) / 100L
@@ -67,12 +69,13 @@
           //check repo
           repo.tokens(0)._1 == repoNFT,
           repo.tokens(1)._1 == SELF.tokens(0)._1,
-
-          OUTPUTS(0).value >= EventBoxErgs,
+          // prevent duplicate commitments
           myWIDCommitments.size == 1,
-          myWIDExists,
+          // verify trigger params
+          trigger.value >= EventBoxErgs,
           trigger.R6[Coll[Byte]].get == SELF.R7[Coll[Byte]].get,
-          WIDs.size == commitmentBoxes.size,
+          trigger.R7[Int].get == commitmentBoxes.size,
+          trigger.R5[Coll[Byte]].get == widListDigest,
           // verify commitment to be correct
           blake2b256(eventData ++ myWID(0)) == SELF.R6[Coll[Byte]].get,
           // check event id
