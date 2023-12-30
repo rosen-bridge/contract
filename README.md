@@ -25,6 +25,8 @@ As previously mentioned, Rosen operates as an Ergo-centric bridge, with the prim
 
 6. **Watcher Identifier Token (WID Token):** After a volunteer locks their RSN tokens, they receive X-RWT tokens as well as a newly issued token that serves as their unique watcher identifier. A watcher may possess multiple X-RWT tokens, allowing them to concurrently create various reports for a chain. However, the WID Token is a unique token assigned to each watcher, which they must utilize to authenticate actions like new report generation, reward receipt, or X-RWT token redemption. Despite its uniqueness, it's minted in three instances. To mitigate the risk of watcher wallet exposure, the watcher employs only one of these tokens for routine watcher operations, but the watcher is required to use at least two of them for lock or unlock actions (the watcher owner has the option to store two WID tokens in a separate secure wallet).
 
+7. **Authorized watcher collateral NFT (AWC NFT):** To prevent the creation of arbitrary boxes similar to the watchers' collateral boxes, the authorized ones will receive this NFT. They all reside in Rwt-Repo box at the beginning.
+
 ### Contracts
 
 To execute bridge operations, Rosen utilizes a straightforward multi-signature wallet on each supported chain. This wallet (X-Chain Wallet), contains all X-native and X-wrapped tokens.
@@ -84,8 +86,9 @@ As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to rec
     * Append the new WID to the WID list
     * Append the number of receiving X-RWT tokens to the token count list
     * Pay RSN to the repo and get the respective X-RWTs tokens
+    * Use one AWC NFT to create the collateral box
 * A watcher permit box is created containing all X-RWT tokens. It also stores the WID in its registers.
-* Collateral box is created containing the required collateral for the watcher.
+* Collateral box is created containing the required collateral for the watcher and the AWC NFT.
 * Issue at least 3 WID tokens and send them to the watcher's address.
 
 <p align="center">
@@ -110,7 +113,7 @@ In this transaction, the watcher is required to update the token count associate
 </p>
 
 
-If a watcher returns all the corresponding X-RWT tokens, then the collateral can be withdrawn accordingly.
+If a watcher returns all the corresponding X-RWT tokens, then the collateral can be withdrawn accordingly. It will return all RWT tokens and the AWC NFT and receive the locked RSN.
 
 <p align="center">
 <img src="images/Return_Total_Permit.png">
