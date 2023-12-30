@@ -9,6 +9,7 @@
   // 0: X-RWT Repo NFT
   // 1: X-RWT
   // 2: RSN
+  // 3: X-AWC NFT
 
   val GuardNFT = fromBase64("GUARD_NFT");
   val watcherCollateralScriptHash = fromBase64("WATCHER_COLLATERAL_SCRIPT_HASH");
@@ -29,6 +30,7 @@
         repoOut.tokens(0)._2 == repo.tokens(0)._2,
         repoOut.tokens(1)._1 == repo.tokens(1)._1,
         repoOut.tokens(2)._1 == repo.tokens(2)._1,
+        repoOut.tokens(3)._1 == repo.tokens(3)._1,
         repoOut.R4[Coll[Coll[Byte]]].get.size == repoOut.R5[Coll[Long]].get.size,
       )
     )
@@ -56,6 +58,7 @@
             Coll(
               permitCreation,
               widOutListSize == widListSize + 1,
+              repoOut.tokens(3)._2 == repo.tokens(3)._2 - 1,
               repoOut.R4[Coll[Coll[Byte]]].get.slice(0, widOutListSize - 1) == repo.R4[Coll[Coll[Byte]]].get,
               repoOut.R4[Coll[Coll[Byte]]].get(widOutListSize - 1) == repo.id,
               repoOut.R5[Coll[Long]].get.slice(0, widOutListSize - 1) == repo.R5[Coll[Long]].get,
@@ -66,11 +69,12 @@
               blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
               watcherCollateral.R4[Coll[Byte]].get == repo.id,
               watcherCollateral.value >= repo.R6[Coll[Long]].get(4),
+              watcherCollateral.tokens(0)._1 == repo.tokens(3)._1,
               if(repo.R6[Coll[Long]].get(5) > 0){
                 allOf(
                   Coll(
-                    watcherCollateral.tokens(0)._1 == repo.tokens(2)._1,
-                    watcherCollateral.tokens(0)._2 >= repo.R6[Coll[Long]].get(5)
+                    watcherCollateral.tokens(1)._1 == repo.tokens(2)._1,
+                    watcherCollateral.tokens(1)._2 >= repo.R6[Coll[Long]].get(5)
                   )
                 )
               }else{
@@ -89,6 +93,7 @@
           allOf(
             Coll(
               permitCreation,
+              repoOut.tokens(3)._2 == repo.tokens(3)._2,
               WID == WIDBox.tokens(0)._1,
               WIDBox.tokens(0)._2 >= 2,
               repoOut.R4[Coll[Coll[Byte]]].get == repo.R4[Coll[Coll[Byte]]].get,
@@ -112,6 +117,7 @@
         // [repo, Fraud, Cleanup] => [repo, Cleanup]
         allOf(
           Coll(
+            repo.tokens(3)._2 == repoOut.tokens(3)._2,
             repo.R5[Coll[Long]].get(WIDIndex) == repoOut.R5[Coll[Long]].get(WIDIndex) + RWTIn,
             repo.R4[Coll[Coll[Byte]]].get == repoOut.R4[Coll[Coll[Byte]]].get,
             repo.R5[Coll[Long]].get.slice(0, WIDIndex) == repoOut.R5[Coll[Long]].get.slice(0, WIDIndex),
@@ -131,6 +137,8 @@
             repo.R5[Coll[Long]].get.slice(0, WIDIndex) == repoOut.R5[Coll[Long]].get.slice(0, WIDIndex),
             repo.R5[Coll[Long]].get.slice(WIDIndex + 1, widListSize) == repoOut.R5[Coll[Long]].get.slice(WIDIndex, widOutListSize),
             blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
+            watcherCollateral.tokens(0)._1 == repo.tokens(3)._1,
+            repoOut.tokens(3)._2 == repo.tokens(3)._2 + 1
           )
         )
       }

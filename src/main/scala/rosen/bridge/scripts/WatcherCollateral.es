@@ -2,8 +2,9 @@
   // ----------------- REGISTERS
   // R4: Coll[Byte] Owner WID
   // ----------------- TOKENS
+  // 0: AWC NFT
   // 0: RSN collateral
-  
+
   // [repo, Permit, WIDToken, Collateral] => [repo, WIDToken(+userChange)]
   val repoNFT = fromBase64("REPO_NFT");
   val repo = INPUTS(0);
