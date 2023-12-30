@@ -3,6 +3,7 @@
   // R4: Coll[Coll[Byte]] [WID[]]
   // R5: Coll[Coll[Byte]] Event data
   // R6: Coll[Byte] Permit contract script digest
+  // R7: Int Watchers Count
   // ----------------- TOKENS
   // 0: RWT
 

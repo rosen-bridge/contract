@@ -302,7 +302,8 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(WID.map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1)))
+        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
+        ErgoValueBuilder.buildFor(WID.size)
       ).build()
   }
 
