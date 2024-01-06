@@ -1,0 +1,22 @@
+{
+  "ergo": {
+    "tokenId": "6ad70cdbf928a2bdd397041a36a5c2490a35beb4d20eabb5666f004b103c7189",
+    "name": "rsHOSKY",
+    "decimals": 0,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235.484f534b59",
+    "policyId": "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235",
+    "assetName": "484f534b59",
+    "name": "HOSKY",
+    "decimals": 0,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "native"
+    }
+  }
+}
