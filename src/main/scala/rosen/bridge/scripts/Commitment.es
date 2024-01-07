@@ -53,11 +53,22 @@
     val widListDigest = blake2b256(WIDs.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b}))
     val myWIDCommitments = commitmentBoxes.filter{ (box: Box) => box.R4[Coll[Coll[Byte]]].get == myWID }
     val EventBoxErgs = commitmentBoxes.map { (box: Box) => box.value }.fold(0L, { (a: Long, b: Long) => a + b })
-    val repo = CONTEXT.dataInputs(0)
+    val repos = CONTEXT.dataInputs
+    val repoValidation = allOf(Coll(
+      repos.size == repos(0).R6[Coll[Long]].get(6),
+      repos.forall {
+        (repo: Box) => {
+          repo.tokens(0)._1 == repoNFT &&
+          repo.tokens(1)._1 == SELF.tokens(0)._1
+        }
+      },
+      // TODO: Check uniqeness
+    ))
+    val watcherCount = repos.fold(0L, {(total: Long, b: Box) => b.R5[Coll[Long]].get.size - 1L + total})
     val requestId = blake2b256(trigger.R4[Coll[Coll[Byte]]].get(0))
-    val repoR6 = repo.R6[Coll[Long]].get
+    val repoR6 = repos(0).R6[Coll[Long]].get
     val maxCommitment = repoR6(3)
-    val requiredCommitmentFromFormula: Long = repoR6(2) + repoR6(1) * (repo.R4[Coll[Coll[Byte]]].get.size - 1L) / 100L
+    val requiredCommitmentFromFormula: Long = repoR6(2) + repoR6(1) * watcherCount / 100L
     val requiredCommitment = if(maxCommitment < requiredCommitmentFromFormula) {
       maxCommitment
     } else {
@@ -67,8 +78,7 @@
       allOf(
         Coll(
           //check repo
-          repo.tokens(0)._1 == repoNFT,
-          repo.tokens(1)._1 == SELF.tokens(0)._1,
+          repoValidation,
           // prevent duplicate commitments
           myWIDCommitments.size == 1,
           // verify trigger params

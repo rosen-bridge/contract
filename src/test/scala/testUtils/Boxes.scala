@@ -175,7 +175,7 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100, 1))),
       )
     repoBuilder.build()
   }
@@ -214,7 +214,7 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100, 1))),
         ErgoValueBuilder.buildFor(R7)
       )
     if (RSNCount > 0) {
