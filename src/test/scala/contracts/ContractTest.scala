@@ -774,19 +774,21 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val WIDs = generateRandomWIDList(5)
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
         val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
           .fee(Configs.fee)
           .addOutputs(trigger)
+          .addDataInputs(repoConfig)
           .addDataInputs(repo)
           .sendChangeTo(prover.getAddress)
           .build()
         prover.sign(tx)
       } catch {
         case exp: Throwable =>
-          println(exp.toString)
+          println(exp.printStackTrace())
           fail("transaction not signed")
       }
     })
@@ -853,7 +855,8 @@ class ContractTest extends TestSuite {
           Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L),
           networkConfig._3.RepoNFT,
           Boxes.getRandomHexString(),
-          networkConfig._2.tokens.AwcNFT
+          networkConfig._2.tokens.AwcNFT,
+          0
         ).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
@@ -884,7 +887,8 @@ class ContractTest extends TestSuite {
           Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L),
           Boxes.getRandomHexString(),
           networkConfig._2.tokens.RWTId,
-          networkConfig._2.tokens.AwcNFT
+          networkConfig._2.tokens.AwcNFT,
+          0
         ).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
