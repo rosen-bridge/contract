@@ -141,6 +141,20 @@ object Boxes {
     ctx.newTxBuilder().outBoxBuilder()
       .value(erg)
       .tokens(
+        new ErgoToken(networkConfig._2.tokens.AwcNFT, 1),
+        new ErgoToken(networkConfig._3.RSN, rsn)
+      )
+      .contract(contracts.WatcherCollateral._1)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
+      ).build()
+  }
+
+  def createFakeWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
+    ctx.newTxBuilder().outBoxBuilder()
+      .value(erg)
+      .tokens(
+        new ErgoToken(networkConfig._3.RSN, 1),
         new ErgoToken(networkConfig._3.RSN, rsn)
       )
       .contract(contracts.WatcherCollateral._1)
@@ -153,17 +167,21 @@ object Boxes {
                             ctx: BlockchainContext,
                             RWTCount: Long,
                             RSNCount: Long,
+                            awcCount: Long,
                             users: Seq[Array[Byte]],
                             userRWT: Seq[Long],
                             nftId: String,
-                            rwtId: String
+                            rwtId: String,
+                            awcId: String,
                           ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .tokens(
         new ErgoToken(nftId, 1),
-        new ErgoToken(rwtId, RWTCount)
+        new ErgoToken(rwtId, RWTCount),
+        new ErgoToken(networkConfig._3.RSN, RSNCount),
+        new ErgoToken(awcId, awcCount)
       )
       .contract(contracts.RWTRepo._1)
       .registers(
@@ -171,9 +189,6 @@ object Boxes {
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
       )
-    if (RSNCount > 0) {
-      repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
-    }
     repoBuilder.build()
   }
 
@@ -181,16 +196,19 @@ object Boxes {
                   ctx: BlockchainContext,
                   RWTCount: Long,
                   RSNCount: Long,
+                  AwcCount: Long,
                   users: Seq[Array[Byte]],
                   userRWT: Seq[Long],
                 ): OutBox = {
-    return createRepoWithTokens(ctx, RWTCount, RSNCount, users, userRWT, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId)
+    createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, users, userRWT,
+      networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT)
   }
 
   def createRepoWithR7(
                         ctx: BlockchainContext,
                         RWTCount: Long,
                         RSNCount: Long,
+                        AwcCount: Long,
                         users: Seq[Array[Byte]],
                         userRWT: Seq[Long],
                         R7: Int
@@ -200,7 +218,9 @@ object Boxes {
       .value(Configs.minBoxValue)
       .tokens(
         new ErgoToken(networkConfig._3.RepoNFT, 1),
-        new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount)
+        new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount),
+        new ErgoToken(networkConfig._3.RSN, RSNCount),
+        new ErgoToken(networkConfig._2.tokens.AwcNFT, AwcCount)
       )
       .contract(contracts.RWTRepo._1)
       .registers(
@@ -209,9 +229,6 @@ object Boxes {
         ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
         ErgoValueBuilder.buildFor(R7)
       )
-    if (RSNCount > 0) {
-      repoBuilder.tokens(new ErgoToken(networkConfig._3.RSN, RSNCount))
-    }
     repoBuilder.build()
   }
 

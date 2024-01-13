@@ -13,7 +13,7 @@ class ContractTest extends TestSuite {
 
   val networkConfig: (ErgoNetwork, Network, MainTokens) = Utils.selectConfig("cardano", "mainnet")
   val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
-  
+
   def getProver(): ErgoProver = {
     networkConfig._1.ergoClient.execute(ctx => {
       ctx.newProverBuilder().withDLogSecret(sk.bigInteger).build()
@@ -33,11 +33,11 @@ class ContractTest extends TestSuite {
       try {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 1L, Seq(), Seq()).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepo(ctx, 99900, 101L, Seq(repoBox.getId.getBytes), Seq(100L))
+        val repoBox = Boxes.createRepo(ctx, 100000, 1L, 100L, Seq(), Seq()).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepo(ctx, 99900, 101L, 99L, Seq(repoBox.getId.getBytes), Seq(100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
         val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
-        val watcherCollateral = Boxes.createWatcherCollateralBox(ctx,1e9.toLong, 100, repoBox.getId.getBytes)
+        val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
           .fee(Configs.fee)
           .addOutputs(repoOut, permitBox, WID, watcherCollateral)
@@ -58,11 +58,11 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
         val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
-        val watcherCollateral = Boxes.createWatcherCollateralBox(ctx,1e9.toLong, 100, repoBox.getId.getBytes)
+        val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
           .fee(Configs.fee)
           .addOutputs(repoOut, permitBox, WID, watcherCollateral)
@@ -82,8 +82,8 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 300L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
         val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 1L))
         val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
@@ -104,11 +104,80 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 300L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
         val permitBox = Boxes.createInvalidPermitBox(ctx, 100L, repoBox.getId.getBytes)
         val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
         val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, permitBox, WID, watcherCollateral)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
+      }
+    })
+  }
+
+  /**
+   * @target get permit transaction signing should throw error when creating a fake collateral not containing AWC
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock input repo box with 100 AWC
+   * - mock output repo box with 100 AWC and collateral box without AWC
+   * - mock valid output wid and permit box
+   * - build and sign the get permit transaction
+   * @expected
+   * - sign error for the collateral not containing AWC
+   */
+  property("get permit transaction signing should throw error when creating a fake collateral not containing AWC") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
+        val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 100L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+        val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
+        val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
+        val watcherCollateral = Boxes.createFakeWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, permitBox, WID, watcherCollateral)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
+      }
+    })
+  }
+
+  /**
+   * @target get permit transaction signing should throw error when stealing AWC and creating fake collateral
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock input repo box with 100 AWC
+   * - mock output repo box with 99 AWC and collateral box without AWC
+   * - mock output wid box with stolen AWC
+   * - mocked valid permit box
+   * - build and sign the get permit transaction
+   * @expected
+   * - sign error for stealing AWC and creating fake collateral
+   */
+  property("get permit transaction signing should throw error when stealing AWC and creating fake collateral") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
+        val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 100L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+        val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
+        val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L), new ErgoToken(networkConfig._2.tokens.AwcNFT, 1L))
+        val watcherCollateral = Boxes.createFakeWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
           .fee(Configs.fee)
           .addOutputs(repoOut, permitBox, WID, watcherCollateral)
@@ -126,8 +195,8 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val WID = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 100L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, Seq(WID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 5901L, Seq(WID), Seq(5900L), 1)
+        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(WID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 5901L, 100L, Seq(WID), Seq(5900L), 1)
         val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -151,8 +220,8 @@ class ContractTest extends TestSuite {
         val WID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 100L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 6459L, Seq(WID, otherWID), Seq(58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 6559L, Seq(WID, otherWID), Seq(158L, 6400L), 1)
+        val repoBox = Boxes.createRepo(ctx, 100000, 6459L, 100L, Seq(WID, otherWID), Seq(58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 6559L, 100L, Seq(WID, otherWID), Seq(158L, 6400L), 1)
         val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -177,8 +246,8 @@ class ContractTest extends TestSuite {
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID2 = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 100L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, Seq(otherWID, WID, otherWID2), Seq(3200L, 158L, 6400L), 2)
+        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, 100L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, 100L, Seq(otherWID, WID, otherWID2), Seq(3200L, 158L, 6400L), 2)
         val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -203,8 +272,8 @@ class ContractTest extends TestSuite {
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID2 = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 1L), new ErgoToken(networkConfig._3.RSN, 100L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, Seq(otherWID, WID, otherWID2), Seq(3200L, 158L, 6400L), 2)
+        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, 100L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, 100L, Seq(otherWID, WID, otherWID2), Seq(3200L, 158L, 6400L), 2)
         val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 1L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -224,8 +293,8 @@ class ContractTest extends TestSuite {
         val WID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 100L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 6459L, Seq(WID, otherWID), Seq(58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 6559L, Seq(WID, otherWID), Seq(158L, 6400L), 1)
+        val repoBox = Boxes.createRepo(ctx, 100000, 6459L, 100L, Seq(WID, otherWID), Seq(58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 6559L, 100L, Seq(WID, otherWID), Seq(158L, 6400L), 1)
         val permitBox = Boxes.createPermitBox(ctx, 100L, otherWID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -246,8 +315,8 @@ class ContractTest extends TestSuite {
         val WID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 200L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 6459L, Seq(WID, otherWID), Seq(58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 6559L, Seq(WID, otherWID), Seq(158L, 6400L), 1)
+        val repoBox = Boxes.createRepo(ctx, 100000, 6459L, 100L, Seq(WID, otherWID), Seq(58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 6559L, 100L, Seq(WID, otherWID), Seq(158L, 6400L), 1)
         val permitBox = Boxes.createInvalidPermitBox(ctx, 100L, WID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -269,8 +338,8 @@ class ContractTest extends TestSuite {
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID2 = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 100L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, Seq(otherWID, WID, otherWID2), Seq(320L, 158L, 6400L), 2)
+        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, 100L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, 100L, Seq(otherWID, WID, otherWID2), Seq(320L, 158L, 6400L), 2)
         val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -291,8 +360,8 @@ class ContractTest extends TestSuite {
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val otherWID2 = Base16.decode(Boxes.getRandomHexString()).get
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 100L))
-        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, Seq(otherWID, WID, otherWID), Seq(3200L, 158L, 6400L), 2)
+        val repoBox = Boxes.createRepo(ctx, 100000, 9659L, 100L, Seq(otherWID, WID, otherWID2), Seq(3200L, 58L, 6400L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepoWithR7(ctx, 99900, 9759L, 100L, Seq(otherWID, WID, otherWID), Seq(3200L, 158L, 6400L), 2)
         val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
         val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
@@ -317,10 +386,10 @@ class ContractTest extends TestSuite {
           userWID,
           Base16.decode(Boxes.getRandomHexString()).get
         )
-        val repoBox = Boxes.createRepo(ctx, 100000, 321L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000, 321L, 100L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitBox = Boxes.createPermitBox(ctx, 60L, userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
-        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, 100L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
         val permitOut = Boxes.createPermitBox(ctx, 40L, userWID)
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2L), new ErgoToken(networkConfig._3.RSN, 20))
         val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox)
@@ -347,10 +416,10 @@ class ContractTest extends TestSuite {
           userWID,
           Base16.decode(Boxes.getRandomHexString()).get
         )
-        val repoBox = Boxes.createRepo(ctx, 100000, 321L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000, 321L, 100L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitBox = Boxes.createPermitBox(ctx, 60L, userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
-        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, 100L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
         val permitOut = Boxes.createPermitBox(ctx, 40L, userWID)
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1L), new ErgoToken(networkConfig._3.RSN, 20))
         val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox)
@@ -375,10 +444,10 @@ class ContractTest extends TestSuite {
           userWID,
           Base16.decode(Boxes.getRandomHexString()).get
         )
-        val repoBox = Boxes.createRepo(ctx, 100000, 321L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000, 321L, 100L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitBox = Boxes.createPermitBox(ctx, 60L, userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
-        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, 100L, WIDs, Seq(100L, 120L, 40L, 40L), 3)
         val permitOut = Boxes.createPermitBox(ctx, 40L, otherWID)
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2L), new ErgoToken(networkConfig._3.RSN, 20))
         val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox)
@@ -404,11 +473,11 @@ class ContractTest extends TestSuite {
           userWID,
           Base16.decode(Boxes.getRandomHexString()).get
         )
-        val repoBox = Boxes.createRepo(ctx, 100000, 321L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000, 321L, 100L, WIDs, Seq(100L, 120L, 60L, 40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, otherWID)
         val permitBox = Boxes.createPermitBox(ctx, 60L, userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
-        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, WIDs, Seq(100L, 100L, 60L, 40L), 2)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100020, 301L, 100L, WIDs, Seq(100L, 100L, 60L, 40L), 2)
         val permitOut = Boxes.createPermitBox(ctx, 40L, userWID)
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2L), new ErgoToken(networkConfig._3.RSN, 20))
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox, WIDBox, permitBox)
@@ -432,14 +501,14 @@ class ContractTest extends TestSuite {
         for (userIndex <- 0 to 5) {
           val userWID = WIDs(userIndex)
           val totalPermitOut = amounts.sum
-          val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+          val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, 99L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
           val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
           val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
           val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1)
           val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1)
-          val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+          val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, 100L, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
           val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2L), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
-          val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx,1e9.toLong, 100, userWID)
+          val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
           val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
             .fee(Configs.fee)
             .addOutputs(repoOut, userOut)
@@ -464,12 +533,12 @@ class ContractTest extends TestSuite {
         for (userIndex <- 0 to 5) {
           val userWID = WIDs(userIndex)
           val totalPermitOut = amounts.sum
-          val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+          val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, 99L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
           val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
           val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 1L))
           val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1)
           val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1)
-          val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+          val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, 100L, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
           val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 1L), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
           val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
           val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
@@ -492,14 +561,14 @@ class ContractTest extends TestSuite {
         val userIndex = 0
         val userWID = WIDs(userIndex)
         val totalPermitOut = amounts.sum
-        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, 99L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
         val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1) ++ Seq(WIDs(userIndex))
         val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1)
-        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, 100L, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
-        val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx,1e9.toLong, 100, userWID)
+        val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
         val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
           .fee(Configs.fee)
           .addOutputs(repoOut, userOut)
@@ -519,12 +588,12 @@ class ContractTest extends TestSuite {
         val userIndex = 0
         val userWID = WIDs(userIndex)
         val totalPermitOut = amounts.sum
-        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, 99L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
         val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1)
         val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1) ++ Seq(100L)
-        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, 100L, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
         val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
         val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
@@ -546,14 +615,54 @@ class ContractTest extends TestSuite {
         val userIndex = 0
         val userWID = WIDs(userIndex)
         val totalPermitOut = amounts.sum
-        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, 99L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
         val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1) ++ Seq(WIDs(userIndex))
         val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1) ++ Seq(100L)
-        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, 100L, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
         val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+      }
+    })
+  }
+
+  /**
+   * @target return permit transaction signing should throw error by returning a fake collateral not containing AWC
+   * @dependencies
+   * @scenario
+   * - mock valid user WID box and permit box
+   * - mock fake collateral without AWC
+   * - mock input repo box with 99 AWC
+   * - mock output repo box with 99 AWC
+   * - mock valid user output with collateral tokens
+   * - build and sign the complete return permit transaction
+   * @expected
+   * - sign error for returning a fake collateral not containing AWC
+   */
+  property("return permit transaction signing should throw error by returning a fake collateral not containing AWC") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(6)
+        val amounts = Seq(100L, 120L, 140L, 20L, 40L, 250L)
+        val userIndex = 0
+        val userWID = WIDs(userIndex)
+        val totalPermitOut = amounts.sum
+        val repoBox = Boxes.createRepo(ctx, 100000L, totalPermitOut + 1L, 99L, WIDs, amounts).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitBox = Boxes.createPermitBox(ctx, amounts(userIndex), userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
+        val outputWIDs = WIDs.take(userIndex) ++ WIDs.drop(userIndex + 1)
+        val outAmounts = amounts.take(userIndex) ++ amounts.drop(userIndex + 1)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100000L + amounts(userIndex), (totalPermitOut - amounts(userIndex)) + 1, 99L, outputWIDs, outAmounts, userIndex + 1) // 4 + first element in WID list is chain name
+        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2), new ErgoToken(networkConfig._3.RSN, amounts(userIndex)))
+        val watcherCollateral = Boxes.createFakeWatcherCollateralBox(ctx, 1e9.toLong, 100, userWID).convertToInputWith(Boxes.getRandomHexString(), 3)
         val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
           .fee(Configs.fee)
           .addOutputs(repoOut, userOut)
@@ -569,12 +678,12 @@ class ContractTest extends TestSuite {
       try {
         val prover = getProver()
         val userWID = Base16.decode(Boxes.getRandomHexString()).get
-        val repoBox = Boxes.createRepo(ctx, 100000, 41L, Seq(userWID), Seq(40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000, 41L, 99L, Seq(userWID), Seq(40L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val permitBox = Boxes.createPermitBox(ctx, 40L, userWID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(userWID, 2L))
-        val repoOut = Boxes.createRepoWithR7(ctx, 100040, 1L, Seq(), Seq(), 1)
+        val repoOut = Boxes.createRepoWithR7(ctx, 100040, 1L, 100L, Seq(), Seq(), 1)
         val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(userWID, 2L), new ErgoToken(networkConfig._3.RSN, 40))
-        val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx,1e9.toLong, 100, userWID)
+        val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, userWID)
         val tx = ctx.newTxBuilder().addInputs(repoBox, permitBox, WIDBox, watcherCollateral)
           .fee(Configs.fee)
           .addOutputs(repoOut, userOut)
@@ -593,7 +702,7 @@ class ContractTest extends TestSuite {
       try {
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
-        val repoBox = Boxes.createRepo(ctx, 100000, 32001L, WIDs, Seq(100L, 120L, 140L, 20L, 40L, 250L, 123L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoBox = Boxes.createRepo(ctx, 100000, 32001L, 100L, WIDs, Seq(100L, 120L, 140L, 20L, 40L, 250L, 123L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val guardBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._3.GuardNFT, 1L))
         val inputs = Seq(repoBox, guardBox)
         val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
@@ -773,7 +882,7 @@ class ContractTest extends TestSuite {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(5)
-        val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -798,7 +907,7 @@ class ContractTest extends TestSuite {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
-        val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.slice(0, 4).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 4), commitment, 40L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -823,7 +932,7 @@ class ContractTest extends TestSuite {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
-        val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -848,10 +957,12 @@ class ContractTest extends TestSuite {
           ctx,
           1000L,
           10001L,
+          100L,
           WIDs,
           Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L),
           networkConfig._3.RepoNFT,
           Boxes.getRandomHexString(),
+          networkConfig._2.tokens.AwcNFT
         ).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
@@ -877,10 +988,12 @@ class ContractTest extends TestSuite {
           ctx,
           1000L,
           10001L,
+          100L,
           WIDs,
           Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L),
           Boxes.getRandomHexString(),
           networkConfig._2.tokens.RWTId,
+          networkConfig._2.tokens.AwcNFT
         ).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
@@ -902,7 +1015,7 @@ class ContractTest extends TestSuite {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(5)
-        val repo = Boxes.createRepo(ctx, 1000L, 10001L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 48L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -1103,7 +1216,7 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val globalWIDs = generateRandomWIDList(3)
         val globalAmounts = Seq(100L, 11L, 20L)
-        val repo = Boxes.createRepo(ctx, 1000L, globalAmounts.sum + 1, globalWIDs, globalAmounts).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repo = Boxes.createRepo(ctx, 1000L, globalAmounts.sum + 1, 100L, globalWIDs, globalAmounts).convertToInputWith(Boxes.getRandomHexString(), 1)
         for (userIndex <- 0 until globalWIDs.length) {
           var amounts = globalAmounts.map(item => item).toArray
           var WIDs = globalWIDs.map(item => item).toArray
@@ -1113,7 +1226,7 @@ class ContractTest extends TestSuite {
           val RWTCount = repo.getTokens.get(1).getValue.toLong + 10
           val RSNCount = repo.getTokens.get(2).getValue.toLong - 10
           amounts(userIndex) -= 10
-          val repoCandidate = Boxes.createRepoWithR7(ctx, RWTCount, RSNCount, WIDs, amounts, userIndex + 1)
+          val repoCandidate = Boxes.createRepoWithR7(ctx, RWTCount, RSNCount, 100L, WIDs, amounts, userIndex + 1)
           val unsigned = ctx.newTxBuilder().addInputs(repo, fraud, box2)
             .fee(Configs.fee)
             .addOutputs(repoCandidate)
@@ -1166,7 +1279,7 @@ class ContractTest extends TestSuite {
         val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
         val signBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 1)
         val box2 = Boxes.createBoxForUser(ctx, guards(0).getAddress, 1e9.toLong)
-        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 4,6)
+        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 4, 6)
         val outBox = Boxes.createBoxCandidateForUser(ctx, guards(1).getAddress, 1e8.toLong)
         val tx = ctx.newTxBuilder().addInputs(signBox, box2)
           .fee(Configs.fee)
@@ -1193,7 +1306,7 @@ class ContractTest extends TestSuite {
         val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
         val signBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 1)
         val box2 = Boxes.createBoxForUser(ctx, guards(0).getAddress, 1e9.toLong)
-        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 4,6)
+        val outSignBox = Boxes.createGuardNftBox(ctx, guardsPks, 4, 6)
         val outBox = Boxes.createBoxCandidateForUser(ctx, guards(1).getAddress, 1e8.toLong)
         val tx = ctx.newTxBuilder().addInputs(signBox, box2)
           .fee(Configs.fee)
