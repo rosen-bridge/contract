@@ -1,7 +1,7 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Coll[Byte]] = [WID]
-  // R5: Coll[Coll[Byte]] = [Request ID (Hash(TxId))]
+  // R4: Coll[Byte] = WID
+  // R5: Coll[Byte] = Event ID (Hash(TxId))
   // R6: Coll[Byte] = Event Data Digest
   // R7: Coll[Byte] = Permit Script Digest
   // ----------------- TOKENS
@@ -11,7 +11,7 @@
   val repoNFT = fromBase64("REPO_NFT");
   val repoConfigNft = fromBase64("REPO_CONFIG_NFT");
   val trigger = if (blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash) INPUTS(0) else OUTPUTS(0)
-  val myWID = SELF.R4[Coll[Coll[Byte]]].get
+  val myWID = SELF.R4[Coll[Byte]].get
   val eventData = trigger.R5[Coll[Coll[Byte]]].get.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a ++ b })
   if(blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash){
     // Reward Distribution (for missed commitments)
@@ -25,7 +25,7 @@
       box.R4[Coll[Byte]].isDefined &&
       box.R4[Coll[Byte]].get == myWID
     }(0)
-    val WIDExists =  WIDs.exists {(WID: Coll[Byte]) => myWID == Coll(WID)}
+    val WIDExists =  WIDs.exists {(WID: Coll[Byte]) => myWID == WID}
     sigmaProp(
       allOf(
         Coll(
@@ -35,7 +35,7 @@
           // check for duplicates
           WIDExists == false,
           // validate commitment
-          blake2b256(eventData ++ myWID(0)) == SELF.R6[Coll[Byte]].get
+          blake2b256(eventData ++ myWID) == SELF.R6[Coll[Byte]].get
         )
       )
     )
@@ -49,9 +49,9 @@
         box.tokens.size > 0 && 
         box.tokens(0)._1 == SELF.tokens(0)._1 
       }
-    val WIDs = commitmentBoxes.map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
+    val WIDs = commitmentBoxes.map{(box:Box) => box.R4[Coll[Byte]].get}
     val widListDigest = blake2b256(WIDs.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b}))
-    val myWIDCommitments = commitmentBoxes.filter{ (box: Box) => box.R4[Coll[Coll[Byte]]].get == myWID }
+    val myWIDCommitments = commitmentBoxes.filter{ (box: Box) => box.R4[Coll[Byte]].get == myWID }
     val EventBoxErgs = commitmentBoxes.map { (box: Box) => box.value }.fold(0L, { (a: Long, b: Long) => a + b })
     val repoConfigBox = CONTEXT.dataInputs(0)
     val repoConfig = repoConfigBox.R4[Coll[Long]].get
@@ -80,9 +80,9 @@
           trigger.R7[Int].get == commitmentBoxes.size,
           trigger.R4[Coll[Byte]].get == widListDigest,
           // verify commitment to be correct
-          blake2b256(eventData ++ myWID(0)) == SELF.R6[Coll[Byte]].get,
+          blake2b256(eventData ++ myWID) == SELF.R6[Coll[Byte]].get,
           // check event id
-          SELF.R5[Coll[Coll[Byte]]].get == Coll(eventId),
+          SELF.R5[Coll[Byte]].get == eventId,
           // check commitment count
           commitmentBoxes.size > requiredCommitment,
           // Check required RWT
@@ -104,7 +104,7 @@
           // check WID copied
           OUTPUTS(0).R4[Coll[Byte]].get == myWID,
           // check user WID
-          INPUTS(1).tokens(0)._1 == myWID(0),
+          INPUTS(1).tokens(0)._1 == myWID,
           // check permit contract address
           blake2b256(OUTPUTS(0).propositionBytes) == SELF.R7[Coll[Byte]].get
         )

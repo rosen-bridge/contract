@@ -306,8 +306,8 @@ object Boxes {
       .contract(contracts.Commitment._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(eventId).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(WID)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(eventId)),
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment)),
         ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
       ).build()
