@@ -120,16 +120,63 @@ class ContractTest extends TestSuite {
     })
   }
 
-  property("test get permit when creating a collateral box without AWC") {
+  /**
+   * @target get permit transaction signing should throw error when creating a fake collateral not containing AWC
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock input repo box with 100 AWC
+   * - mock output repo box with 100 AWC and collateral box without AWC
+   * - mock valid output wid and permit box
+   * - build and sign the get permit transaction
+   * @expected
+   * - sign error for the collateral not containing AWC
+   */
+  property("get permit transaction signing should throw error when creating a fake collateral not containing AWC") {
     networkConfig._1.ergoClient.execute(ctx => {
       assertThrows[AnyRef] {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
         val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 100L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
         val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
+        val watcherCollateral = Boxes.createFakeWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
+        val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
+          .fee(Configs.fee)
+          .addOutputs(repoOut, permitBox, WID, watcherCollateral)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
+      }
+    })
+  }
+
+  /**
+   * @target get permit transaction signing should throw error when stealing AWC and creating fake collateral
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock input repo box with 100 AWC
+   * - mock output repo box with 99 AWC and collateral box without AWC
+   * - mock output wid box with stolen AWC
+   * - mocked valid permit box
+   * - build and sign the get permit transaction
+   * @expected
+   * - sign error for stealing AWC and creating fake collateral
+   */
+  property("get permit transaction signing should throw error when stealing AWC and creating fake collateral") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      assertThrows[AnyRef] {
+        val prover = getProver()
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
+        val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 100L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+        val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
+        val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L), new ErgoToken(networkConfig._2.tokens.AwcNFT, 1L))
         val watcherCollateral = Boxes.createFakeWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
         val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
           .fee(Configs.fee)
@@ -586,7 +633,20 @@ class ContractTest extends TestSuite {
     })
   }
 
-  property("test complete return permit using a fake collateral box") {
+  /**
+   * @target return permit transaction signing should throw error by returning a fake collateral not containing AWC
+   * @dependencies
+   * @scenario
+   * - mock valid user WID box and permit box
+   * - mock fake collateral without AWC
+   * - mock input repo box with 99 AWC
+   * - mock output repo box with 99 AWC
+   * - mock valid user output with collateral tokens
+   * - build and sign the complete return permit transaction
+   * @expected
+   * - sign error for returning a fake collateral not containing AWC
+   */
+  property("return permit transaction signing should throw error by returning a fake collateral not containing AWC") {
     networkConfig._1.ergoClient.execute(ctx => {
       assertThrows[AnyRef] {
         val prover = getProver()
