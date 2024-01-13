@@ -151,6 +151,19 @@ object Boxes {
       ).build()
   }
 
+  def createFakeWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
+    ctx.newTxBuilder().outBoxBuilder()
+      .value(erg)
+      .tokens(
+        new ErgoToken(networkConfig._3.RSN, 1),
+        new ErgoToken(networkConfig._3.RSN, rsn)
+      )
+      .contract(contracts.WatcherCollateral._1)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
+      ).build()
+  }
+
   def createRepoWithTokens(
                             ctx: BlockchainContext,
                             RWTCount: Long,
@@ -237,8 +250,6 @@ object Boxes {
         ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100, 1))),
         ErgoValueBuilder.buildFor(R7)
       )
-    if (RSNCount > 0) {
-    }
     repoBuilder.build()
   }
 
