@@ -62,7 +62,7 @@ class Commitment {
 }
 
 object Boxes {
-  
+
   val networkConfig: (ErgoNetwork, Network, MainTokens) = Utils.selectConfig("cardano", "mainnet")
   val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
 
@@ -138,6 +138,7 @@ object Boxes {
   def createWatcherCollateralBoxInput(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): InputBox = {
     Boxes.createWatcherCollateralBox(ctx, erg, rsn, wid).convertToInputWith(getRandomHexString(), 3)
   }
+
   def createWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
     ctx.newTxBuilder().outBoxBuilder()
       .value(erg)
@@ -265,6 +266,7 @@ object Boxes {
       )
       .build()
   }
+
   def createInvalidPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
     val txB = ctx.newTxBuilder()
     val tokensSeq = Seq(new ErgoToken(networkConfig._3.RSN, RWTCount)) ++ tokens.toSeq
@@ -305,7 +307,7 @@ object Boxes {
       ).build()
   }
 
-  def createTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment, RWTCount: Long): OutBox = {
+  def createTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment, RWTCount: Long, commitmentCount: Option[Int] = None): OutBox = {
     val size = WID.length
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue * size)
@@ -314,6 +316,21 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
         ErgoValueBuilder.buildFor(Colls.fromArray(scorex.crypto.hash.Blake2b256(WID.reduce((a, b) => a ++ b)))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
+        ErgoValueBuilder.buildFor(commitmentCount.getOrElse(WID.size))
+      ).build()
+  }
+
+
+  def createFakeTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment, RWTCount: Long): OutBox = {
+    val size = WID.length
+    ctx.newTxBuilder().outBoxBuilder()
+      .value(Configs.minBoxValue * size)
+      .contract(contracts.WatcherTriggerEvent._1)
+      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(scorex.crypto.hash.Blake2b256(WID.slice(1, WID.size).reduce((a, b) => a ++ b)))),
         ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
         ErgoValueBuilder.buildFor(WID.size)
       ).build()

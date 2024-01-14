@@ -945,6 +945,72 @@ class ContractTest extends TestSuite {
     })
   }
 
+  /**
+   * @target create trigger transaction signing should throw error when the commitment count is not valid in trigger box
+   * @dependencies
+   * @scenario
+   * - mock commitment wid list
+   * - mock repo box with the wid list as data input
+   * - mock commitments for an event for each wid
+   * - mock invalid trigger with wrong commitment count
+   * - build and sign the create trigger transaction
+   * @expected
+   * - sign error for invalid commitment count in trigger box
+   */
+  property("create trigger transaction signing should throw error when the commitment count is not valid in trigger box") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(5)
+      val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+      val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L, Some(4))
+      val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+      val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+        .fee(Configs.fee)
+        .addOutputs(trigger)
+        .addDataInputs(repo)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
+  /**
+   * @target create trigger transaction signing should throw error when the wid list digest is invalid in trigger box
+   * @dependencies
+   * @scenario
+   * - mock commitment wid list
+   * - mock repo box with the wid list as data input
+   * - mock commitments for an event for each wid
+   * - mock invalid trigger with wrong wid list digest
+   * - build and sign the create trigger transaction
+   * @expected
+   * - sign error for invalid wid list digest in trigger box
+   */
+  property("create trigger transaction signing should throw error when the wid list digest is invalid in trigger box") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(5)
+      val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+      val trigger = Boxes.createFakeTriggerEventBox(ctx, WIDs, commitment, 50L)
+      val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+      val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+        .fee(Configs.fee)
+        .addOutputs(trigger)
+        .addDataInputs(repo)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
   property("test create event trigger with repo box of different chain") {
     networkConfig._1.ergoClient.execute(ctx => {
       val commitment = new Commitment()
