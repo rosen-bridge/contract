@@ -1,7 +1,7 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Coll[Byte]] Event data
-  // R5: Coll[Byte] WID list digest
+  // R4: Coll[Coll[Byte]] [WID list digest]
+  // R5: Coll[Coll[Byte]] Event data
   // R6: Coll[Byte] Permit contract script digest
   // R7: Int Commitment Count
   // ----------------- TOKENS
@@ -46,7 +46,7 @@
   sigmaProp(
     allOf(
       Coll(
-        SELF.R5[Coll[Byte]].get == widListDigest,
+        SELF.R4[Coll[Coll[Byte]]].get(0) == widListDigest,
         checkAllWIDs,
         fraudScriptCheck,
       )
