@@ -1133,6 +1133,104 @@ class ContractTest extends TestSuite {
     })
   }
 
+  /**
+   * @target reward transaction signing should throw error when number of watcher rewards are less than the trigger commitment count
+   * @dependencies
+   * @scenario
+   * - mock commitment wid list
+   * - mock guards secrets, public keys and box with the guard NFT
+   * - mock lock box with required tokens
+   * - mock trigger box with wid list
+   * - mock output permits for all wids except one
+   * - build and sign the reward transaction
+   * @expected
+   * - sign error for fewer reward boxes than expected
+   */
+  property("reward transaction signing should throw error when number of watcher rewards are less than the trigger commitment count") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(7)
+      val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+      val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+      val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+      val userFee: Long = math.floor((commitment.fee * 0.6) / WIDs.length).toLong
+      val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val lockBox = Boxes.createLockBox(
+        ctx,
+        Configs.minBoxValue,
+        new ErgoToken(commitment.targetChainTokenId, userFee * WIDs.length)
+      ).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val newPermits = WIDs.slice(0, WIDs.length - 1).map(item => {
+        Boxes.createPermitBox(ctx, 10, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+      })
+      val inputs = Seq(eventTrigger, lockBox)
+      val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
+        .addDataInputs(guardBox)
+        .fee(Configs.fee)
+        .sendChangeTo(prover.getAddress)
+        .addOutputs(newPermits: _*)
+        .build()
+      val multiSigProverBuilder = ctx.newProverBuilder()
+      secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+      val multiSigProver = multiSigProverBuilder.build()
+      assertThrows[AnyRef] {
+        multiSigProver.sign(unsignedTx)
+      }
+    })
+  }
+
+  /**
+   * @target reward transaction signing should throw error when all reporting watchers are not rewarded
+   * @dependencies
+   * @scenario
+   * - mock commitment wid list
+   * - mock guards secrets, public keys and box with the guard NFT
+   * - mock lock box with required tokens
+   * - mock trigger box with wid list
+   * - mock output permits for all wids except one + an extra permit for a new wid
+   * - build and sign the reward transaction
+   * @expected
+   * - sign error for rewarding a wrong wid
+   */
+  property("reward transaction signing should throw error when all reporting watchers are not rewarded") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(7)
+      val newWID = Base16.decode(Boxes.getRandomHexString()).get
+      val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+      val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+      val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+      val userFee: Long = math.floor((commitment.fee * 0.6) / WIDs.length).toLong
+      val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val lockBox = Boxes.createLockBox(
+        ctx,
+        Configs.minBoxValue,
+        new ErgoToken(commitment.targetChainTokenId, userFee * WIDs.length)
+      ).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val rewardingWIDs = WIDs.slice(0, WIDs.length - 1) ++ Seq(newWID)
+      val newPermits = rewardingWIDs.map(item => {
+        Boxes.createPermitBox(ctx, 10, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+      })
+      val inputs = Seq(eventTrigger, lockBox)
+      val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
+        .addDataInputs(guardBox)
+        .fee(Configs.fee)
+        .sendChangeTo(prover.getAddress)
+        .addOutputs(newPermits: _*)
+        .build()
+      val multiSigProverBuilder = ctx.newProverBuilder()
+      secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+      val multiSigProver = multiSigProverBuilder.build()
+      assertThrows[AnyRef] {
+        multiSigProver.sign(unsignedTx)
+      }
+    })
+  }
+
   property("test guard payment with wrong permit RWT count") {
     networkConfig._1.ergoClient.execute(ctx => {
       val commitment = new Commitment()

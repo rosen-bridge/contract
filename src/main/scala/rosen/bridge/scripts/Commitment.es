@@ -13,13 +13,13 @@
   val myWID = SELF.R4[Coll[Byte]].get
   val eventData = trigger.R4[Coll[Coll[Byte]]].get.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b})
   if(blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash){
+    // Reward Distribution (for missed commitments)
+    // [EventTrigger, Commitments[], BridgeWallet] => [WatcherPermits[], BridgeWallet]
     val WIDs = OUTPUTS.filter{(box:Box) 
         => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
       }
       .slice(0, trigger.R7[Int].get)
       .map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
-    // Reward Distribution (for missed commitments)
-    // [EventTrigger, Commitments[], BridgeWallet] => [WatcherPermits[], BridgeWallet]
     val permitBoxes = OUTPUTS.filter {(box:Box) =>
       blake2b256(box.propositionBytes) == SELF.R7[Coll[Byte]].get &&
       box.R4[Coll[Coll[Byte]]].isDefined &&
