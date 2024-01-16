@@ -54,16 +54,21 @@
         sigmaProp(
           allOf(
             Coll(
-              permitCreation,
               widOutListSize == widListSize + 1,
               repoOut.tokens(3)._2 == repo.tokens(3)._2 - 1,
               repoOut.R4[Coll[Coll[Byte]]].get.slice(0, widOutListSize - 1) == repo.R4[Coll[Coll[Byte]]].get,
               repoOut.R4[Coll[Coll[Byte]]].get(widOutListSize - 1) == repo.id,
               repoOut.R5[Coll[Long]].get.slice(0, widOutListSize - 1) == repo.R5[Coll[Long]].get,
               repoOut.R5[Coll[Long]].get(widOutListSize - 1) == RWTOut,
+              // Permit and WID checks
+              permitCreation,
               permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
               outWIDBox.tokens(0)._1 == repo.id,
               outWIDBox.tokens(0)._2 >= 3,
+              // Repo config checks
+              CONTEXT.dataInputs(0).tokens(0)._1 == SELF.tokens(0)._1,
+              CONTEXT.dataInputs(0).tokens(1)._1 == SELF.tokens(1)._1,
+              // Collateral checks
               blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
               watcherCollateral.R4[Coll[Byte]].get == repo.id,
               watcherCollateral.value >= repoConfig.get(4),
