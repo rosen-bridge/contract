@@ -2,9 +2,7 @@
   // ----------------- REGISTERS
   // R4: Coll[Coll[Byte]] = [Chain id, WID_0, WID_1, ...] (Stores Chain id and related watcher ids)
   // R5: Coll[Long] = [i, X-RWT_0, X-RWT_1, ...] (The first element is repo index and the rest indicates X-RWT count for watcher i)
-  // R6: Coll[Long] = [Commitment RWT count, Watcher quorum percentage, minimum needed approval, maximum needed approval, Collateral Erg amount, Collateral Rsn Amount, Total repo count]
-  // (Minimum number of commitments needed for an event is: min(R6[3], R6[1] * (len(R4) - 1) / 100 + R6[2]) )
-  // R7: Int = Watcher index (only used in returning or extending permits)
+  // R6: Int = Watcher index (only used in returning or extending permits)
   // ----------------- TOKENS
   // 0: X-RWT Repo NFT
   // 1: X-RWT
@@ -25,7 +23,6 @@
     val repoReplication = allOf(
       Coll(
         repoOut.propositionBytes == repo.propositionBytes,
-        repoOut.R6[Coll[Long]].get == repo.R6[Coll[Long]].get,
         repoOut.tokens(0)._1 == repo.tokens(0)._1,
         repoOut.tokens(0)._2 == repo.tokens(0)._2,
         repoOut.tokens(1)._1 == repo.tokens(1)._1,
@@ -36,7 +33,7 @@
     )
     if(repo.tokens(1)._2 > repoOut.tokens(1)._2){
       // Getting Watcher Permit
-      val WIDIndex = repoOut.R7[Int].getOrElse(-1)
+      val WIDIndex = repoOut.R6[Int].getOrElse(-1)
       val permit = OUTPUTS(1)
       val outWIDBox = OUTPUTS(2)
       val RWTOut = repo.tokens(1)._2 - repoOut.tokens(1)._2
@@ -53,6 +50,7 @@
         // Getting initial permit
         // [Repo, UserInputs] => [Repo, watcherPermit, WIDBox, watcherCollateral]
         val watcherCollateral = OUTPUTS(3)
+        val repoConfig = CONTEXT.dataInputs(0).R4[Coll[Long]]
         sigmaProp(
           allOf(
             Coll(
@@ -68,13 +66,13 @@
               outWIDBox.tokens(0)._2 >= 3,
               blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
               watcherCollateral.R4[Coll[Byte]].get == repo.id,
-              watcherCollateral.value >= repo.R6[Coll[Long]].get(4),
+              watcherCollateral.value >= repoConfig.get(4),
               watcherCollateral.tokens(0)._1 == repo.tokens(3)._1,
-              if(repo.R6[Coll[Long]].get(5) > 0){
+              if(repoConfig.get(5) > 0){
                 allOf(
                   Coll(
                     watcherCollateral.tokens(1)._1 == repo.tokens(2)._1,
-                    watcherCollateral.tokens(1)._2 >= repo.R6[Coll[Long]].get(5)
+                    watcherCollateral.tokens(1)._2 >= repoConfig.get(5)
                   )
                 )
               }else{
@@ -110,7 +108,7 @@
       // Returning Watcher Permit
       val permit = INPUTS(1)
       val RWTIn = repoOut.tokens(1)._2 - repo.tokens(1)._2
-      val WIDIndex = repoOut.R7[Int].get
+      val WIDIndex = repoOut.R6[Int].get
       val WIDCheckInRepo = if(repo.R5[Coll[Long]].get(WIDIndex) > RWTIn) {
         // Returning some RWTs
         // [repo, Permit, WIDToken] => [repo, Permit(Optional), WIDToken(+userChange)]
