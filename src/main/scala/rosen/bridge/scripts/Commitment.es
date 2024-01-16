@@ -11,27 +11,26 @@
   val repoNFT = fromBase64("REPO_NFT");
   val trigger = if (blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash) INPUTS(0) else OUTPUTS(0)
   val myWID = SELF.R4[Coll[Coll[Byte]]].get
-  val eventData = trigger.R4[Coll[Coll[Byte]]].get.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b})
+  val eventData = trigger.R5[Coll[Coll[Byte]]].get.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a ++ b })
   if(blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash){
+    // Reward Distribution (for missed commitments)
+    // [EventTrigger, Commitments[], BridgeWallet] => [WatcherPermits[], BridgeWallet]
     val WIDs = OUTPUTS.filter{(box:Box) 
         => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
       }
       .slice(0, trigger.R7[Int].get)
       .map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
-    // Reward Distribution (for missed commitments)
-    // [EventTrigger, Commitments[], BridgeWallet] => [WatcherPermits[], BridgeWallet]
-    val permitBoxes = OUTPUTS.filter {(box:Box) =>
-      blake2b256(box.propositionBytes) == SELF.R7[Coll[Byte]].get &&
+    val permitBox = OUTPUTS.filter {(box:Box) =>
       box.R4[Coll[Coll[Byte]]].isDefined &&
       box.R4[Coll[Coll[Byte]]].get == myWID
-    }
+    }(0)
     val WIDExists =  WIDs.exists {(WID: Coll[Byte]) => myWID == Coll(WID)}
     sigmaProp(
       allOf(
         Coll(
-          permitBoxes.size == 1,
-          permitBoxes(0).tokens(0)._1 == SELF.tokens(0)._1,
-          permitBoxes(0).tokens(0)._2 == SELF.tokens(0)._2,
+          blake2b256(permitBox.propositionBytes) == SELF.R7[Coll[Byte]].get,
+          permitBox.tokens(0)._1 == SELF.tokens(0)._1,
+          permitBox.tokens(0)._2 == SELF.tokens(0)._2,
           // check for duplicates
           WIDExists == false,
           // validate commitment
@@ -69,7 +68,7 @@
       }
     ))
     val watcherCount = repos.slice(1, repos.size).fold(0L, {(total: Long, b: Box) => b.R5[Coll[Long]].get.size - 1L + total})
-    val requestId = blake2b256(trigger.R4[Coll[Coll[Byte]]].get(0))
+    val eventId = blake2b256(trigger.R5[Coll[Coll[Byte]]].get(0))
     val repoR6 = repos(0).R4[Coll[Long]].get
     val maxCommitment = repoR6(3)
     val requiredCommitmentFromFormula: Long = repoR6(2) + repoR6(1) * watcherCount / 100L
@@ -89,11 +88,11 @@
           trigger.value >= EventBoxErgs,
           trigger.R6[Coll[Byte]].get == SELF.R7[Coll[Byte]].get,
           trigger.R7[Int].get == commitmentBoxes.size,
-          trigger.R5[Coll[Byte]].get == widListDigest,
+          trigger.R4[Coll[Coll[Byte]]].get(0) == widListDigest,
           // verify commitment to be correct
           blake2b256(eventData ++ myWID(0)) == SELF.R6[Coll[Byte]].get,
           // check event id
-          SELF.R5[Coll[Coll[Byte]]].get == Coll(requestId),
+          SELF.R5[Coll[Coll[Byte]]].get == Coll(eventId),
           // check commitment count
           commitmentBoxes.size > requiredCommitment,
           // Check required RWT
