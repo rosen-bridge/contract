@@ -6,6 +6,7 @@ import org.ergoplatform.appkit.{Address, BlockchainContext, ErgoContract, ErgoTo
 import rosen.bridge.Contracts
 import scorex.util.encode.Base16
 import sigmastate.eval.Colls
+import scorex.util.encode.{Base16, Base64}
 
 import java.nio.ByteBuffer
 import scala.collection.JavaConverters._
@@ -61,7 +62,7 @@ class Commitment {
 }
 
 object Boxes {
-  
+
   val networkConfig: (ErgoNetwork, Network, MainTokens) = Utils.selectConfig("cardano", "mainnet")
   val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
 
@@ -137,6 +138,7 @@ object Boxes {
   def createWatcherCollateralBoxInput(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): InputBox = {
     Boxes.createWatcherCollateralBox(ctx, erg, rsn, wid).convertToInputWith(getRandomHexString(), 3)
   }
+
   def createWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte]): OutBox = {
     ctx.newTxBuilder().outBoxBuilder()
       .value(erg)
@@ -264,6 +266,7 @@ object Boxes {
       )
       .build()
   }
+
   def createInvalidPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
     val txB = ctx.newTxBuilder()
     val tokensSeq = Seq(new ErgoToken(networkConfig._3.RSN, RWTCount)) ++ tokens.toSeq
@@ -291,29 +294,47 @@ object Boxes {
       .build()
   }
 
-  def createCommitment(ctx: BlockchainContext, WID: Array[Byte], RequestId: Array[Byte], commitment: Array[Byte], RWTCount: Long): OutBox = {
+  def createCommitment(ctx: BlockchainContext, WID: Array[Byte], eventId: Array[Byte], commitment: Array[Byte], RWTCount: Long): OutBox = {
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.Commitment._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(RequestId).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(eventId).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment)),
         ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
       ).build()
   }
 
-  def createTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment, RWTCount: Long): OutBox = {
+  def createTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment, RWTCount: Long, commitmentCount: Option[Int] = None): OutBox = {
     val size = WID.length
+    val digest = scorex.crypto.hash.Blake2b256(WID.reduce((a, b) => a ++ b))
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue * size)
       .contract(contracts.WatcherTriggerEvent._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(WID.map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(digest).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1)))
+        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
+        ErgoValueBuilder.buildFor(commitmentCount.getOrElse(WID.size))
+      ).build()
+  }
+
+
+  def createFakeTriggerEventBox(ctx: BlockchainContext, WID: Seq[Array[Byte]], commitment: Commitment, RWTCount: Long): OutBox = {
+    val size = WID.length
+    val digest = scorex.crypto.hash.Blake2b256(WID.slice(1, WID.size).reduce((a, b) => a ++ b))
+    ctx.newTxBuilder().outBoxBuilder()
+      .value(Configs.minBoxValue * size)
+      .contract(contracts.WatcherTriggerEvent._1)
+      .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(digest).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
+        ErgoValueBuilder.buildFor(WID.size)
       ).build()
   }
 

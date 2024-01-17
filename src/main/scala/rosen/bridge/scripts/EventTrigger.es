@@ -1,8 +1,9 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Coll[Byte]] [WID[]]
+  // R4: Coll[Coll[Byte]] [WID list digest]
   // R5: Coll[Coll[Byte]] Event data
   // R6: Coll[Byte] Permit contract script digest
+  // R7: Int Commitment Count
   // ----------------- TOKENS
   // 0: RWT
 
@@ -28,20 +29,25 @@
       )
     )
   }
-  val WIDs: Coll[Coll[Byte]] = SELF.R4[Coll[Coll[Byte]]].get
-  val mergeBoxes = OUTPUTS.slice(0, WIDs.size)
-  val checkAllWIDs = WIDs.zip(mergeBoxes).forall {
-    (data: (Coll[Byte], Box)) => {
-      Coll(data._1) == data._2.R4[Coll[Coll[Byte]]].get && 
-      data._2.propositionBytes == OUTPUTS(0).propositionBytes &&
-      data._2.tokens(0)._1 == SELF.tokens(0)._1 &&
-      data._2.tokens(0)._2 == SELF.tokens(0)._2 / WIDs.size
+  val commitmentCount = SELF.R7[Int].get
+  val rewards = OUTPUTS.filter{(box:Box) 
+      => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
+    }
+    .slice(0, commitmentCount)
+  val WIDs = rewards.map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
+  val widListDigest = blake2b256(WIDs.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b}))
+  val checkAllWIDs = rewards.forall {
+    (data: Box) => {
+      data.propositionBytes == OUTPUTS(0).propositionBytes &&
+      data.tokens(0)._1 == SELF.tokens(0)._1 &&
+      data.tokens(0)._2 == SELF.tokens(0)._2 / commitmentCount
     }
   }
   sigmaProp(
     allOf(
       Coll(
-        WIDs.size == mergeBoxes.size,
+        rewards.size == commitmentCount,
+        SELF.R4[Coll[Coll[Byte]]].get(0) == widListDigest,
         checkAllWIDs,
         fraudScriptCheck,
       )
