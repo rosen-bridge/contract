@@ -46,6 +46,7 @@
   sigmaProp(
     allOf(
       Coll(
+        rewards.size == commitmentCount,
         SELF.R4[Coll[Coll[Byte]]].get(0) == widListDigest,
         checkAllWIDs,
         fraudScriptCheck,
