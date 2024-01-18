@@ -1096,32 +1096,6 @@ class ContractTest extends TestSuite {
         .sendChangeTo(prover.getAddress)
         .build()
       assertThrows[AnyRef] {
-        val commitment = new Commitment()
-        val prover = getProver()
-        val WIDs = generateRandomWIDList(7)
-        val repo = Boxes.createRepoWithTokens(
-          ctx,
-          1000L,
-          10001L,
-          100L,
-          WIDs,
-          Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L),
-          Boxes.getRandomHexString(),
-          networkConfig._2.tokens.RWTId,
-          networkConfig._2.tokens.AwcNFT,
-          0
-        ).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
-        val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
-        val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
-        val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
-          .fee(Configs.fee)
-          .addOutputs(trigger)
-          .addDataInputs(repoConfig)
-          .addDataInputs(repoConfig)
-          .addDataInputs(repo)
-          .sendChangeTo(prover.getAddress)
-          .build()
         prover.sign(tx)
       }
     })

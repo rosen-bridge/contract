@@ -41,7 +41,7 @@
 
   } else if (blake2b256(OUTPUTS(0).propositionBytes) == eventTriggerHash){
     // Event Trigger Creation
-    // [Commitments[]] + [Repo(DataInput)] => [EventTrigger]
+    // [Commitments[]] + [(DataInput) RepoConfig + Repos[]] => [EventTrigger]
     val commitmentBoxes = INPUTS.filter{ 
       (box: Box) => 
         SELF.propositionBytes == box.propositionBytes && 
@@ -52,26 +52,27 @@
     val widListDigest = blake2b256(WIDs.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b}))
     val myWIDCommitments = commitmentBoxes.filter{ (box: Box) => box.R4[Coll[Coll[Byte]]].get == myWID }
     val EventBoxErgs = commitmentBoxes.map { (box: Box) => box.value }.fold(0L, { (a: Long, b: Long) => a + b })
-    val repos = CONTEXT.dataInputs
+    val repoConfig = CONTEXT.dataInputs(0)
+    val repos = CONTEXT.dataInputs.slice(1, CONTEXT.dataInputs.size)
     val repoValidation = allOf(Coll(
-      repos.size == repos(0).R4[Coll[Long]].get(6) + 1,
-      repos.forall {
+      repos.size == repoConfig.R4[Coll[Long]].get(6),
+      CONTEXT.dataInputs.forall {
         (repo: Box) => {
           repo.tokens(0)._1 == repoNFT &&
           repo.tokens(1)._1 == SELF.tokens(0)._1
         }
       },
-      repos.slice(1, repos.size).zip(repos.indices).forall {
+      repos.zip(repos.indices).forall {
         (data: (Box, Int)) => {
           data._1.R5[Coll[Long]].get(0) == data._2
         }
       }
     ))
-    val watcherCount = repos.slice(1, repos.size).fold(0L, {(total: Long, b: Box) => b.R5[Coll[Long]].get.size - 1L + total})
+    val watcherCount = repos.fold(0L, {(total: Long, b: Box) => b.R5[Coll[Long]].get.size - 1L + total})
     val eventId = blake2b256(trigger.R5[Coll[Coll[Byte]]].get(0))
-    val repoR6 = repos(0).R4[Coll[Long]].get
-    val maxCommitment = repoR6(3)
-    val requiredCommitmentFromFormula: Long = repoR6(2) + repoR6(1) * watcherCount / 100L
+    val configs = repoConfig.R4[Coll[Long]].get
+    val maxCommitment = configs(3)
+    val requiredCommitmentFromFormula: Long = configs(2) + configs(1) * watcherCount / 100L
     val requiredCommitment = if(maxCommitment < requiredCommitmentFromFormula) {
       maxCommitment
     } else {
@@ -96,8 +97,8 @@
           // check commitment count
           commitmentBoxes.size > requiredCommitment,
           // Check required RWT
-          SELF.tokens(0)._2 == repoR6(0),
-          trigger.tokens(0)._2 == repoR6(0) * commitmentBoxes.size,
+          SELF.tokens(0)._2 == configs(0),
+          trigger.tokens(0)._2 == configs(0) * commitmentBoxes.size,
           trigger.tokens(0)._1 == SELF.tokens(0)._1
         )
       )

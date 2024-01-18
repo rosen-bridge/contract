@@ -48,7 +48,7 @@
       )
       if(WIDIndex == -1){
         // Getting initial permit
-        // [Repo, UserInputs] => [Repo, watcherPermit, WIDBox, watcherCollateral]
+        // [Repo, UserInputs] + [(DataInput) RepoConfig] => [Repo, watcherPermit, WIDBox, watcherCollateral]
         val watcherCollateral = OUTPUTS(3)
         val repoConfig = CONTEXT.dataInputs(0).R4[Coll[Long]]
         sigmaProp(
