@@ -198,6 +198,7 @@ object Boxes {
                             ctx: BlockchainContext,
                             nftId: String,
                             rwtId: String,
+                            repoCount: Int = 1
                           ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
@@ -208,7 +209,7 @@ object Boxes {
       )
       .contract(contracts.RepoConfig._1)
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100, 1))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100, repoCount))),
       )
     repoBuilder.build()
   }
@@ -220,9 +221,10 @@ object Boxes {
                   AwcCount: Long,
                   users: Seq[Array[Byte]],
                   userRWT: Seq[Long],
+                  index: Int = 0
                 ): OutBox = {
     createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, users, userRWT,
-      networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, 0)
+      networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, index)
   }
 
   def createRepoWithR6(

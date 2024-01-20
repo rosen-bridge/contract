@@ -105,24 +105,60 @@ class ContractTest extends TestSuite {
 
   property("test get permit while created permit first token is not RWT") {
     networkConfig._1.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 300L))
+      val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+      val permitBox = Boxes.createInvalidPermitBox(ctx, 100L, repoBox.getId.getBytes)
+      val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
+      val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
+      val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
+        .fee(Configs.fee)
+        .addDataInputs(repoConfig)
+        .addOutputs(repoOut, permitBox, WID, watcherCollateral)
+        .sendChangeTo(prover.getAddress)
+        .build()
       assertThrows[AnyRef] {
-        val prover = getProver()
-        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 300L))
-        val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
-        val permitBox = Boxes.createInvalidPermitBox(ctx, 100L, repoBox.getId.getBytes)
-        val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
-        val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
-        val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
-          .fee(Configs.fee)
-          .addDataInputs(repoConfig)
-          .addOutputs(repoOut, permitBox, WID, watcherCollateral)
-          .sendChangeTo(prover.getAddress)
-          .build()
         val signedTx = prover.sign(tx)
         println(signedTx.toJson(false))
+      }
+    })
+  }
+
+  /**
+   * @target get permit transaction signing should throw error when repoConfig is invalid
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock input repo box with 100 AWC
+   * - mock invalid repoConfig box as data input
+   * - mock valid output repo box with 100 AWC and collateral box
+   * - mock valid output wid and permit box
+   * - build and sign the get permit transaction
+   * @expected
+   * - sign error for invalid repo config box
+   */
+  property("get permit transaction signing should throw error when repoConfig is invalid") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
+      val otherWID = Base16.decode(Boxes.getRandomHexString()).get
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, Boxes.getRandomHexString()).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
+      val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
+      val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
+      val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes)
+      val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
+        .fee(Configs.fee)
+        .addDataInputs(repoConfig)
+        .addOutputs(repoOut, permitBox, WID, watcherCollateral)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
       }
     })
   }
@@ -133,6 +169,7 @@ class ContractTest extends TestSuite {
    * @scenario
    * - mock user input
    * - mock input repo box with 100 AWC
+   * - mock valid repoConfig box as data input
    * - mock output repo box with 100 AWC and collateral box without AWC
    * - mock valid output wid and permit box
    * - build and sign the get permit transaction
@@ -169,6 +206,7 @@ class ContractTest extends TestSuite {
    * @scenario
    * - mock user input
    * - mock input repo box with 100 AWC
+   * - mock valid repoConfig box as data input
    * - mock output repo box with 99 AWC and collateral box without AWC
    * - mock output wid box with stolen AWC
    * - mocked valid permit box
@@ -738,6 +776,53 @@ class ContractTest extends TestSuite {
     })
   }
 
+  /**
+   * @target redeem repoConfig transaction should sign successfully
+   * @dependencies
+   * @scenario
+   * - mock repo config
+   * - mock commitments for an event for each wid
+   * - mock guards secrets, public keys and box with the guard NFT
+   * - build and sign the create trigger transaction
+   * @expected
+   * - successful sign for repo config redeem transaction
+   */
+  property("redeem repoConfig transaction should sign successfully") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      try {
+        val prover = getProver()
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val lockBox = Boxes.createLockBox(ctx, Configs.minBoxValue*10).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val inputs = Seq(repoConfig, guardBox)
+        val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
+          .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+          .registers(
+            repoConfig.getRegisters.get(0),
+          )
+          .tokens(new ErgoToken(networkConfig._3.GuardNFT, 1L))
+        boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
+        val tx = ctx.newTxBuilder().addInputs(guardBox, repoConfig, lockBox)
+          .fee(Configs.fee)
+          .addDataInputs(guardBox)
+          .addOutputs(boxBuilder.build())
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+          multiSigProver.sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("transaction not signed")
+      }
+    })
+  }
+
   property("test create new commitment") {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
@@ -940,6 +1025,92 @@ class ContractTest extends TestSuite {
     })
   }
 
+  /**
+   * @target create trigger transaction should sign successfully using multiple repo boxes, contributed by all watchers
+   * @dependencies
+   * @scenario
+   * - mock two commitment wid list
+   * - mock repo config and two repo boxes with the wid list as data input
+   * - mock commitments for an event for each wid
+   * - mock valid trigger
+   * - build and sign the create trigger transaction
+   * @expected
+   * - successful sign for valid trigger transaction contributed by all watchers
+   */
+  property("create trigger transaction should sign successfully using multiple repo boxes, contributed by all watchers") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      try {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(5)
+        val WIDs2 = generateRandomWIDList(5)
+        val allWIDs = WIDs ++ WIDs2
+        val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repo2 = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs2, Seq(10L, 30L, 20L, 35L, 5L), 1).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val commitments = allWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val trigger = Boxes.createTriggerEventBox(ctx, allWIDs, commitment, 100L)
+        val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+        val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+          .fee(Configs.fee)
+          .addOutputs(trigger)
+          .addDataInputs(repoConfig)
+          .addDataInputs(repo)
+          .addDataInputs(repo2)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.printStackTrace())
+          fail("transaction not signed")
+      }
+    })
+  }
+
+  /**
+   * @target create trigger transaction should sign successfully using multiple repo boxes, contributed by minimum watchers
+   * @dependencies
+   * @scenario
+   * - mock two commitment wid list
+   * - mock repo config and two repo boxes with the wid list as data input
+   * - mock commitments for an event for minimum number of watchers
+   * - mock valid trigger
+   * - build and sign the create trigger transaction
+   * @expected
+   * - successful sign for valid trigger transaction contributed by minimum watchers
+   */
+  property("create trigger transaction should sign successfully using multiple repo boxes, contributed by minimum watchers") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      try {
+        val commitment = new Commitment()
+        val prover = getProver()
+        val WIDs = generateRandomWIDList(5)
+        val WIDs2 = generateRandomWIDList(5)
+        val allWIDs = (WIDs ++ WIDs2).slice(0, 6)
+        val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repo2 = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs2, Seq(10L, 30L, 20L, 35L, 5L), 1).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val commitments = allWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+        val trigger = Boxes.createTriggerEventBox(ctx, allWIDs, commitment, 60L)
+        val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+        val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+          .fee(Configs.fee)
+          .addOutputs(trigger)
+          .addDataInputs(repoConfig)
+          .addDataInputs(repo)
+          .addDataInputs(repo2)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.printStackTrace())
+          fail("transaction not signed")
+      }
+    })
+  }
+
   property("test cant create event trigger for lower than minimum required watcher") {
     networkConfig._1.ergoClient.execute(ctx => {
       val commitment = new Commitment()
@@ -955,6 +1126,44 @@ class ContractTest extends TestSuite {
         .addOutputs(trigger)
         .addDataInputs(repoConfig)
         .addDataInputs(repo)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
+  /**
+   * @target create trigger transaction signing should throw error when contributed by less than minimum watchers using multiple repo boxes
+   * @dependencies
+   * @scenario
+   * - mock two commitment wid list
+   * - mock repo config and two repo boxes with the wid list as data input
+   * - mock commitments for an event for less than minimum number of watchers
+   * - mock valid trigger
+   * - build and sign the create trigger transaction
+   * @expected
+   * - sign error for trigger creation transaction contributed by less than minimum watchers
+   */
+  property("create trigger transaction signing should throw error when contributed by less than minimum watchers using multiple repo boxes") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(5)
+      val WIDs2 = generateRandomWIDList(5)
+      val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repo2 = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs2, Seq(10L, 30L, 20L, 35L, 5L), 1).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+      val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
+      val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+      val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+        .fee(Configs.fee)
+        .addOutputs(trigger)
+        .addDataInputs(repoConfig)
+        .addDataInputs(repo)
+        .addDataInputs(repo2)
         .sendChangeTo(prover.getAddress)
         .build()
       assertThrows[AnyRef] {
@@ -1033,6 +1242,42 @@ class ContractTest extends TestSuite {
     })
   }
 
+  /**
+   * @target create trigger transaction signing should throw error when using multiple repo boxes with invalid repoConfig from another chain
+   * @dependencies
+   * @scenario
+   * - mock two commitment wid list
+   * - mock repo config and one valid repo box with the wid list as data input
+   * - mock an invalid repo box from another chain as data input
+   * - mock commitments for an event for less than minimum number of watchers
+   * - mock valid trigger
+   * - build and sign the create trigger transaction
+   * @expected
+   * - sign error for trigger creation transaction with invalid repoConfig as data input
+   */
+  property("create trigger transaction signing should throw error when using multiple repo boxes with invalid repoConfig from another chain") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(5)
+      val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, Boxes.getRandomHexString()).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+      val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
+      val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+      val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+        .fee(Configs.fee)
+        .addOutputs(trigger)
+        .addDataInputs(repoConfig)
+        .addDataInputs(repo)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
   property("test create event trigger with repo box of different chain") {
     networkConfig._1.ergoClient.execute(ctx => {
       val commitment = new Commitment()
@@ -1059,6 +1304,60 @@ class ContractTest extends TestSuite {
         .addOutputs(trigger)
         .addDataInputs(repoConfig)
         .addDataInputs(repo)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
+  /**
+   * @target create trigger transaction signing should throw error when using multiple repo boxes with one invalid repo from another chain
+   * @dependencies
+   * @scenario
+   * - mock two commitment wid list
+   * - mock repo config and one valid repo box with the wid list as data input
+   * - mock an invalid repo box from another chain as data input
+   * - mock commitments for an event for less than minimum number of watchers
+   * - mock valid trigger
+   * - build and sign the create trigger transaction
+   * @expected
+   * - sign error for trigger creation transaction with one invalid repo as data input
+   */
+  property("create trigger transaction signing should throw error when using multiple repo boxes with one invalid repo from another chain") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(5)
+      val WIDs2 = generateRandomWIDList(5)
+      val allWIDs = WIDs ++ WIDs2
+      val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L))
+        .convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repo2 = Boxes.createRepoWithTokens(
+        ctx,
+        1000L,
+        10001L,
+        100L,
+        WIDs2,
+        Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L),
+        networkConfig._3.RepoNFT,
+        Boxes.getRandomHexString(),
+        networkConfig._2.tokens.AwcNFT,
+        1
+      ).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2)
+        .convertToInputWith(Boxes.getRandomHexString(), 1)
+      val commitments = allWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L)
+        .convertToInputWith(Boxes.getRandomHexString(), 1))
+      val trigger = Boxes.createTriggerEventBox(ctx, allWIDs, commitment, 100L)
+      val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
+      val tx = ctx.newTxBuilder().addInputs(commitments ++ Seq(feeBox): _*)
+        .fee(Configs.fee)
+        .addOutputs(trigger)
+        .addDataInputs(repoConfig)
+        .addDataInputs(repo)
+        .addDataInputs(repo2)
         .sendChangeTo(prover.getAddress)
         .build()
       assertThrows[AnyRef] {
