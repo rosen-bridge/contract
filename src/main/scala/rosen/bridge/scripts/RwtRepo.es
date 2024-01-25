@@ -50,7 +50,8 @@
         // Getting initial permit
         // [Repo, UserInputs] + [(DataInput) RepoConfig] => [Repo, watcherPermit, WIDBox, watcherCollateral]
         val watcherCollateral = OUTPUTS(3)
-        val repoConfig = CONTEXT.dataInputs(0).R4[Coll[Long]]
+        val repoConfigBox = CONTEXT.dataInputs(0)
+        val repoConfig = repoConfigBox.R4[Coll[Long]]
         sigmaProp(
           allOf(
             Coll(
@@ -66,8 +67,8 @@
               outWIDBox.tokens(0)._1 == repo.id,
               outWIDBox.tokens(0)._2 >= 3,
               // Repo config checks
-              CONTEXT.dataInputs(0).tokens(0)._1 == SELF.tokens(0)._1,
-              CONTEXT.dataInputs(0).tokens(1)._1 == SELF.tokens(1)._1,
+              repoConfigBox.tokens(0)._1 == SELF.tokens(0)._1,
+              repoConfigBox.tokens(1)._1 == SELF.tokens(1)._1,
               // Collateral checks
               blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
               watcherCollateral.R4[Coll[Byte]].get == repo.id,

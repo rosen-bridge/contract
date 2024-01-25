@@ -992,7 +992,7 @@ class ContractTest extends TestSuite {
         prover.sign(tx)
       } catch {
         case exp: Throwable =>
-          println(exp.printStackTrace())
+          println(exp.toString)
           fail("transaction not signed")
       }
     })

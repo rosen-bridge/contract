@@ -50,7 +50,7 @@ As guard public keys are stored within this box's registers, updating the guard 
 
 7. **X-Event Commitment:** This contract comes into play when a watcher detects a new event on the observing chain. Then, the watcher creates a report commitment with the event data digest.
 
-8. **X-Event Trigger:** A watcher creates the event trigger after a quorum of watchers reported the same event. This action involves spending all commitments and revealing the event's contents. The event trigger also stores the WIDs of the reporting watchers.
+8. **X-Event Trigger:** A watcher creates the event trigger after a quorum of watchers reported the same event. This action involves spending all commitments and revealing the event's contents. The event trigger also stores the digest of the reporting watchers' wid list.
 
 9. **X-Fraud:** Occasionally, watchers may create erroneous or fraudulent reports. Guards will process these events if a watcher generates the event trigger (after a quorum of watchers generated the corresponding commitment). However, guards will disregard these triggers as they are not verifiable. After a while, the cleanup service collects these faulty triggers and transfers their associated X-RWT tokens to the fraud contract as a form of penalty.
 
