@@ -32,7 +32,7 @@ class ContractTest extends TestSuite {
       try {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
         val repoBox = Boxes.createRepo(ctx, 100000, 1L, 100L, Seq(), Seq()).convertToInputWith(Boxes.getRandomHexString(), 0)
         val repoOut = Boxes.createRepo(ctx, 99900, 101L, 99L, Seq(repoBox.getId.getBytes), Seq(100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -59,7 +59,7 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
         val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -85,7 +85,7 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 300L))
         val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
         val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
         val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
         val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -108,7 +108,7 @@ class ContractTest extends TestSuite {
       val prover = getProver()
       val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 300L))
       val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
       val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
       val permitBox = Boxes.createInvalidPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -145,7 +145,7 @@ class ContractTest extends TestSuite {
       val prover = getProver()
       val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
       val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, Boxes.getRandomHexString()).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, Boxes.getRandomHexString()).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
       val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
       val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -181,7 +181,7 @@ class ContractTest extends TestSuite {
       val prover = getProver()
       val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
       val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
       val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 100L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
       val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -219,7 +219,7 @@ class ContractTest extends TestSuite {
       val prover = getProver()
       val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
       val otherWID = Base16.decode(Boxes.getRandomHexString()).get
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repoBox = Boxes.createRepo(ctx, 100000, 5801L, 100L, Seq(otherWID), Seq(5800L)).convertToInputWith(Boxes.getRandomHexString(), 0)
       val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, Seq(otherWID, repoBox.getId.getBytes), Seq(5800L, 100L))
       val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
@@ -749,25 +749,32 @@ class ContractTest extends TestSuite {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
         val WIDs = generateRandomWIDList(7)
         val repoBox = Boxes.createRepo(ctx, 100000, 32001L, 100L, WIDs, Seq(100L, 120L, 140L, 20L, 40L, 250L, 123L)).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val guardBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._3.GuardNFT, 1L))
-        val inputs = Seq(repoBox, guardBox)
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val lockBox = Boxes.createLockBox(ctx, Configs.minBoxValue * 10).convertToInputWith(Boxes.getRandomHexString(), 0)
         val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
+          .value(Configs.minBoxValue)
           .contract(ctx.newContract(prover.getAddress.asP2PK().script))
           .registers(
             repoBox.getRegisters.get(0),
             repoBox.getRegisters.get(1),
           )
-          .tokens(new ErgoToken(networkConfig._3.GuardNFT, 1L))
-        boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
-        repoBox.getTokens.forEach(token => boxBuilder.tokens(token))
-        val tx = ctx.newTxBuilder().addInputs(repoBox, guardBox)
+          .tokens(new ErgoToken(networkConfig._2.tokens.RepoConfigNFT, 1))
+        val tx = ctx.newTxBuilder().addInputs(repoConfig, repoBox, lockBox)
           .fee(Configs.fee)
+          .addDataInputs(guardBox)
           .addOutputs(boxBuilder.build())
           .sendChangeTo(prover.getAddress)
           .build()
-        prover.sign(tx)
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        multiSigProver.sign(tx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
@@ -791,7 +798,7 @@ class ContractTest extends TestSuite {
     networkConfig._1.ergoClient.execute(ctx => {
       try {
         val prover = getProver()
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
         val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
         val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
@@ -803,9 +810,8 @@ class ContractTest extends TestSuite {
           .registers(
             repoConfig.getRegisters.get(0),
           )
-          .tokens(new ErgoToken(networkConfig._3.GuardNFT, 1L))
         boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
-        val tx = ctx.newTxBuilder().addInputs(guardBox, repoConfig, lockBox)
+        val tx = ctx.newTxBuilder().addInputs(repoConfig, lockBox)
           .fee(Configs.fee)
           .addDataInputs(guardBox)
           .addOutputs(boxBuilder.build())
@@ -978,7 +984,7 @@ class ContractTest extends TestSuite {
         val prover = getProver()
         val WIDs = generateRandomWIDList(5)
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -1004,7 +1010,7 @@ class ContractTest extends TestSuite {
         val commitment = new Commitment()
         val prover = getProver()
         val WIDs = generateRandomWIDList(7)
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = WIDs.slice(0, 4).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 4), commitment, 40L)
@@ -1047,7 +1053,7 @@ class ContractTest extends TestSuite {
         val allWIDs = WIDs ++ WIDs2
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
         val repo2 = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs2, Seq(10L, 30L, 20L, 35L, 5L), 1).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = allWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, allWIDs, commitment, 100L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -1090,7 +1096,7 @@ class ContractTest extends TestSuite {
         val allWIDs = (WIDs ++ WIDs2).slice(0, 6)
         val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
         val repo2 = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs2, Seq(10L, 30L, 20L, 35L, 5L), 1).convertToInputWith(Boxes.getRandomHexString(), 1)
-        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+        val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
         val commitments = allWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
         val trigger = Boxes.createTriggerEventBox(ctx, allWIDs, commitment, 60L)
         val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -1116,7 +1122,7 @@ class ContractTest extends TestSuite {
       val commitment = new Commitment()
       val prover = getProver()
       val WIDs = generateRandomWIDList(7)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 25L, 5L, 4L, 6L)).convertToInputWith(Boxes.getRandomHexString(), 1)
       val commitments = WIDs.slice(0, 3).map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
       val trigger = Boxes.createTriggerEventBox(ctx, WIDs.slice(0, 3), commitment, 30L)
@@ -1154,7 +1160,7 @@ class ContractTest extends TestSuite {
       val WIDs2 = generateRandomWIDList(5)
       val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repo2 = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs2, Seq(10L, 30L, 20L, 35L, 5L), 1).convertToInputWith(Boxes.getRandomHexString(), 1)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
       val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
       val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
       val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -1189,7 +1195,7 @@ class ContractTest extends TestSuite {
       val commitment = new Commitment()
       val prover = getProver()
       val WIDs = generateRandomWIDList(5)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
       val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
       val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L, Some(4))
@@ -1224,7 +1230,7 @@ class ContractTest extends TestSuite {
       val commitment = new Commitment()
       val prover = getProver()
       val WIDs = generateRandomWIDList(5)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
       val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
       val trigger = Boxes.createFakeTriggerEventBox(ctx, WIDs, commitment, 50L)
@@ -1261,7 +1267,7 @@ class ContractTest extends TestSuite {
       val prover = getProver()
       val WIDs = generateRandomWIDList(5)
       val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, Boxes.getRandomHexString()).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, Boxes.getRandomHexString()).convertToInputWith(Boxes.getRandomHexString(), 1)
       val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
       val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 50L)
       val feeBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong)
@@ -1283,7 +1289,7 @@ class ContractTest extends TestSuite {
       val commitment = new Commitment()
       val prover = getProver()
       val WIDs = generateRandomWIDList(7)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repo = Boxes.createRepoWithTokens(
         ctx,
         1000L,
@@ -1346,7 +1352,7 @@ class ContractTest extends TestSuite {
         networkConfig._2.tokens.AwcNFT,
         1
       ).convertToInputWith(Boxes.getRandomHexString(), 1)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, 2)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT, 2)
         .convertToInputWith(Boxes.getRandomHexString(), 1)
       val commitments = allWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L)
         .convertToInputWith(Boxes.getRandomHexString(), 1))
@@ -1371,7 +1377,7 @@ class ContractTest extends TestSuite {
       val commitment = new Commitment()
       val prover = getProver()
       val WIDs = generateRandomWIDList(7)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repo = Boxes.createRepoWithTokens(
         ctx,
         1000L,
@@ -1405,7 +1411,7 @@ class ContractTest extends TestSuite {
       val commitment = new Commitment()
       val prover = getProver()
       val WIDs = generateRandomWIDList(5)
-      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT).convertToInputWith(Boxes.getRandomHexString(), 1)
       val repo = Boxes.createRepo(ctx, 1000L, 10001L, 100L, WIDs, Seq(10L, 30L, 20L, 35L, 5L)).convertToInputWith(Boxes.getRandomHexString(), 1)
       val commitments = WIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
       val trigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 48L)

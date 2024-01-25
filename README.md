@@ -214,7 +214,7 @@ The cleanup service box with its unique token should exist in both fraud detecti
 ### D. Service Update Procedure
 
 #### 1. X-RWT Repo Update
-Upon any update on the bridge, the X-RWT Repo and X-Repo config may need to receive updates accordingly. Then both these boxes can be updated in a transaction containing the guard NFT. The guards should compromise on the update and create a new box with the updated information. This updating can be done only if the guard NFT is spent on the updating transaction. Since guard NFT resides in a guard multi-sig address, it means that they could agree on the new setting.
+Upon any update on the bridge, the X-RWT Repo and X-Repo config may need to receive updates accordingly. Then both these boxes can be updated in a transaction with the guard NFT in data input. The guards should compromise on the update and create a new box with the updated information. This updating can be done only if a quorum of guards sign the update transaction.
 
 Repo Config store some necessary configs related to a bridge, and it may receive updates periodically. It should keep track of the watchers and tune the maximum watcher counts and watcher quorum percentage based on the network X status.
 

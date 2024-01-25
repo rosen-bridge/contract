@@ -9,9 +9,9 @@
   // 2: RSN
   // 3: X-AWC NFT
 
-  val GuardNFT = fromBase64("GUARD_NFT");
+  val repoConfigNft = fromBase64("REPO_CONFIG_NFT");
   val watcherCollateralScriptHash = fromBase64("WATCHER_COLLATERAL_SCRIPT_HASH");
-  if(OUTPUTS(0).tokens(0)._1 == GuardNFT){
+  if(OUTPUTS(0).tokens(0)._1 == repoConfigNft){
     // RWT Repo Update transaction
     sigmaProp(true)
   } else {
@@ -67,8 +67,7 @@
               outWIDBox.tokens(0)._1 == repo.id,
               outWIDBox.tokens(0)._2 >= 3,
               // Repo config checks
-              repoConfigBox.tokens(0)._1 == SELF.tokens(0)._1,
-              repoConfigBox.tokens(1)._1 == SELF.tokens(1)._1,
+              repoConfigBox.tokens(0)._1 == repoConfigNft,
               // Collateral checks
               blake2b256(watcherCollateral.propositionBytes) == watcherCollateralScriptHash,
               watcherCollateral.R4[Coll[Byte]].get == repo.id,
