@@ -133,7 +133,7 @@ class ContractTest extends TestSuite {
    * @scenario
    * - mock user input
    * - mock input repo box with 100 AWC
-   * - mock invalid repoConfig box as data input
+   * - mock invalid repoConfig box with invalid NFT as data input
    * - mock valid output repo box with 100 AWC and collateral box
    * - mock valid output wid and permit box
    * - build and sign the get permit transaction
@@ -781,8 +781,8 @@ class ContractTest extends TestSuite {
    * @dependencies
    * @scenario
    * - mock repo config
-   * - mock commitments for an event for each wid
    * - mock guards secrets, public keys and box with the guard NFT
+   * - mock lock box to provide transaction fee
    * - build and sign the create trigger transaction
    * @expected
    * - successful sign for repo config redeem transaction
@@ -1029,9 +1029,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction should sign successfully using multiple repo boxes, contributed by all watchers
    * @dependencies
    * @scenario
-   * - mock two commitment wid list
-   * - mock repo config and two repo boxes with the wid list as data input
-   * - mock commitments for an event for each wid
+   * - mock two commitment wid list (5 wid each)
+   * - mock two repo boxes with the wid list as data input (5 wid each, total 10 watchers)
+   * - mock repo config (requiring minimum 6 commitments for 10 watchers)
+   * - mock commitments for an event for each wid (for all 10 watcher)
    * - mock valid trigger
    * - build and sign the create trigger transaction
    * @expected
@@ -1072,9 +1073,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction should sign successfully using multiple repo boxes, contributed by minimum watchers
    * @dependencies
    * @scenario
-   * - mock two commitment wid list
-   * - mock repo config and two repo boxes with the wid list as data input
-   * - mock commitments for an event for minimum number of watchers
+   * - mock two commitment wid list (5 wid each)
+   * - mock two repo boxes with the wid list as data input (5 wid each, total 10 watchers)
+   * - mock repo config (requiring minimum 6 commitments for 10 watchers)
+   * - mock commitments for an event for minimum number of watchers (just 6 watchers)
    * - mock valid trigger
    * - build and sign the create trigger transaction
    * @expected
@@ -1138,9 +1140,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction signing should throw error when contributed by less than minimum watchers using multiple repo boxes
    * @dependencies
    * @scenario
-   * - mock two commitment wid list
-   * - mock repo config and two repo boxes with the wid list as data input
-   * - mock commitments for an event for less than minimum number of watchers
+   * - mock two commitment wid list (5 wid each)
+   * - mock two repo boxes with the wid list as data input (5 wid each, total 10 watchers)
+   * - mock repo config (requiring minimum 6 commitments for 10 watchers)
+   * - mock commitments for an event for less than minimum number of watchers (commitment by just 5 watchers)
    * - mock valid trigger
    * - build and sign the create trigger transaction
    * @expected
@@ -1176,10 +1179,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction signing should throw error when the commitment count is not valid in trigger box
    * @dependencies
    * @scenario
-   * - mock commitment wid list
-   * - mock repo box with the wid list as data input
-   * - mock commitments for an event for each wid
-   * - mock invalid trigger with wrong commitment count
+   * - mock commitment wid list (5 wid)
+   * - mock repo config and repo box with the wid list as data input
+   * - mock commitments for an event for each wid (for all 5 wid)
+   * - mock invalid trigger with wrong commitment count (4 commitment)
    * - build and sign the create trigger transaction
    * @expected
    * - sign error for invalid commitment count in trigger box
@@ -1211,10 +1214,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction signing should throw error when the wid list digest is invalid in trigger box
    * @dependencies
    * @scenario
-   * - mock commitment wid list
-   * - mock repo box with the wid list as data input
-   * - mock commitments for an event for each wid
-   * - mock invalid trigger with wrong wid list digest
+   * - mock commitment wid list (5 wid)
+   * - mock repo config and repo box with the wid list as data input
+   * - mock commitments for an event for each wid (for all 5 wid)
+   * - mock invalid trigger with wrong wid list digest (not considering one wid in digest)
    * - build and sign the create trigger transaction
    * @expected
    * - sign error for invalid wid list digest in trigger box
@@ -1246,10 +1249,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction signing should throw error when using multiple repo boxes with invalid repoConfig from another chain
    * @dependencies
    * @scenario
-   * - mock two commitment wid list
-   * - mock repo config and one valid repo box with the wid list as data input
-   * - mock an invalid repo box from another chain as data input
-   * - mock commitments for an event for less than minimum number of watchers
+   * - mock two commitment wid list (5 wid
+   * - mock invalid repo config from another chain (different RWT)
+   * - mock valid repo box with the wid list as data input
+   * - mock commitments for an event for each wid (for all 5 wid)
    * - mock valid trigger
    * - build and sign the create trigger transaction
    * @expected
