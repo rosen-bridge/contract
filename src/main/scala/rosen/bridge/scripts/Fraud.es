@@ -9,14 +9,14 @@
   val outputWithToken = OUTPUTS.slice(1, OUTPUTS.size).filter { (box: Box) => box.tokens.size > 0 }
   val outputWithRWT = outputWithToken.exists { (box: Box) => box.tokens.exists { (token: (Coll[Byte], Long)) => token._1 == SELF.tokens(0)._1 } }
   // RSN Slash
-  // [Repo, Fraud, Cleanup] => [Repo, Cleanup, Slashed]
+  // [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup, Slashed]
   sigmaProp(
     allOf(
       Coll(
         outputWithRWT == false,
-        SELF.id == INPUTS(1).id,
+        SELF.id == INPUTS(2).id,
         INPUTS(0).tokens(0)._1 == repoNFT,
-        INPUTS(2).tokens(0)._1 == cleanupNFT,
+        INPUTS(3).tokens(0)._1 == cleanupNFT,
       )
     )
   )

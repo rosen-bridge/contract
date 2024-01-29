@@ -7,19 +7,22 @@
   val repoNFT = fromBase64("REPO_NFT");
   val commitmentScriptHash = fromBase64("COMMITMENT_SCRIPT_HASH");
   val WID = SELF.R4[Coll[Coll[Byte]]].get
-  val outputWithToken = OUTPUTS.slice(2, OUTPUTS.size).filter { (box: Box) => box.tokens.size > 0 }
+  val outputWithToken = OUTPUTS.slice(3, OUTPUTS.size).filter { 
+    (box: Box) => 
+      box.tokens.size > 0
+    } // TODO: Fix attack
   val outputWithRWT = outputWithToken.exists { (box: Box) => box.tokens.exists { (token: (Coll[Byte], Long)) => token._1 == SELF.tokens(0)._1 } }
-  val secondBoxHasRWT = OUTPUTS(1).tokens.exists { (token: (Coll[Byte], Long)) => token._1 == SELF.tokens(0)._1 }
+  val hasOuputPermit = OUTPUTS(2).tokens.exists { (token: (Coll[Byte], Long)) => token._1 == SELF.tokens(0)._1 }
   if(OUTPUTS(0).tokens(0)._1 == repoNFT){
     // Updating Permit (Return or receive more tokens)
-    // [Repo, Permit(SELF), WID] => [Repo, Permit(optional), WID(+userChange)]
-    val outputPermitCheck = if(secondBoxHasRWT){
+    // [Repo, Collateral, Permit(SELF), WID] => [Repo, Collateral, Permit(optional), WID(+userChange)]
+    val outputPermitCheck = if(hasOuputPermit){
       allOf(
         Coll(
-          SELF.id == INPUTS(1).id,
-          OUTPUTS(1).tokens(0)._1 == SELF.tokens(0)._1,
-          OUTPUTS(1).propositionBytes == SELF.propositionBytes,
-          SELF.R4[Coll[Coll[Byte]]].get == OUTPUTS(1).R4[Coll[Coll[Byte]]].get
+          SELF.id == INPUTS(2).id,
+          OUTPUTS(2).tokens(0)._1 == SELF.tokens(0)._1,
+          OUTPUTS(2).propositionBytes == SELF.propositionBytes,
+          SELF.R4[Coll[Coll[Byte]]].get == OUTPUTS(2).R4[Coll[Coll[Byte]]].get
         )
       )
     }else{
@@ -29,8 +32,8 @@
       allOf(
         Coll(
           outputWithRWT == false,
-          INPUTS(2).tokens(0)._1 == WID(0),
-          INPUTS(2).tokens(0)._2 >= 2,
+          INPUTS(3).tokens(0)._1 == WID(0),
+          INPUTS(3).tokens(0)._2 >= 2,
           outputPermitCheck,
         )
       )

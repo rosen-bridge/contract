@@ -55,18 +55,8 @@
     val EventBoxErgs = commitmentBoxes.map { (box: Box) => box.value }.fold(0L, { (a: Long, b: Long) => a + b })
     val repoConfigBox = CONTEXT.dataInputs(0)
     val repoConfig = repoConfigBox.R4[Coll[Long]].get
-    val repos = CONTEXT.dataInputs.slice(1, CONTEXT.dataInputs.size)
-    val repoValidation = allOf(Coll(
-      repos.size == repoConfig(6),
-      repos.zip(repos.indices).forall {
-        (data: (Box, Int)) => {
-          data._1.R5[Coll[Long]].get(0) == data._2 &&
-          data._1.tokens(0)._1 == repoNFT &&
-          data._1.tokens(1)._1 == SELF.tokens(0)._1
-        }
-      }
-    ))
-    val watcherCount = repos.fold(0L, {(total: Long, b: Box) => b.R5[Coll[Long]].get.size - 1L + total})
+    val repo = CONTEXT.dataInputs(1)
+    val watcherCount = repo.R5[Coll[Long]].get(0)
     val eventId = blake2b256(trigger.R5[Coll[Coll[Byte]]].get(0))
     val maxCommitment = repoConfig(3)
     val requiredCommitmentFromFormula: Long = repoConfig(2) + repoConfig(1) * watcherCount / 100L
@@ -79,8 +69,9 @@
       allOf(
         Coll(
           //check repo
-          repoValidation,
           repoConfigBox.tokens(0)._1 == repoConfigNft,
+          repo.tokens(0)._1 == repoNFT,
+          repo.tokens(1)._1 == SELF.tokens(0)._1,
           // prevent duplicate commitments
           myWIDCommitments.size == 1,
           // verify trigger params
