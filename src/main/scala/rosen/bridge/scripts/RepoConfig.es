@@ -16,7 +16,9 @@
     allOf(
       Coll(
         verifyGuard,
-        atLeast(updateSignCount, signedColl)
+        atLeast(updateSignCount, signedColl),
+        OUTPUTS(0).tokens(0)._1 == SELF.tokens(0)._1,
+        OUTPUTS(0).tokens(0)._2 == SELF.tokens(0)._2,
       )
     )
   )

@@ -810,6 +810,7 @@ class ContractTest extends TestSuite {
           .registers(
             repoConfig.getRegisters.get(0),
           )
+          .tokens(new ErgoToken(networkConfig._2.tokens.RepoConfigNFT, 1))
         boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
         val tx = ctx.newTxBuilder().addInputs(repoConfig, lockBox)
           .fee(Configs.fee)
