@@ -140,17 +140,16 @@ object Boxes {
   }
 
   def createWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte], rwtCount: Long): OutBox = {
-    ctx.newTxBuilder().outBoxBuilder()
+    val builder = ctx.newTxBuilder().outBoxBuilder()
       .value(erg)
-      .tokens(
-        new ErgoToken(networkConfig._2.tokens.AwcNFT, 1),
-        new ErgoToken(networkConfig._3.RSN, rsn)
-      )
+      .tokens(new ErgoToken(networkConfig._2.tokens.AwcNFT, 1))
       .contract(contracts.WatcherCollateral._1)
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
         ErgoValueBuilder.buildFor(rwtCount),
-      ).build()
+      )
+    if (rsn > 0) builder.tokens(new ErgoToken(networkConfig._3.RSN, rsn))
+    builder.build()
   }
 
   def createFakeWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte], rwtCount: Long): OutBox = {
@@ -194,11 +193,11 @@ object Boxes {
     repoBuilder.build()
   }
 
-  def createRepoConfigs(
-                            ctx: BlockchainContext,
-                            nftId: String,
-                            repoCount: Int = 1
-                          ): OutBox = {
+  def createRepoConfigsWithList(
+                                 ctx: BlockchainContext,
+                                 nftId: String,
+                                 configs: Array[Long]
+                               ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
       .value(Configs.minBoxValue)
@@ -207,9 +206,17 @@ object Boxes {
       )
       .contract(contracts.RepoConfig._1)
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100, repoCount))),
+        ErgoValueBuilder.buildFor(Colls.fromArray(configs)),
       )
     repoBuilder.build()
+  }
+
+  def createRepoConfigs(ctx: BlockchainContext, nft: String = networkConfig._2.tokens.RepoConfigNFT): OutBox = {
+    createRepoConfigsWithList(ctx, nft, Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))
+  }
+
+  def createRepoConfigsInput(ctx: BlockchainContext): InputBox = {
+    createRepoConfigs(ctx).convertToInputWith(Boxes.getRandomHexString(), 1)
   }
 
   def createRepo(
@@ -222,31 +229,14 @@ object Boxes {
     createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, watcherCount, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT)
   }
 
-  def createRepoWithR6(
-                        ctx: BlockchainContext,
-                        RWTCount: Long,
-                        RSNCount: Long,
-                        AwcCount: Long,
-                        users: Seq[Array[Byte]],
-                        userRWT: Seq[Long],
-                        R6: Int
-                      ): OutBox = {
-    val txB = ctx.newTxBuilder()
-    val repoBuilder = txB.outBoxBuilder()
-      .value(Configs.minBoxValue)
-      .tokens(
-        new ErgoToken(networkConfig._3.RepoNFT, 1),
-        new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount),
-        new ErgoToken(networkConfig._3.RSN, RSNCount),
-        new ErgoToken(networkConfig._2.tokens.AwcNFT, AwcCount)
-      )
-      .contract(contracts.RWTRepo._1)
-      .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(R6)
-      )
-    repoBuilder.build()
+  def createRepoInput(
+                       ctx: BlockchainContext,
+                       RWTCount: Long,
+                       RSNCount: Long,
+                       AwcCount: Long,
+                       watcherCount: Long,
+                     ): InputBox = {
+    createRepo(ctx, RWTCount, RSNCount, AwcCount, watcherCount).convertToInputWith(Boxes.getRandomHexString(), 0)
   }
 
   def createPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
