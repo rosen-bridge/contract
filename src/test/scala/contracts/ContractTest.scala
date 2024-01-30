@@ -803,7 +803,7 @@ class ContractTest extends TestSuite {
         val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
         val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
         val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val lockBox = Boxes.createLockBox(ctx, Configs.minBoxValue*10).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val lockBox = Boxes.createLockBox(ctx, Configs.minBoxValue * 10).convertToInputWith(Boxes.getRandomHexString(), 0)
         val inputs = Seq(repoConfig, guardBox)
         val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
           .contract(ctx.newContract(prover.getAddress.asP2PK().script))
@@ -821,11 +821,55 @@ class ContractTest extends TestSuite {
         val multiSigProverBuilder = ctx.newProverBuilder()
         secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
         val multiSigProver = multiSigProverBuilder.build()
-          multiSigProver.sign(tx)
+        multiSigProver.sign(tx)
       } catch {
         case exp: Throwable =>
           println(exp.toString)
           fail("transaction not signed")
+      }
+    })
+  }
+
+
+  /**
+   * @target redeem repoConfig transaction signing should throw error when signed by less than required guards
+   * @dependencies
+   * @scenario
+   * - mock repo config
+   * - mock commitments for an event for each wid
+   * - mock guards secrets, public keys and box with the guard NFT requiring at least 6 signature for update
+   * - build and sign the create trigger transaction with only 5 secret
+   * @expected
+   * - sign error for repo config redeem transaction
+   */
+  property("redeem repoConfig transaction signing should throw error when signed by less than required guards") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val repoConfig = Boxes.createRepoConfigs(ctx, networkConfig._2.tokens.RepoConfigNFT, 2).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val secrets = (0 until 10).map(ind => Utils.randBigInt.bigInteger)
+      val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+      val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+      val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val lockBox = Boxes.createLockBox(ctx, Configs.minBoxValue * 10).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val inputs = Seq(repoConfig, guardBox)
+      val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
+        .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+        .registers(
+          repoConfig.getRegisters.get(0),
+        )
+        .tokens(new ErgoToken(networkConfig._2.tokens.RepoConfigNFT, 1))
+      boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
+      val tx = ctx.newTxBuilder().addInputs(repoConfig, lockBox)
+        .fee(Configs.fee)
+        .addDataInputs(guardBox)
+        .addOutputs(boxBuilder.build())
+        .sendChangeTo(prover.getAddress)
+        .build()
+      val multiSigProverBuilder = ctx.newProverBuilder()
+      secrets.slice(0, 5).map(item => multiSigProverBuilder.withDLogSecret(item))
+      val multiSigProver = multiSigProverBuilder.build()
+      assertThrows[AnyRef] {
+        multiSigProver.sign(tx)
       }
     })
   }
