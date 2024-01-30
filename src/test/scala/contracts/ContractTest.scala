@@ -169,7 +169,7 @@ class ContractTest extends TestSuite {
    * @scenario
    * - mock user input
    * - mock input repo box with 100 AWC
-   * - mock invalid repoConfig box as data input
+   * - mock invalid repoConfig box with invalid NFT as data input
    * - mock valid output repo box with 100 AWC and collateral box
    * - mock valid output wid and permit box
    * - build and sign the get permit transaction
@@ -938,8 +938,8 @@ class ContractTest extends TestSuite {
    * @dependencies
    * @scenario
    * - mock repo config
-   * - mock commitments for an event for each wid
    * - mock guards secrets, public keys and box with the guard NFT
+   * - mock lock box to provide transaction fee
    * - build and sign the create trigger transaction
    * @expected
    * - successful sign for repo config redeem transaction
@@ -960,6 +960,7 @@ class ContractTest extends TestSuite {
           .registers(
             repoConfig.getRegisters.get(0),
           )
+          .tokens(new ErgoToken(networkConfig._2.tokens.RepoConfigNFT, 1))
         boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
         val tx = ctx.newTxBuilder().addInputs(repoConfig, lockBox)
           .fee(Configs.fee)
@@ -975,6 +976,50 @@ class ContractTest extends TestSuite {
         case exp: Throwable =>
           println(exp.toString)
           fail("transaction not signed")
+      }
+    })
+  }
+
+
+  /**
+   * @target redeem repoConfig transaction signing should throw error when signed by less than required guards
+   * @dependencies
+   * @scenario
+   * - mock repo config
+   * - mock commitments for an event for each wid
+   * - mock guards secrets, public keys and box with the guard NFT requiring at least 6 signature for update
+   * - build and sign the create trigger transaction with only 5 secret
+   * @expected
+   * - sign error for repo config redeem transaction
+   */
+  property("redeem repoConfig transaction signing should throw error when signed by less than required guards") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val repoConfig = Boxes.createRepoConfigsInput(ctx)
+      val secrets = (0 until 10).map(ind => Utils.randBigInt.bigInteger)
+      val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+      val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+      val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val lockBox = Boxes.createLockBox(ctx, Configs.minBoxValue * 10).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val inputs = Seq(repoConfig, guardBox)
+      val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
+        .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+        .registers(
+          repoConfig.getRegisters.get(0),
+        )
+        .tokens(new ErgoToken(networkConfig._2.tokens.RepoConfigNFT, 1))
+      boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
+      val tx = ctx.newTxBuilder().addInputs(repoConfig, lockBox)
+        .fee(Configs.fee)
+        .addDataInputs(guardBox)
+        .addOutputs(boxBuilder.build())
+        .sendChangeTo(prover.getAddress)
+        .build()
+      val multiSigProverBuilder = ctx.newProverBuilder()
+      secrets.slice(0, 5).map(item => multiSigProverBuilder.withDLogSecret(item))
+      val multiSigProver = multiSigProverBuilder.build()
+      assertThrows[AnyRef] {
+        multiSigProver.sign(tx)
       }
     })
   }
@@ -1208,10 +1253,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction signing should throw error when the commitment count is not valid in trigger box
    * @dependencies
    * @scenario
-   * - mock commitment wid list
-   * - mock repo box with the wid list as data input
-   * - mock commitments for an event for each wid
-   * - mock invalid trigger with wrong commitment count
+   * - mock commitment wid list (5 wid)
+   * - mock repo config and repo box with the wid list as data input
+   * - mock commitments for an event for each wid (for all 5 wid)
+   * - mock invalid trigger with wrong commitment count (4 commitment)
    * - build and sign the create trigger transaction
    * @expected
    * - sign error for invalid commitment count in trigger box
@@ -1243,10 +1288,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction signing should throw error when the wid list digest is invalid in trigger box
    * @dependencies
    * @scenario
-   * - mock commitment wid list
-   * - mock repo box with the wid list as data input
-   * - mock commitments for an event for each wid
-   * - mock invalid trigger with wrong wid list digest
+   * - mock commitment wid list (5 wid)
+   * - mock repo config and repo box with the wid list as data input
+   * - mock commitments for an event for each wid (for all 5 wid)
+   * - mock invalid trigger with wrong wid list digest (not considering one wid in digest)
    * - build and sign the create trigger transaction
    * @expected
    * - sign error for invalid wid list digest in trigger box
@@ -1278,9 +1323,10 @@ class ContractTest extends TestSuite {
    * @target create trigger transaction signing should throw error when with invalid repoConfig from another chain
    * @dependencies
    * @scenario
-   * - mock two commitment wid list
-   * - mock repo config and one valid repo box with the wid list as data input
-   * - mock commitments for an event for less than minimum number of watchers
+   * - mock two commitment wid list (5 wid
+   * - mock invalid repo config from another chain (different RWT)
+   * - mock valid repo box with the wid list as data input
+   * - mock commitments for an event for each wid (for all 5 wid)
    * - mock valid trigger
    * - build and sign the create trigger transaction
    * @expected
