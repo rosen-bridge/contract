@@ -40,17 +40,19 @@ Boxes governed by this contract can only be spent when the Guard NFT is included
 To perform asset transfers and configuration updates, guards must spend this box by signing transactions with their secrets. 
 As guard public keys are stored within this box's registers, updating the guard set in the Ergo network is as straightforward as executing a standard multi-signature transaction. This eliminates the need to alter bridge addresses or transfer assets to a new wallet.
 
-3. **X-RWT Repo:** This contract governs the system configuration for each supported chain. It is responsible for tracking the corresponding X-RWT tokens and locking RSNs to emit new X-RWTs. It stores the number of required X-RWTs for each event commitment, the quorum percentage of watchers, the maximum needed event commitment count for this chain, and needed watcher collateral in ERG and RSN. Additionally, it maintains a list of available watcher WIDs alongside their respective X-RWT token counts.
+3. **X-RWT Repo:** It is responsible for tracking the corresponding X-RWT tokens and locking RSNs to emit new X-RWTs. Additionally, it maintains a list of available watcher WIDs alongside their respective X-RWT token counts.
 
-4. **Watcher Collateral:** Watchers are required to provide a security deposit or collateral as part of their participation in the bridge. This collateral is safely kept in this contract. Whenever the watcher redeemed its permits, the collateral will automatically returned to their address.
+4. **X-Repo Config:** This contract governs the system configuration for each supported chain. It stores the number of required X-RWTs for each event commitment, the quorum percentage of watchers, the maximum needed event commitment count for this chain, and needed watcher collateral in ERG and RSN. It also stores the number of RWT Repo boxes for it's chain.
 
-5. **X-Watcher Permit:** When a new watcher registers, their X-RWT tokens are locked within this contract. Furthermore, the contract stores the WID (Watcher Identifier) in its registers. It can only be spent if the corresponding WID token exists within the spending transaction.
+5. **Watcher Collateral:** Watchers are required to provide a security deposit or collateral as part of their participation in the bridge. This collateral is safely kept in this contract. Whenever the watcher redeems its permits, the collateral will automatically returned to their address.
 
-6. **X-Event Commitment:** This contract comes into play when a watcher detects a new event on the observing chain. Then, the watcher creates a report commitment with the event data digest.
+6. **X-Watcher Permit:** When a new watcher registers, their X-RWT tokens are locked within this contract. Furthermore, the contract stores the WID (Watcher Identifier) in its registers. It can only be spent if the corresponding WID token exists within the spending transaction.
 
-7. **X-Event Trigger:** A watcher creates the event trigger after a quorum of watchers reported the same event. This action involves spending all commitments and revealing the event's contents. The event trigger also stores the WIDs of the reporting watchers.
+7. **X-Event Commitment:** This contract comes into play when a watcher detects a new event on the observing chain. Then, the watcher creates a report commitment with the event data digest.
 
-8. **X-Fraud:** Occasionally, watchers may create erroneous or fraudulent reports. Guards will process these events if a watcher generate the event trigger (after a quorum of watchers generated the corresponding commitment). However, guards will disregard these triggers as they are not verifiable. After a while, the cleanup service collects these faulty triggers and transfers their associated X-RWT tokens to the fraud contract as a form of penalty.
+8. **X-Event Trigger:** A watcher creates the event trigger after a quorum of watchers reported the same event. This action involves spending all commitments and revealing the event's contents. The event trigger also stores the digest of the reporting watchers' wid list.
+
+9. **X-Fraud:** Occasionally, watchers may create erroneous or fraudulent reports. Guards will process these events if a watcher generates the event trigger (after a quorum of watchers generated the corresponding commitment). However, guards will disregard these triggers as they are not verifiable. After a while, the cleanup service collects these faulty triggers and transfers their associated X-RWT tokens to the fraud contract as a form of penalty.
 
 
 ### Data
@@ -96,14 +98,7 @@ As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to rec
 </p>
 
 
-#### 2- Merge Watcher Permits
-In the payment procedure-reward distribution phase (B.4), you can see guards will pay back the X-RWT token besides the watcher reward after accepting the event triggers. A watcher can spend all these boxes with their WID token as authentication. He may want to merge these boxes and extract the collected rewards. Also, he can create a new commitment report while merging boxes (See B.2).
-
-<p align="center">
-<img src="images/Merge_Permits.png">
-</p>
-
-#### 3- Return Watcher Permit
+#### 2- Return Watcher Permit
 At any given time, a watcher may wish to withdraw their RSN tokens, whether for the purpose of selling them or watching a different chain. To facilitate this, the watcher must return their watcher permits to unlock the X-RWTs and initiate the withdrawal of RSN tokens.
 
 In this transaction, the watcher is required to update the token count associated with their WID (Watcher Identifier Token).
@@ -150,7 +145,7 @@ In this phase, a watcher creates the event trigger after a quorum of watchers re
 
 At first, the watcher finds all commitments with the same id. Then, he verifies the commitments with the event data and the issuer's WID. Finally, if there are sufficient verified commitments, he spends them all and creates the event trigger. Created event trigger stores:
 
-* List of all WIDs merged in this transaction
+* Digest of all WIDs contributed to create this trigger
 * Event data
 
 <p align="center">
@@ -219,8 +214,9 @@ The cleanup service box with its unique token should exist in both fraud detecti
 ### D. Service Update Procedure
 
 #### 1. X-RWT Repo Update
-X-RWT repo stores some necessary configs related to a bridge. It should keep track of the watchers and tune the maximum watcher counts and watcher quorum percentage based on the network X status.
-Thus this box may need to be updated at any time. The guards should compromise on the updated setting and create a new box with the updated information. This updating can be done only if the guard NFT is spent on the updating transaction. Since guard NFT resides in a guard multi-sig address, it means that they could agree on the new setting.
+Upon any update on the bridge, the X-RWT Repo and X-Repo config may need to receive updates accordingly. Then both these boxes can be updated in a transaction with the guard NFT in data input. The guards should compromise on the update and create a new box with the updated information. This updating can be done only if a quorum of guards sign the update transaction.
+
+Repo Config store some necessary configs related to a bridge, and it may receive updates periodically. It should keep track of the watchers and tune the maximum watcher counts and watcher quorum percentage based on the network X status.
 
 <p align="center">
 <img src="images/Repo_Update.png">

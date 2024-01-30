@@ -17,9 +17,10 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
   lazy val Fraud: (ErgoContract, String) = generateFraudContract()
   lazy val Lock: (ErgoContract, String) = generateLockContract()
   lazy val GuardSign: (ErgoContract, String) = generateGuardSignContract()
+  lazy val RepoConfig: (ErgoContract, String) = generateRepoConfigContract()
 
   def readScript(path: String) = {
-    val scriptSource: BufferedSource = Source.fromFile("src/main/scala/rosen/bridge/scripts/"+ path, "utf-8")
+    val scriptSource: BufferedSource = Source.fromFile("src/main/scala/rosen/bridge/scripts/" + path, "utf-8")
     val script: String = scriptSource.getLines.mkString("\n")
     scriptSource.close()
     script
@@ -35,7 +36,8 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
       ("guardSign", Json.fromString(GuardSign._2)),
       ("Commitment", Json.fromString(Commitment._2)),
       ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2)),
-      ("WatcherCollateral", Json.fromString(WatcherCollateral._2))
+      ("WatcherCollateral", Json.fromString(WatcherCollateral._2)),
+      ("RepoConfig", Json.fromString(RepoConfig._2)),
     ))
   }
 
@@ -70,7 +72,7 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
       val watcherPermitHash = Base64.encode(Utils.getContractScriptHash(WatcherPermit._1))
       val watcherCollateralHash = Base64.encode(Utils.getContractScriptHash(WatcherCollateral._1))
       val RwtRepoScript = readScript("RwtRepo.es")
-        .replace("GUARD_NFT", Base64.encode(Base16.decode(networkConfig._2.GuardNFT).get))
+        .replace("REPO_CONFIG_NFT", Base64.encode(Base16.decode(networkConfig._1.tokens.RepoConfigNFT).get))
         .replace("RSN_TOKEN", Base64.encode(Base16.decode(networkConfig._2.RSN).get))
         .replace("PERMIT_SCRIPT_HASH", watcherPermitHash)
         .replace("WATCHER_COLLATERAL_SCRIPT_HASH", watcherCollateralHash)
@@ -100,6 +102,7 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
       val triggerEvent = Base64.encode(Utils.getContractScriptHash(WatcherTriggerEvent._1))
       val commitmentScript = readScript("Commitment.es")
         .replace("REPO_NFT", Base64.encode(Base16.decode(networkConfig._2.RepoNFT).get))
+        .replace("REPO_CONFIG_NFT", Base64.encode(Base16.decode(networkConfig._1.tokens.RepoConfigNFT).get))
         .replace("EVENT_TRIGGER_SCRIPT_HASH", triggerEvent)
 
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), commitmentScript)
@@ -158,6 +161,18 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), guardSignScript)
       val address = Utils.getContractAddress(contract, ergoGeneralConfig.addressEncoder)
       println(s"guard sign address is : \t\t\t$address")
+      (contract, address)
+    })
+  }
+
+  private def generateRepoConfigContract(): (ErgoContract, String) = {
+    ergoGeneralConfig.ergoClient.execute(ctx => {
+      val testScript = readScript("RepoConfig.es")
+        .replace("GUARD_NFT", Base64.encode(Base16.decode(networkConfig._2.GuardNFT).get))
+      
+      val contract = ctx.compileContract(ConstantsBuilder.create().build(), testScript)
+      val address = Utils.getContractAddress(contract, ergoGeneralConfig.addressEncoder)
+      println(s"repo config address is : \t\t\t$address")
       (contract, address)
     })
   }

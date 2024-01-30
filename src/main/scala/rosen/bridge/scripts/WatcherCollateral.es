@@ -10,7 +10,7 @@
   val repo = INPUTS(0);
   val repoOut = OUTPUTS(0);
   val widBox = INPUTS(2);
-  val watcherIndex = repoOut.R7[Int].getOrElse(-1);
+  val watcherIndex = repoOut.R6[Int].getOrElse(-1);
   val watcherWID = SELF.R4[Coll[Byte]].get;
   sigmaProp(
     allOf(

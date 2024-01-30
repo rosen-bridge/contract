@@ -175,6 +175,7 @@ object Boxes {
                             nftId: String,
                             rwtId: String,
                             awcId: String,
+                            index: Long,
                           ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
@@ -188,8 +189,25 @@ object Boxes {
       .contract(contracts.RWTRepo._1)
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
+        ErgoValueBuilder.buildFor(Colls.fromArray((Seq(index) ++ userRWT).toArray)),
+      )
+    repoBuilder.build()
+  }
+
+  def createRepoConfigs(
+                            ctx: BlockchainContext,
+                            nftId: String,
+                            repoCount: Int = 1
+                          ): OutBox = {
+    val txB = ctx.newTxBuilder()
+    val repoBuilder = txB.outBoxBuilder()
+      .value(Configs.minBoxValue)
+      .tokens(
+        new ErgoToken(nftId, 1),
+      )
+      .contract(contracts.RepoConfig._1)
+      .registers(
+        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100, repoCount))),
       )
     repoBuilder.build()
   }
@@ -201,19 +219,20 @@ object Boxes {
                   AwcCount: Long,
                   users: Seq[Array[Byte]],
                   userRWT: Seq[Long],
+                  index: Int = 0
                 ): OutBox = {
     createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, users, userRWT,
-      networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT)
+      networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, index)
   }
 
-  def createRepoWithR7(
+  def createRepoWithR6(
                         ctx: BlockchainContext,
                         RWTCount: Long,
                         RSNCount: Long,
                         AwcCount: Long,
                         users: Seq[Array[Byte]],
                         userRWT: Seq[Long],
-                        R7: Int
+                        R6: Int
                       ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
@@ -228,8 +247,7 @@ object Boxes {
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq("ADA".getBytes()) ++ users).map(item => Colls.fromArray(item)).toArray)),
         ErgoValueBuilder.buildFor(Colls.fromArray((Seq(0L) ++ userRWT).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))),
-        ErgoValueBuilder.buildFor(R7)
+        ErgoValueBuilder.buildFor(R6)
       )
     repoBuilder.build()
   }
