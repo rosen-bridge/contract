@@ -1,7 +1,7 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Byte] Owner WID
-  // R5: Long locked RSN
+  // R4: Coll[Byte] = Owner WID
+  // R5: Long = locked RSN
   // ----------------- TOKENS
   // 0: X-AWC NFT
   // 0: RSN collateral

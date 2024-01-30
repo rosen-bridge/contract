@@ -248,7 +248,7 @@ object Boxes {
       .contract(contracts.WatcherPermit._1)
       .tokens(tokensSeq: _*)
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(WID)),
         // this value must exists in case of redeem commitment.
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(Array(0.toByte)).map(item => Colls.fromArray(item)).toArray)),
       )
@@ -295,7 +295,7 @@ object Boxes {
       .contract(contracts.Fraud._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(WID).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(WID))
       )
       .build()
   }
@@ -321,7 +321,7 @@ object Boxes {
       .contract(contracts.WatcherTriggerEvent._1)
       .tokens(new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount))
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(digest).map(item => Colls.fromArray(item)).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray(digest)),
         ErgoValueBuilder.buildFor(Colls.fromArray(commitment.partsArray().map(item => Colls.fromArray(item)))),
         ErgoValueBuilder.buildFor(Colls.fromArray(Utils.getContractScriptHash(contracts.WatcherPermit._1))),
         ErgoValueBuilder.buildFor(commitmentCount.getOrElse(WID.size))

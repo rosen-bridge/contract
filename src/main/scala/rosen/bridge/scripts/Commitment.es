@@ -20,10 +20,10 @@
         => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
       }
       .slice(0, trigger.R7[Int].get)
-      .map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
+      .map{(box:Box) => box.R4[Coll[Byte]].get}
     val permitBox = OUTPUTS.filter {(box:Box) =>
-      box.R4[Coll[Coll[Byte]]].isDefined &&
-      box.R4[Coll[Coll[Byte]]].get == myWID
+      box.R4[Coll[Byte]].isDefined &&
+      box.R4[Coll[Byte]].get == myWID
     }(0)
     val WIDExists =  WIDs.exists {(WID: Coll[Byte]) => myWID == Coll(WID)}
     sigmaProp(
@@ -78,7 +78,7 @@
           trigger.value >= EventBoxErgs,
           trigger.R6[Coll[Byte]].get == SELF.R7[Coll[Byte]].get,
           trigger.R7[Int].get == commitmentBoxes.size,
-          trigger.R4[Coll[Coll[Byte]]].get(0) == widListDigest,
+          trigger.R4[Coll[Byte]].get == widListDigest,
           // verify commitment to be correct
           blake2b256(eventData ++ myWID(0)) == SELF.R6[Coll[Byte]].get,
           // check event id
@@ -102,7 +102,7 @@
           OUTPUTS(0).tokens(0)._1 == SELF.tokens(0)._1,
           OUTPUTS(0).tokens(0)._2 == SELF.tokens(0)._2,
           // check WID copied
-          OUTPUTS(0).R4[Coll[Coll[Byte]]].get == myWID,
+          OUTPUTS(0).R4[Coll[Byte]].get == myWID,
           // check user WID
           INPUTS(1).tokens(0)._1 == myWID(0),
           // check permit contract address
