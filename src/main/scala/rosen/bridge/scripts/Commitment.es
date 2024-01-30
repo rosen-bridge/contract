@@ -56,7 +56,7 @@
     val repoConfigBox = CONTEXT.dataInputs(0)
     val repoConfig = repoConfigBox.R4[Coll[Long]].get
     val repo = CONTEXT.dataInputs(1)
-    val watcherCount = repo.R5[Coll[Long]].get(0)
+    val watcherCount = repo.R5[Long].get
     val eventId = blake2b256(trigger.R5[Coll[Coll[Byte]]].get(0))
     val maxCommitment = repoConfig(3)
     val requiredCommitmentFromFormula: Long = repoConfig(2) + repoConfig(1) * watcherCount / 100L

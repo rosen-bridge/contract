@@ -188,8 +188,8 @@ object Boxes {
       )
       .contract(contracts.RWTRepo._1)
       .registers(
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq("ADA".getBytes()).map(item => Colls.fromArray(item)).toArray)),
-        ErgoValueBuilder.buildFor(Colls.fromArray(Seq(watcherCount).toArray)),
+        ErgoValueBuilder.buildFor(Colls.fromArray("ADA".getBytes())),
+        ErgoValueBuilder.buildFor(watcherCount),
       )
     repoBuilder.build()
   }

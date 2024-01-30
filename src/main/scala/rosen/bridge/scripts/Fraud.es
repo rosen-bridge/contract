@@ -6,14 +6,13 @@
 
   val repoNFT = fromBase64("REPO_NFT");
   val cleanupNFT = fromBase64("CLEANUP_NFT");
-  val outputWithToken = OUTPUTS.slice(1, OUTPUTS.size).filter { (box: Box) => box.tokens.size > 0 }
-  val outputWithRWT = outputWithToken.exists { (box: Box) => box.tokens.exists { (token: (Coll[Byte], Long)) => token._1 == SELF.tokens(0)._1 } }
+  val transferedRwt = OUTPUTS(0).tokens(1)._2 - INPUTS(0).tokens(1)._2
   // RSN Slash
   // [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup, Slashed]
   sigmaProp(
     allOf(
       Coll(
-        outputWithRWT == false,
+        SELF.tokens(0)._2 == transferedRwt,
         SELF.id == INPUTS(2).id,
         INPUTS(0).tokens(0)._1 == repoNFT,
         INPUTS(3).tokens(0)._1 == cleanupNFT,

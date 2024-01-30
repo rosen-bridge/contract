@@ -1,7 +1,7 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Coll[Byte]] = [Chain id]
-  // R5: Coll[Long] = [total watchers]
+  // R4: Coll[Byte] = Chain id
+  // R5: Long = total watchers
   // ----------------- TOKENS
   // 0: X-RWT Repo NFT
   // 1: X-RWT
@@ -25,7 +25,7 @@
         repoOut.tokens(1)._1 == repo.tokens(1)._1,
         repoOut.tokens(2)._1 == repo.tokens(2)._1,
         repoOut.tokens(3)._1 == repo.tokens(3)._1,
-        repoOut.R4[Coll[Coll[Byte]]].get == repo.R4[Coll[Coll[Byte]]].get,
+        repoOut.R4[Coll[Byte]].get == repo.R4[Coll[Byte]].get,
       )
     )
     if(repo.tokens(1)._2 > repoOut.tokens(1)._2){
@@ -51,7 +51,7 @@
         sigmaProp(
           allOf(
             Coll(
-              repoOut.R5[Coll[Long]].get(0) == repo.R5[Coll[Long]].get(0) + 1,
+              repoOut.R5[Long].get == repo.R5[Long].get + 1,
               // Permit and WID checks
               permitCreation,
               permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
@@ -93,11 +93,7 @@
               permit.R4[Coll[Coll[Byte]]].get == Coll(WID),
               // Rwt repo check
               repoOut.tokens(3)._2 == repo.tokens(3)._2,
-              repoOut.R5[Coll[Long]].get(0) == repo.R5[Coll[Long]].get(0),
-              // WID check
-              WID == WIDBox.tokens(0)._1,
-              WIDBox.tokens(0)._2 >= 2,
-              outWIDBox.tokens(0)._1 == WID,
+              repoOut.R5[Long].get == repo.R5[Long].get,
               // Collateral check
               outCollateral.tokens(0)._1 == repo.tokens(3)._1,
               collateral.R5[Long].get + RWTOut == outCollateral.R5[Long].get
@@ -110,7 +106,7 @@
       val permit = INPUTS(2)
       val RWTIn = repoOut.tokens(1)._2 - repo.tokens(1)._2
       val collateral = INPUTS(1)
-      val WIDCheckInRepo = if(collateral.R5[Long].get > RWTIn) {
+      val validateUpdates = if(collateral.R5[Long].get > RWTIn) {
         val outCollateral = OUTPUTS(1)
         // Returning some RWTs
         // [repo, Collateral, Permit, WIDToken] => [repo, Collateral, Permit(Optional), WIDToken(+userChange)]
@@ -118,9 +114,8 @@
         allOf(
           Coll(
             repo.tokens(3)._2 == repoOut.tokens(3)._2,
-            repoOut.R5[Coll[Long]].get(0) == repo.R5[Coll[Long]].get(0),
+            repoOut.R5[Long].get == repo.R5[Long].get,
             collateral.R5[Long].get - RWTIn == outCollateral.R5[Long].get,
-            outCollateral.R5[Long].get > 0
           )
         )
       }else{
@@ -129,7 +124,7 @@
         allOf(
           Coll(
             repoOut.tokens(3)._2 == repo.tokens(3)._2 + 1,
-            repoOut.R5[Coll[Long]].get(0) == repo.R5[Coll[Long]].get(0) - 1,
+            repoOut.R5[Long].get == repo.R5[Long].get - 1,
           )
         )
       }
@@ -139,8 +134,9 @@
           Coll(
             repoReplication,
             Coll(WID) == permit.R4[Coll[Coll[Byte]]].get,
+            permit.tokens(0)._1 == repo.tokens(1)._1,
             RWTIn == repo.tokens(2)._2 - repoOut.tokens(2)._2,
-            WIDCheckInRepo,
+            validateUpdates,
             collateral.tokens(0)._1 == repo.tokens(3)._1,
           )
         )
