@@ -17,11 +17,13 @@ case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String, RSNRatioNF
 
 case class ErgoNetwork(ergoClient: ErgoClient, addressEncoder: ErgoAddressEncoder)
 
-case class Tokens(CleanupNFT: String, RWTId: String, AwcNFT: String) {
+case class Tokens(CleanupNFT: String, RWTId: String, AwcNFT: String, RepoConfigNFT: String) {
   def toJson(): Json = {
     Json.fromFields(List(
       ("CleanupNFT", Json.fromString(CleanupNFT)),
       ("RWTId", Json.fromString(RWTId)),
+      ("AwcNFT", Json.fromString(AwcNFT)),
+      ("RepoConfigNFT", Json.fromString(RepoConfigNFT)),
     ))
   }
 }

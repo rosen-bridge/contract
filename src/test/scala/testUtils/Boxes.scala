@@ -197,7 +197,6 @@ object Boxes {
   def createRepoConfigs(
                             ctx: BlockchainContext,
                             nftId: String,
-                            rwtId: String,
                             repoCount: Int = 1
                           ): OutBox = {
     val txB = ctx.newTxBuilder()
@@ -205,7 +204,6 @@ object Boxes {
       .value(Configs.minBoxValue)
       .tokens(
         new ErgoToken(nftId, 1),
-        new ErgoToken(rwtId, 1),
       )
       .contract(contracts.RepoConfig._1)
       .registers(
