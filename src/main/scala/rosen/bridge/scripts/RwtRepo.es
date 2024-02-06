@@ -109,8 +109,8 @@
       val validateUpdates = if(collateral.R5[Long].get > RWTIn) {
         val outCollateral = OUTPUTS(1)
         // Returning some RWTs
-        // [repo, Collateral, Permit, WIDToken] => [repo, Collateral, Permit(Optional), WIDToken(+userChange)]
-        // [repo, Collateral, Fraud, Cleanup] => [repo, Collateral, Cleanup]
+        // [Repo, Collateral, Permit, WIDBox] => [Repo, Collateral, Permit(Optional), WIDBox(+userChange)]
+        // [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup]
         allOf(
           Coll(
             repo.tokens(3)._2 == repoOut.tokens(3)._2,
@@ -120,7 +120,7 @@
         )
       }else{
         // Returning total permit
-        // [repo, Collateral, Permit, WIDToken] => [repo, WIDToken(+userChange)]
+        // [Repo, Collateral, Permit, WIDBox] => [Repo, UserChange(+Collateral)]
         allOf(
           Coll(
             repoOut.tokens(3)._2 == repo.tokens(3)._2 + 1,

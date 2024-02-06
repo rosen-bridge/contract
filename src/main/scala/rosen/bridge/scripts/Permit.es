@@ -24,7 +24,6 @@
       allOf(
         Coll(
           inputPermits - transferedRwt == OUTPUTS(2).tokens(0)._2,
-          OUTPUTS(2).tokens(0)._1 == SELF.tokens(0)._1,
           OUTPUTS(2).propositionBytes == SELF.propositionBytes,
           SELF.R4[Coll[Coll[Byte]]].get == OUTPUTS(2).R4[Coll[Coll[Byte]]].get
         )
