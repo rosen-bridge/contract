@@ -83,7 +83,6 @@
         // [Repo, Collateral, WIDBox] => [Repo, Collateral, watcherPermit, WIDBox]
         val collateral = INPUTS(1)
         val WID = outCollateral.R4[Coll[Byte]].get
-        val WIDBox = INPUTS(2)
         // sigmaProp(true)
         sigmaProp(
           allOf(
@@ -107,10 +106,12 @@
       val RWTIn = repoOut.tokens(1)._2 - repo.tokens(1)._2
       val collateral = INPUTS(1)
       val validateUpdates = if(collateral.R5[Long].get > RWTIn) {
+        // two scenarios:
+        //   - partial return permit
+        //   [Repo, Collateral, Permit(Optional), WIDBox] => [Repo, Collateral, Permit(Optional), WIDBox]
+        //   - slash
+        //   [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup]
         val outCollateral = OUTPUTS(1)
-        // Returning some RWTs
-        // [Repo, Collateral, Permit, WIDBox] => [Repo, Collateral, Permit(Optional), WIDBox(+userChange)]
-        // [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup]
         allOf(
           Coll(
             repo.tokens(3)._2 == repoOut.tokens(3)._2,
