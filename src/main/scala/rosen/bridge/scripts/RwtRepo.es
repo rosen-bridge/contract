@@ -108,7 +108,7 @@
       val validateUpdates = if(collateral.R5[Long].get > RWTIn) {
         // two scenarios:
         //   - partial return permit
-        //   [Repo, Collateral, Permit(Optional), WIDBox] => [Repo, Collateral, Permit(Optional), WIDBox]
+        //   [Repo, Collateral, Permit, WIDBox, Permits(Optional)] => [Repo, Collateral, Permit(Optional), WIDBox]
         //   - slash
         //   [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup]
         val outCollateral = OUTPUTS(1)

@@ -12,9 +12,12 @@
   val WID = SELF.R4[Coll[Byte]].get;
   val transferedRwt = repoOut.tokens(1)._2 - repo.tokens(1)._2
   if(transferedRwt < SELF.R5[Long].get){
+    // two scenarios:
+    //   - extend or partial return permit
+    //   [Repo, Collateral, Permit(Optional), WIDBox, Permits(Optional)] => [Repo, Collateral, Permit(Optional), WIDBox]
+    //   - slash
+    //   [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup]
     val outCollateral = OUTPUTS(1)
-    // [Repo, Collateral, Permit(Optional), WIDBox] => [Repo, Collateral, Permit(Optional), WIDBox]
-    // [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup]
     sigmaProp(
       allOf(
         Coll(
