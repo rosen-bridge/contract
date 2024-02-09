@@ -16,7 +16,7 @@
     .map{(box:Box) => box.tokens(0)._2}
     .fold(0L, { (a: Long, b: Long) => a + b })
   if(OUTPUTS(0).tokens(0)._1 == repoNFT){
-    // Updating Permit (Return or receive more tokens)
+    // Returning Permit
     // [Repo, Collateral, Permit(SELF), WID] => [Repo, Collateral, Permit(optional), WID(+userChange)]
     val transferedRwt = OUTPUTS(0).tokens(1)._2 - INPUTS(0).tokens(1)._2
     val hasOuputPermit = OUTPUTS(2).tokens.size > 0 && OUTPUTS(2).tokens(0)._1 == SELF.tokens(0)._1

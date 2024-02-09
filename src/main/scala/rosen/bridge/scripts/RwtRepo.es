@@ -83,7 +83,6 @@
         // [Repo, Collateral, WIDBox] => [Repo, Collateral, watcherPermit, WIDBox]
         val collateral = INPUTS(1)
         val WID = outCollateral.R4[Coll[Byte]].get
-        // sigmaProp(true)
         sigmaProp(
           allOf(
             Coll(
