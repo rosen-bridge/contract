@@ -17,7 +17,7 @@ As previously mentioned, Rosen operates as an Ergo-centric bridge, with the prim
 
 2. **Guard NFT:** This NFT  is collectively owned by the guards and its expenditure represents a consensus among guards on a transaction. This NFT resides in a multi-signature address controlled by the guards, then its presence in a transaction input signifies the approval of the guards. It is used for transfer payments and system update transactions.
 
-3. **RWT Repo NFT:** Each chain has unique configuration for watchers, all of which are stored in the RWT-Repo box. This NFT serves as an identifier for verified repos associated with each chain.
+3. **RWT Repo NFT:** RWT Repo is responsible for keeping track of X-RWT tokens (as watcher permits) and exchanging them by RSN. This NFT serves as an identifier for verified repos associated with each chain.
 
 4. **X-Rosen Watcher Token (X-RWT):** Watcher volunteers are required to lock their RSN tokens to become watchers of a specific chain. The legitimate watchers receive X-RWT tokens in exchange of their RSN tokens. Each pack of these tokens can be used to create a new action report. If the report was correct, guards will return the X-RWT tokens to the respective watcher. RWT is a chain-specific token; thus, chain X watchers will employ X-RWT tokens for report creation.
 
@@ -25,7 +25,9 @@ As previously mentioned, Rosen operates as an Ergo-centric bridge, with the prim
 
 6. **Watcher Identifier Token (WID Token):** After a volunteer locks their RSN tokens, they receive X-RWT tokens as well as a newly issued token that serves as their unique watcher identifier. A watcher may possess multiple X-RWT tokens, allowing them to concurrently create various reports for a chain. However, the WID Token is a unique token assigned to each watcher, which they must utilize to authenticate actions like new report generation, reward receipt, or X-RWT token redemption. Despite its uniqueness, it's minted in three instances. To mitigate the risk of watcher wallet exposure, the watcher employs only one of these tokens for routine watcher operations, but the watcher is required to use at least two of them for lock or unlock actions (the watcher owner has the option to store two WID tokens in a separate secure wallet).
 
-7. **Authorized watcher collateral NFT (AWC NFT):** To prevent the creation of arbitrary boxes similar to the watchers' collateral boxes, the authorized ones will receive this NFT. They all reside in Rwt-Repo box at the beginning.
+7. **X-Authorized Watcher Collateral NFT (X-AWC NFT):** To prevent the creation of arbitrary boxes similar to the watchers' collateral boxes, the authorized ones will receive this NFT. They are chain-specific tokens and they all reside in the corresponding Rwt-Repo box at the beginning.
+
+8. **X-Repo Config NFT:** Each chain has a unique configuration for watchers, all of which are stored in the RWT-Repo box. This configuration box has a unique NFT for each chain.
 
 ### Contracts
 
@@ -40,11 +42,11 @@ Boxes governed by this contract can only be spent when the Guard NFT is included
 To perform asset transfers and configuration updates, guards must spend this box by signing transactions with their secrets. 
 As guard public keys are stored within this box's registers, updating the guard set in the Ergo network is as straightforward as executing a standard multi-signature transaction. This eliminates the need to alter bridge addresses or transfer assets to a new wallet.
 
-3. **X-RWT Repo:** It is responsible for tracking the corresponding X-RWT tokens and locking RSNs to emit new X-RWTs. Additionally, it maintains a list of available watcher WIDs alongside their respective X-RWT token counts.
+3. **X-RWT Repo:** It is responsible for tracking the corresponding X-RWT tokens and locking RSNs to emit new X-RWTs.
 
 4. **X-Repo Config:** This contract governs the system configuration for each supported chain. It stores the number of required X-RWTs for each event commitment, the quorum percentage of watchers, the maximum needed event commitment count for this chain, and needed watcher collateral in ERG and RSN. It also stores the number of RWT Repo boxes for it's chain.
 
-5. **Watcher Collateral:** Watchers are required to provide a security deposit or collateral as part of their participation in the bridge. This collateral is safely kept in this contract. Whenever the watcher redeems its permits, the collateral will automatically returned to their address.
+5. **Watcher Collateral:** Watchers are required to provide a security deposit or collateral as part of their participation in the bridge. This collateral is safely kept in this contract. Whenever the watcher redeems its permits, the collateral will automatically returned to their address. Additionally, this contract protects the number of total permits of this watcher.
 
 6. **X-Watcher Permit:** When a new watcher registers, their X-RWT tokens are locked within this contract. Furthermore, the contract stores the WID (Watcher Identifier) in its registers. It can only be spent if the corresponding WID token exists within the spending transaction.
 
@@ -85,12 +87,10 @@ Any individual possessing a sufficient amount of X-RWT tokens can become a X-cha
 As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to receive corresponding X-RWTs to obtain the watcher permit. So in this transaction, these requirements must be satisfied:
 
 * X-RWT repo data should be updated:
-    * Append the new WID to the WID list
-    * Append the number of receiving X-RWT tokens to the token count list
     * Pay RSN to the repo and get the respective X-RWTs tokens
     * Use one AWC NFT to create the collateral box
+* A Collateral box is created containing the required collateral for the watcher and the AWC NFT. It also stores the total number of watcher permits.
 * A watcher permit box is created containing all X-RWT tokens. It also stores the WID in its registers.
-* Collateral box is created containing the required collateral for the watcher and the AWC NFT.
 * Issue at least 3 WID tokens and send them to the watcher's address.
 
 <p align="center">
@@ -101,7 +101,7 @@ As mentioned earlier, each watcher volunteer needs to lock his RSN tokens to rec
 #### 2- Return Watcher Permit
 At any given time, a watcher may wish to withdraw their RSN tokens, whether for the purpose of selling them or watching a different chain. To facilitate this, the watcher must return their watcher permits to unlock the X-RWTs and initiate the withdrawal of RSN tokens.
 
-In this transaction, the watcher is required to update the token count associated with their WID (Watcher Identifier Token).
+In this transaction, the watcher is required to update the token count associated with their WID (Watcher Identifier Token) stored in collateral box.
 
 <p align="center">
 <img src="images/Return_Permit.png">

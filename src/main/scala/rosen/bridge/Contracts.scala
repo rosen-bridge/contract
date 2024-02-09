@@ -58,7 +58,7 @@ class Contracts(ergoGeneralConfig: ErgoNetwork, networkConfig: (Network, MainTok
 
   private def generateWatcherCollateralContract(): (ErgoContract, String) = {
     ergoGeneralConfig.ergoClient.execute(ctx => {
-      val watcherCollateralScript = readScript("WatcherCollateral.es")
+      val watcherCollateralScript = readScript("Collateral.es")
         .replace("REPO_NFT", Base64.encode(Base16.decode(networkConfig._2.RepoNFT).get))
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), watcherCollateralScript)
       val address = Utils.getContractAddress(contract, ergoGeneralConfig.addressEncoder)
