@@ -6,9 +6,9 @@
 
   val repoNFT = fromBase64("REPO_NFT");
   val cleanupNFT = fromBase64("CLEANUP_NFT");
-  val transferedRwt = OUTPUTS(0).tokens(1)._2 - INPUTS(0).tokens(1)._2
   // RSN Slash
   // [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup, Slashed]
+  val transferedRwt = OUTPUTS(0).tokens(1)._2 - INPUTS(0).tokens(1)._2
   sigmaProp(
     allOf(
       Coll(

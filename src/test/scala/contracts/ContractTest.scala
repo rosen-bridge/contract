@@ -665,7 +665,7 @@ class ContractTest extends TestSuite {
    * - mock valid input and output repo box
    * - mock valid output wid box and permit box for watcher with WID2
    * - mock output collateral with updated permit count for watcher with WID
-   * - build and sign the complete return permit transaction
+   * - build and sign the partial return permit transaction
    * @expected
    * - sign error for returning permit WID2 and changing watcher permit count for WID
    */
@@ -688,6 +688,45 @@ class ContractTest extends TestSuite {
           .addOutputs(repoOut, outCollateral, permitOut, userOut)
           .sendChangeTo(prover.getAddress)
           .build()
+      assertThrows[AnyRef] {
+        val signedTx = prover.sign(tx)
+        println(signedTx.toJson(false))
+      }
+    })
+  }
+
+  /**
+   * @target partial return permit transaction signing should throw error by spending another watcher permit box
+   * @dependencies
+   * @scenario
+   * - mock valid input wid box and permit box for watcher with WID
+   * - mock valid input collateral for watcher with WID
+   * - mock valid input and output repo box
+   * - mock a valid permit box with WID2 in registers
+   * - mock output collateral and permit for WID
+   * - build and sign the partial return permit transaction
+   * @expected
+   * - sign error for trying to spend another watcher permits
+   */
+  property("partial return permit transaction signing should throw error by spending another watcher permit box") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val WID = Base16.decode(Boxes.getRandomHexString()).get
+      val WID2 = Base16.decode(Boxes.getRandomHexString()).get
+      val repoBox = Boxes.createRepo(ctx, 10000, 321, 100L, 1).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val collateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, WID, 100L)
+      val repoOut = Boxes.createRepo(ctx, 10020, 301, 100L, 1)
+      val outCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, WID, 80L)
+      val permitBox = Boxes.createPermitBox(ctx, 60L, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L))
+      val anotherPermit = Boxes.createPermitBox(ctx, 60L, WID2).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val permitOut = Boxes.createPermitBox(ctx, 100L, WID)
+      val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 20))
+      val tx = ctx.newTxBuilder().addInputs(repoBox, collateral, permitBox, WIDBox, anotherPermit)
+        .fee(Configs.fee)
+        .addOutputs(repoOut, outCollateral, permitOut, userOut)
+        .sendChangeTo(prover.getAddress)
+        .build()
       assertThrows[AnyRef] {
         val signedTx = prover.sign(tx)
         println(signedTx.toJson(false))
@@ -1320,7 +1359,7 @@ class ContractTest extends TestSuite {
   }
 
   /**
-   * @target create trigger transaction signing should throw error when with invalid repoConfig from another chain
+   * @target create trigger transaction signing should throw error with invalid repoConfig from another chain
    * @dependencies
    * @scenario
    * - mock two commitment wid list (5 wid
