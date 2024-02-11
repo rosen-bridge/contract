@@ -104,7 +104,7 @@
           // check WID copied
           OUTPUTS(0).R4[Coll[Byte]].get == myWID,
           // check user WID
-          INPUTS(1).tokens(0)._1 == myWID,
+          OUTPUTS(1).tokens(0)._1 == myWID,
           // check permit contract address
           blake2b256(OUTPUTS(0).propositionBytes) == SELF.R7[Coll[Byte]].get
         )
