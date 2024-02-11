@@ -1,8 +1,8 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Coll[Byte]] = [WID]
+  // R4: Coll[Byte] = WID
   // ----------------- TOKENS
-  // 0: RWT
+  // 0: X-RWT
 
   val repoNFT = fromBase64("REPO_NFT");
   val cleanupNFT = fromBase64("CLEANUP_NFT");

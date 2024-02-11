@@ -1,9 +1,9 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Coll[Byte]] [WID list digest]
-  // R5: Coll[Coll[Byte]] Event data
-  // R6: Coll[Byte] Permit contract script digest
-  // R7: Int Commitment Count
+  // R4: Coll[Byte] = WID list digest
+  // R5: Coll[Coll[Byte]] = Event data
+  // R6: Coll[Byte] = Permit contract script digest
+  // R7: Int = Commitment Count
   // ----------------- TOKENS
   // 0: RWT
 
@@ -34,7 +34,7 @@
       => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
     }
     .slice(0, commitmentCount)
-  val WIDs = rewards.map{(box:Box) => box.R4[Coll[Coll[Byte]]].get(0)}
+  val WIDs = rewards.map{(box:Box) => box.R4[Coll[Byte]].get}
   val widListDigest = blake2b256(WIDs.fold(Coll[Byte](), {(a: Coll[Byte], b: Coll[Byte]) => a++b}))
   val checkAllWIDs = rewards.forall {
     (data: Box) => {
@@ -47,7 +47,7 @@
     allOf(
       Coll(
         rewards.size == commitmentCount,
-        SELF.R4[Coll[Coll[Byte]]].get(0) == widListDigest,
+        SELF.R4[Coll[Byte]].get == widListDigest,
         checkAllWIDs,
         fraudScriptCheck,
       )

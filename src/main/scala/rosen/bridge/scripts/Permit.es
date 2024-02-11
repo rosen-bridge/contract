@@ -1,12 +1,12 @@
 {
   // ----------------- REGISTERS
-  // R4: Coll[Coll[Byte]] = [WID]
+  // R4: Coll[Byte] = WID
   // ----------------- TOKENS
   // 0: X-RWT
 
   val repoNFT = fromBase64("REPO_NFT");
   val commitmentScriptHash = fromBase64("COMMITMENT_SCRIPT_HASH");
-  val WID = SELF.R4[Coll[Coll[Byte]]].get
+  val WID = SELF.R4[Coll[Byte]].get
   val inputPermitsRwt = INPUTS.filter{
     (box:Box) => 
       box.tokens.size > 0 &&
@@ -25,7 +25,7 @@
         Coll(
           inputPermitsRwt - transferedRwt == OUTPUTS(2).tokens(0)._2,
           OUTPUTS(2).propositionBytes == SELF.propositionBytes,
-          SELF.R4[Coll[Coll[Byte]]].get == OUTPUTS(2).R4[Coll[Coll[Byte]]].get
+          SELF.R4[Coll[Byte]].get == OUTPUTS(2).R4[Coll[Byte]].get
         )
       )
     }else{
@@ -34,7 +34,7 @@
     sigmaProp(
       allOf(
         Coll(
-          INPUTS(3).tokens(0)._1 == WID(0),
+          INPUTS(3).tokens(0)._1 == WID,
           INPUTS(3).tokens(0)._2 >= 2,
           outputPermitCheck,
         )
@@ -50,13 +50,13 @@
           OUTPUTS(1).tokens(0)._2 == inputPermitsRwt - OUTPUTS(0).tokens(0)._2,
           OUTPUTS(1).tokens(0)._1 == SELF.tokens(0)._1,
           blake2b256(OUTPUTS(1).propositionBytes) == commitmentScriptHash,
-          OUTPUTS(1).R5[Coll[Coll[Byte]]].isDefined,
+          OUTPUTS(1).R5[Coll[Byte]].isDefined,
           OUTPUTS(1).R6[Coll[Byte]].isDefined,
           OUTPUTS(1).R7[Coll[Byte]].get == blake2b256(SELF.propositionBytes),
-          OUTPUTS(1).R4[Coll[Coll[Byte]]].get == WID,
+          OUTPUTS(1).R4[Coll[Byte]].get == WID,
           OUTPUTS(0).propositionBytes == SELF.propositionBytes,
-          OUTPUTS(0).R4[Coll[Coll[Byte]]].get == WID,
-          OUTPUTS(2).tokens(0)._1 == WID(0),
+          OUTPUTS(0).R4[Coll[Byte]].get == WID,
+          OUTPUTS(2).tokens(0)._1 == WID,
         )
       )
     )

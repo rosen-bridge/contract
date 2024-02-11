@@ -54,7 +54,7 @@
               repoOut.R5[Long].get == repo.R5[Long].get + 1,
               // Permit and WID checks
               permitCreation,
-              permit.R4[Coll[Coll[Byte]]].get == Coll(repo.id),
+              permit.R4[Coll[Byte]].get == repo.id,
               outWIDBox.tokens(0)._1 == repo.id,
               outWIDBox.tokens(0)._2 >= 3,
               // Repo config checks
@@ -88,7 +88,7 @@
             Coll(
               // Permit check
               permitCreation,
-              permit.R4[Coll[Coll[Byte]]].get == Coll(WID),
+              permit.R4[Coll[Byte]].get == WID,
               // Rwt repo check
               repoOut.tokens(3)._2 == repo.tokens(3)._2,
               repoOut.R5[Long].get == repo.R5[Long].get,
@@ -133,7 +133,7 @@
         allOf(
           Coll(
             repoReplication,
-            Coll(WID) == permit.R4[Coll[Coll[Byte]]].get,
+            permit.R4[Coll[Byte]].get == WID,
             permit.tokens(0)._1 == repo.tokens(1)._1,
             RWTIn == repo.tokens(2)._2 - repoOut.tokens(2)._2,
             validateUpdates,
