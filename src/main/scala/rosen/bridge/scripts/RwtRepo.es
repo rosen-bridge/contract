@@ -20,6 +20,7 @@
     val repoReplication = allOf(
       Coll(
         repoOut.propositionBytes == repo.propositionBytes,
+        repoOut.value == repo.value,
         repoOut.tokens(0)._1 == repo.tokens(0)._1,
         repoOut.tokens(0)._2 == repo.tokens(0)._2,
         repoOut.tokens(1)._1 == repo.tokens(1)._1,

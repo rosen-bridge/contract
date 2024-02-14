@@ -176,10 +176,11 @@ object Boxes {
                             nftId: String,
                             rwtId: String,
                             awcId: String,
+                            value: Long = Configs.minBoxValue,
                           ): OutBox = {
     val txB = ctx.newTxBuilder()
     val repoBuilder = txB.outBoxBuilder()
-      .value(Configs.minBoxValue)
+      .value(value)
       .tokens(
         new ErgoToken(nftId, 1),
         new ErgoToken(rwtId, RWTCount),
@@ -226,8 +227,9 @@ object Boxes {
                   RSNCount: Long,
                   AwcCount: Long,
                   watcherCount: Long,
+                  value: Long = Configs.minBoxValue,
                 ): OutBox = {
-    createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, watcherCount, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT)
+    createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, watcherCount, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, value)
   }
 
   def createRepoInput(
@@ -236,8 +238,9 @@ object Boxes {
                        RSNCount: Long,
                        AwcCount: Long,
                        watcherCount: Long,
+                       value: Long = Configs.minBoxValue,
                      ): InputBox = {
-    createRepo(ctx, RWTCount, RSNCount, AwcCount, watcherCount).convertToInputWith(Boxes.getRandomHexString(), 0)
+    createRepo(ctx, RWTCount, RSNCount, AwcCount, watcherCount, value).convertToInputWith(Boxes.getRandomHexString(), 0)
   }
 
   def createPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
