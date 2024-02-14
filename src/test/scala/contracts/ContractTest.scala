@@ -180,8 +180,9 @@ class ContractTest extends TestSuite {
     networkConfig._1.ergoClient.execute(ctx => {
       val prover = getProver()
       val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
-      val repoConfig = Boxes.createRepoConfigsInput(ctx)
-      val repoBox = Boxes.createRepoInput(ctx, 100000, 5801L, 100L, 0)
+      val repoConfig = Boxes.createRepoConfigsWithList(ctx, Boxes.getRandomHexString(), Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))
+        .convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoBox = Boxes.createRepoInput(ctx, 100000, 5801L, 100L, 1)
       val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, 2)
       val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
       val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
