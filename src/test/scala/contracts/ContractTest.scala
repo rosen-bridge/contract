@@ -180,9 +180,45 @@ class ContractTest extends TestSuite {
     networkConfig._1.ergoClient.execute(ctx => {
       val prover = getProver()
       val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
-      val repoConfig = Boxes.createRepoConfigsInput(ctx)
-      val repoBox = Boxes.createRepoInput(ctx, 100000, 5801L, 100L, 0)
+      val repoConfig = Boxes.createRepoConfigsWithList(ctx, Boxes.getRandomHexString(), Array(10L, 51L, 0L, 9999L, 1e9.toLong, 100))
+        .convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoBox = Boxes.createRepoInput(ctx, 100000, 5801L, 100L, 1)
       val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, 2)
+      val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
+      val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
+      val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes, 100)
+      val tx = ctx.newTxBuilder().addInputs(repoBox, userBox)
+        .fee(Configs.fee)
+        .addDataInputs(repoConfig)
+        .addOutputs(repoOut, watcherCollateral, permitBox, WID)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
+  /**
+   * @target get permit transaction signing should throw error when repo value decreased in transaction
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock input repo box with 1e10 value
+   * - mock valid repoConfig box as data input
+   * - mock valid output repo box with 1e9 value
+   * - mock valid output wid, collateral and permit box
+   * - build and sign the get permit transaction
+   * @expected
+   * - sign error since 1e9 is less than 1e10
+   */
+  property("get permit transaction signing should throw error when repo value decreased in transaction") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 2e9.toLong, new ErgoToken(networkConfig._3.RSN, 200L))
+      val repoConfig = Boxes.createRepoConfigsInput(ctx)
+      val repoBox = Boxes.createRepoInput(ctx, 100000, 5801L, 100L, 1, 1e10.toLong)
+      val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 99L, 2, 1e9.toLong)
       val permitBox = Boxes.createPermitBox(ctx, 100L, repoBox.getId.getBytes)
       val WID = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(repoBox.getId.getBytes, 3L))
       val watcherCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, repoBox.getId.getBytes, 100)
