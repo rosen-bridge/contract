@@ -707,23 +707,23 @@ class ContractTest extends TestSuite {
    */
   property("partial return permit transaction signing should throw error by changing another watcher permit count") {
     networkConfig._1.ergoClient.execute(ctx => {
-        val prover = getProver()
-        val WID = Base16.decode(Boxes.getRandomHexString()).get
-        val WID2 = Base16.decode(Boxes.getRandomHexString()).get
-        val repoBox = Boxes.createRepo(ctx, 10000, 321, 100L, 1).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val collateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, WID, 100L)
-        val repoOut = Boxes.createRepo(ctx, 10020, 301, 100L, 1)
-        val outCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, WID, 80L)
-        val fakePermit = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, WID, new ErgoToken(Boxes.getRandomHexString(), 60L))
-        val permitBox = Boxes.createPermitBox(ctx, 60L, WID2).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID2, 2L))
-        val permitOut = Boxes.createPermitBox(ctx, 40L, WID2)
-        val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID2, 2L), new ErgoToken(networkConfig._3.RSN, 20))
-        val tx = ctx.newTxBuilder().addInputs(repoBox, collateral, fakePermit, WIDBox, permitBox)
-          .fee(Configs.fee)
-          .addOutputs(repoOut, outCollateral, permitOut, userOut)
-          .sendChangeTo(prover.getAddress)
-          .build()
+      val prover = getProver()
+      val WID = Base16.decode(Boxes.getRandomHexString()).get
+      val WID2 = Base16.decode(Boxes.getRandomHexString()).get
+      val repoBox = Boxes.createRepo(ctx, 10000, 321, 100L, 1).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val collateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, WID, 100L)
+      val repoOut = Boxes.createRepo(ctx, 10020, 301, 100L, 1)
+      val outCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, WID, 80L)
+      val fakePermit = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, WID, new ErgoToken(Boxes.getRandomHexString(), 60L))
+      val permitBox = Boxes.createPermitBox(ctx, 60L, WID2).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID2, 2L))
+      val permitOut = Boxes.createPermitBox(ctx, 40L, WID2)
+      val userOut = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, 1e8.toLong, new ErgoToken(WID2, 2L), new ErgoToken(networkConfig._3.RSN, 20))
+      val tx = ctx.newTxBuilder().addInputs(repoBox, collateral, fakePermit, WIDBox, permitBox)
+        .fee(Configs.fee)
+        .addOutputs(repoOut, outCollateral, permitOut, userOut)
+        .sendChangeTo(prover.getAddress)
+        .build()
       assertThrows[AnyRef] {
         val signedTx = prover.sign(tx)
         println(signedTx.toJson(false))
@@ -897,8 +897,8 @@ class ContractTest extends TestSuite {
         val WID = Boxes.getRandomHexString().getBytes()
         val rwtCount = 20
         val repoBox = Boxes.createRepoInput(ctx, 100000L, 200, 99L, 5)
-        val permitBox = Boxes.createPermitBox(ctx, rwtCount/2, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
-        val permitBox2 = Boxes.createPermitBox(ctx, rwtCount/2, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitBox = Boxes.createPermitBox(ctx, rwtCount / 2, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val permitBox2 = Boxes.createPermitBox(ctx, rwtCount / 2, WID).convertToInputWith(Boxes.getRandomHexString(), 0)
         val WIDBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L))
         val repoOut = Boxes.createRepo(ctx, 100000L + rwtCount, 200 - rwtCount, 100L, 4)
         val watcherCollateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, WID, rwtCount)
@@ -1728,6 +1728,112 @@ class ContractTest extends TestSuite {
         case exp: Throwable =>
           println(exp.toString)
           fail("transaction not signed")
+      }
+    })
+  }
+
+  /**
+   * @target reward transaction signing should throw error when there is duplicated not-merged commitments in inputs
+   * @dependencies
+   * @scenario
+   * - mock commitment wid list
+   * - mock not-merged commitments wid list with a duplicate WID
+   * - mock guards secrets, public keys and box with the guard NFT
+   * - mock lock box with required tokens
+   * - mock trigger box with wid list
+   * - mock output permits for all wids except the duplicate one
+   * - build and sign the reward transaction
+   * @expected
+   * - sign error for having duplicate commitment boxes in inputs, and stealing the RWTs by guards
+   */
+  property("reward transaction signing should throw error when there is duplicated not-merged commitments in inputs") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(7)
+      var notMergedWIDs = generateRandomWIDList(3)
+      val allWIDs = WIDs ++ notMergedWIDs
+      notMergedWIDs = notMergedWIDs ++ Seq(notMergedWIDs(0))
+      val notMergedCommitments = notMergedWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+      val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+      val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+      val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+      val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val userFee: Long = math.floor((commitment.fee * 0.6) / allWIDs.length).toLong
+      val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val lockBox = Boxes.createLockBox(
+        ctx,
+        Configs.minBoxValue,
+        new ErgoToken(commitment.targetChainTokenId, userFee * (WIDs ++ notMergedWIDs).length)
+      ).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val newPermits = allWIDs.map(item => {
+        Boxes.createPermitBox(ctx, 10, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+      })
+      val inputs = Seq(eventTrigger) ++ notMergedCommitments ++ Seq(lockBox)
+      val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
+        .fee(Configs.fee)
+        .addDataInputs(guardBox)
+        .sendChangeTo(prover.getAddress)
+        .addOutputs(newPermits: _*)
+        .build()
+      val multiSigProverBuilder = ctx.newProverBuilder()
+      secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+      val multiSigProver = multiSigProverBuilder.build()
+      assertThrows[AnyRef] {
+        multiSigProver.sign(unsignedTx)
+      }
+    })
+  }
+
+  /**
+   * @target reward transaction signing should throw error when there is duplicated rewards for duplicated not merged commitments
+   * @dependencies
+   * @scenario
+   * - mock commitment wid list
+   * - mock not merged commitments wid list with a duplicate WID
+   * - mock guards secrets, public keys and box with the guard NFT
+   * - mock lock box with required tokens
+   * - mock trigger box with wid list
+   * - mock output permits for all wids including the duplicate WID
+   * - build and sign the reward transaction
+   * @expected
+   * - sign error for having duplicate rewards boxes in outputs
+   */
+  property("reward transaction signing should throw error when there is duplicated rewards for duplicated not merged commitments") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val commitment = new Commitment()
+      val prover = getProver()
+      val WIDs = generateRandomWIDList(7)
+      var notMergedWIDs = generateRandomWIDList(3)
+      notMergedWIDs = notMergedWIDs ++ Seq(notMergedWIDs(0))
+      val allWIDs = WIDs ++ notMergedWIDs
+      val notMergedCommitments = notMergedWIDs.map(WID => Boxes.createCommitment(ctx, WID, commitment.requestId(), commitment.hash(WID), 10L).convertToInputWith(Boxes.getRandomHexString(), 1))
+      val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+      val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+      val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+      val eventTrigger = Boxes.createTriggerEventBox(ctx, WIDs, commitment, 70L).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val userFee: Long = math.floor((commitment.fee * 0.6) / allWIDs.length).toLong
+      val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val lockBox = Boxes.createLockBox(
+        ctx,
+        Configs.minBoxValue,
+        new ErgoToken(commitment.targetChainTokenId, userFee * (WIDs ++ notMergedWIDs).length)
+      ).convertToInputWith(Boxes.getRandomHexString(), 0)
+      val newPermits = allWIDs.map(item => {
+        Boxes.createPermitBox(ctx, 10, item, new ErgoToken(commitment.targetChainTokenId, userFee))
+      })
+      val inputs = Seq(eventTrigger) ++ notMergedCommitments ++ Seq(lockBox)
+      val unsignedTx = ctx.newTxBuilder().addInputs(inputs: _*)
+        .fee(Configs.fee)
+        .addDataInputs(guardBox)
+        .sendChangeTo(prover.getAddress)
+        .addOutputs(newPermits: _*)
+        .build()
+      val multiSigProverBuilder = ctx.newProverBuilder()
+      secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+      val multiSigProver = multiSigProverBuilder.build()
+      assertThrows[AnyRef] {
+        multiSigProver.sign(unsignedTx)
       }
     })
   }

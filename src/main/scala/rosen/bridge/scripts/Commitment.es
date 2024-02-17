@@ -19,13 +19,19 @@
     val WIDs = OUTPUTS.filter{(box:Box) 
         => box.tokens.size > 0 && box.tokens(0)._1 == SELF.tokens(0)._1
       }
-      .slice(0, trigger.R7[Int].get)
+      .map{(box:Box) => box.R4[Coll[Byte]].get}
+    val commitmentWIDs = INPUTS.filter{(box:Box) =>
+        box.tokens.size > 0 &&
+        box.tokens(0)._1 == SELF.tokens(0)._1 && 
+        box.propositionBytes == SELF.propositionBytes
+      }
       .map{(box:Box) => box.R4[Coll[Byte]].get}
     val permitBox = OUTPUTS.filter {(box:Box) =>
       box.R4[Coll[Byte]].isDefined &&
       box.R4[Coll[Byte]].get == myWID
     }(0)
-    val WIDExists =  WIDs.exists {(WID: Coll[Byte]) => myWID == WID}
+    val rewardWithWid =  WIDs.filter {(WID: Coll[Byte]) => myWID == WID}
+    val commitmentWithWid = commitmentWIDs.filter{(WID: Coll[Byte]) => myWID == WID}
     sigmaProp(
       allOf(
         Coll(
@@ -33,7 +39,8 @@
           permitBox.tokens(0)._1 == SELF.tokens(0)._1,
           permitBox.tokens(0)._2 == SELF.tokens(0)._2,
           // check for duplicates
-          WIDExists == false,
+          rewardWithWid.size == 1,
+          commitmentWithWid.size == 1,
           // validate commitment
           blake2b256(eventData ++ myWID) == SELF.R6[Coll[Byte]].get
         )
