@@ -21,6 +21,12 @@
       }
       .slice(0, trigger.R7[Int].get)
       .map{(box:Box) => box.R4[Coll[Byte]].get}
+    val commitmentsWithMyWid = INPUTS.filter{(box:Box) =>
+        box.tokens.size > 0 &&
+        box.tokens(0)._1 == SELF.tokens(0)._1 && 
+        box.propositionBytes == SELF.propositionBytes &&
+        box.R4[Coll[Byte]].get == myWID
+      }
     val permitBox = OUTPUTS.filter {(box:Box) =>
       box.R4[Coll[Byte]].isDefined &&
       box.R4[Coll[Byte]].get == myWID
@@ -34,6 +40,7 @@
           permitBox.tokens(0)._2 == SELF.tokens(0)._2,
           // check for duplicates
           WIDExists == false,
+          commitmentsWithMyWid.size == 1,
           // validate commitment
           blake2b256(eventData ++ myWID) == SELF.R6[Coll[Byte]].get
         )
@@ -42,7 +49,7 @@
 
   } else if (blake2b256(OUTPUTS(0).propositionBytes) == eventTriggerHash){
     // Event Trigger Creation
-    // [Commitments[]] + [(DataInput) RepoConfigBox + Repos[]] => [EventTrigger]
+    // [Commitments[]] + [(DataInput) RepoConfigBox + Repo] => [EventTrigger]
     val commitmentBoxes = INPUTS.filter{ 
       (box: Box) => 
         SELF.propositionBytes == box.propositionBytes && 
