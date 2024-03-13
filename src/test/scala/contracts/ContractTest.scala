@@ -478,6 +478,43 @@ class ContractTest extends TestSuite {
   }
 
   /**
+   * @target extend permit transaction should throw error when using fake collateral in inputs altering rwt count
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock valid input repo and wid box
+   * - mock fake collateral without AWC and different rwt count
+   * - mock valid collateral
+   * - mock valid output repo, permit and wid box
+   * - mock invalid collateral with AWC and altered rwt count
+   * - build and sign the extend permit transaction
+   * @expected
+   * - sign error for invalid rwt count in output collateral (110 != 200)
+   */
+  property("extend permit transaction should throw error when using fake collateral in inputs altering rwt count") {
+    networkConfig._1.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val WID = Base16.decode(Boxes.getRandomHexString()).get
+      val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._3.RSN, 100L))
+      val repoBox = Boxes.createRepoInput(ctx, 100000, 5801L, 100L, 1)
+      val collateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 0, WID, 100)
+      val fakeCollateral = Boxes.createFakeWatcherCollateralBox(ctx, 1e9.toLong, 0, WID, 10).convertToInputWith(Boxes.getRandomHexString(), 1)
+      val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 100L, 1)
+      val outCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 0, WID, 110L)
+      val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
+      val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
+      val tx = ctx.newTxBuilder().addInputs(repoBox, fakeCollateral, userBox, collateral)
+        .fee(Configs.fee)
+        .addOutputs(repoOut, outCollateral, permitBox, WIDBox)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
+  /**
    * @target extend permit transaction signing should throw error when rwt count is not updated correctly in collateral
    * @dependencies
    * @scenario
