@@ -21,6 +21,7 @@
     sigmaProp(
       allOf(
         Coll(
+          SELF.id == INPUTS(1).id,
           repo.tokens(0)._1 == repoNFT,
           repo.tokens(3)._1 == SELF.tokens(0)._1,
           outCollateral.value == SELF.value,
