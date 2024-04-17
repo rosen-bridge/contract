@@ -1,12 +1,11 @@
 package testUtils
 
-import helpers.{Configs, ErgoNetwork, MainTokens, Network, Utils}
+import helpers.{Configs, Network, NetworkGeneral, Utils}
 import org.ergoplatform.appkit.scalaapi.ErgoValueBuilder
 import org.ergoplatform.appkit.{Address, BlockchainContext, ErgoContract, ErgoToken, InputBox, OutBox}
 import rosen.bridge.Contracts
-import scorex.util.encode.Base16
 import sigmastate.eval.Colls
-import scorex.util.encode.{Base16, Base64}
+import scorex.util.encode.Base16
 
 import java.nio.ByteBuffer
 import scala.collection.JavaConverters._
@@ -63,8 +62,8 @@ class Commitment {
 
 object Boxes {
 
-  val networkConfig: (ErgoNetwork, Network, MainTokens) = Utils.selectConfig("cardano", "mainnet")
-  val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
+  val networkConfig: (NetworkGeneral, Network) = Utils.selectConfig("cardano", "mainnet")
+  val contracts = new Contracts(networkConfig._1, networkConfig._2)
 
   def getRandomHexString(length: Int = 64): String = {
     val r = new Random()
@@ -149,7 +148,7 @@ object Boxes {
         ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
         ErgoValueBuilder.buildFor(rwtCount),
       )
-    if (rsn > 0) builder.tokens(new ErgoToken(networkConfig._3.RSN, rsn))
+    if (rsn > 0) builder.tokens(new ErgoToken(networkConfig._1.mainTokens.RSN, rsn))
     builder.build()
   }
 
@@ -157,8 +156,8 @@ object Boxes {
     ctx.newTxBuilder().outBoxBuilder()
       .value(erg)
       .tokens(
-        new ErgoToken(networkConfig._3.RSN, 1),
-        new ErgoToken(networkConfig._3.RSN, rsn)
+        new ErgoToken(networkConfig._1.mainTokens.RSN, 1),
+        new ErgoToken(networkConfig._1.mainTokens.RSN, rsn)
       )
       .contract(contracts.WatcherCollateral._1)
       .registers(
@@ -184,7 +183,7 @@ object Boxes {
       .tokens(
         new ErgoToken(nftId, 1),
         new ErgoToken(rwtId, RWTCount),
-        new ErgoToken(networkConfig._3.RSN, RSNCount),
+        new ErgoToken(networkConfig._1.mainTokens.RSN, RSNCount),
         new ErgoToken(awcId, awcCount)
       )
       .contract(contracts.RWTRepo._1)
@@ -229,7 +228,7 @@ object Boxes {
                   watcherCount: Long,
                   value: Long = Configs.minBoxValue,
                 ): OutBox = {
-    createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, watcherCount, networkConfig._3.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, value)
+    createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, watcherCount, networkConfig._1.mainTokens.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, value)
   }
 
   def createRepoInput(
@@ -261,7 +260,7 @@ object Boxes {
   def createInvalidMixedPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
     val txB = ctx.newTxBuilder()
     val tokensSeq = Seq(
-      new ErgoToken(networkConfig._3.RSN, RWTCount),
+      new ErgoToken(networkConfig._1.mainTokens.RSN, RWTCount),
       new ErgoToken(networkConfig._2.tokens.RWTId, RWTCount),
     ) ++ tokens.toSeq
     txB.outBoxBuilder()
@@ -278,7 +277,7 @@ object Boxes {
 
   def createInvalidPermitBox(ctx: BlockchainContext, RWTCount: Long, WID: Array[Byte], tokens: ErgoToken*): OutBox = {
     val txB = ctx.newTxBuilder()
-    val tokensSeq = Seq(new ErgoToken(networkConfig._3.RSN, RWTCount)) ++ tokens.toSeq
+    val tokensSeq = Seq(new ErgoToken(networkConfig._1.mainTokens.RSN, RWTCount)) ++ tokens.toSeq
     txB.outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.WatcherPermit._1)
@@ -351,7 +350,7 @@ object Boxes {
     ctx.newTxBuilder().outBoxBuilder()
       .value(Configs.minBoxValue)
       .contract(contracts.GuardSign._1)
-      .tokens(new ErgoToken(networkConfig._3.GuardNFT, 1))
+      .tokens(new ErgoToken(networkConfig._1.mainTokens.GuardNFT, 1))
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(guardPks.map(item => Colls.fromArray(item)))),
         ErgoValueBuilder.buildFor(Colls.fromArray(Seq(requiredSign, requiredUpdate).toArray)),

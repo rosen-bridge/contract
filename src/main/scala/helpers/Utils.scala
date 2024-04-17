@@ -10,11 +10,10 @@ import java.math.BigInteger
 object Utils {
   private val secureRandom = new java.security.SecureRandom
 
-  def selectConfig(networkName: String, networkType: String) : (ErgoNetwork, Network, MainTokens) = {
+  def selectConfig(networkName: String, networkType: String) : (NetworkGeneral, Network) = {
     (
-      Configs.generalConfig(networkType)._1,
-      Configs.allNetworksToken((networkName, networkType)),
-      Configs.generalConfig(networkType)._2
+      Configs.generalConfig(networkType),
+      Configs.allNetworksToken((networkName, networkType))
     )
   }
 
@@ -44,8 +43,8 @@ object Utils {
    */
   def createContracts(networkVersion: String, networkName: String = "", networkType: String = ""): Unit = {
     if(networkName.nonEmpty) {
-      val networkConfig: (ErgoNetwork, Network, MainTokens) = selectConfig(networkName, networkType)
-      val contracts = new Contracts(networkConfig._1, (networkConfig._2, networkConfig._3))
+      val networkConfig: (NetworkGeneral, Network) = selectConfig(networkName, networkType)
+      val contracts = new Contracts(networkConfig._1, networkConfig._2)
       contracts.createContractsJson(
         networkName,
         networkType,
@@ -61,7 +60,7 @@ object Utils {
         if ((network._2 contains networkType) || networkType.isEmpty){
           val networkObj = allNetworksToken(network)
           val generalObj = generalConfig(network._2)
-          val contracts = new Contracts(generalObj._1, (networkObj, generalObj._2))
+          val contracts = new Contracts(generalObj, networkObj)
           contracts.createContractsJson(
             network._1,
             network._2,
