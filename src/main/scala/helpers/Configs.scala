@@ -74,7 +74,7 @@ object Configs extends ConfigHelper {
   })
 
   private lazy val networkGeneralConfig = config.getObject("network-general")
-  var generalConfig = mutable.Map.empty[String, (ErgoNetwork, MainTokens)]
+  var generalConfig = mutable.Map.empty[String, NetworkGeneral]
   networkGeneralConfig.keySet().forEach(networkTypeName => {
     val mainNetworkConfig = networkGeneralConfig.get(networkTypeName).asInstanceOf[ConfigObject]
     val mainTokensConfig = mainNetworkConfig.get("main-tokens").asInstanceOf[ConfigObject]
@@ -88,6 +88,9 @@ object Configs extends ConfigHelper {
       readKeyDynamic(mainTokensConfig, "RSNRatioNFT")
     )
 
+    // Prepare general tokens
+    val minimumFeeAddress = readKeyDynamic(mainNetworkConfig, "MinimumFeeAddress")
+
     // Prepare general network config
     val node = readKeyDynamic(ergNetworkConfig, "node")
     val networkType: NetworkType = if (readKeyDynamic(ergNetworkConfig, "type").toLowerCase.equals("mainnet")) NetworkType.MAINNET else NetworkType.TESTNET
@@ -97,7 +100,7 @@ object Configs extends ConfigHelper {
     val addressEncoder = new ErgoAddressEncoder(networkType.networkPrefix)
     val ergoNetwork = ErgoNetwork(ergoClient, addressEncoder)
 
-    generalConfig(networkTypeName) = (ergoNetwork, mainTokens)
+    generalConfig(networkTypeName) = NetworkGeneral(ergoNetwork, mainTokens, minimumFeeAddress)
   })
 
   lazy val tokensMapDirPath: String = readKey("tokensMap.dirPath", "./tokensMap")
