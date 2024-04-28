@@ -1,0 +1,31 @@
+{
+  "ergo": {
+    "tokenId": "060c036dad88bb740310d4561db01cebe929c5f7b46f68e359bd6d56a5300804",
+    "name": "rstBTC",
+    "decimals": 8,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69.727374425443",
+    "policyId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69",
+    "assetName": "727374425443",
+    "name": "rstBTC",
+    "decimals": 8,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  },
+  "bitcoin": {
+    "tokenId": "btc",
+    "name": "BTC",
+    "decimals": 8,
+    "metaData": {
+      "type": "native",
+      "residency": "native"
+    }
+  }
+}

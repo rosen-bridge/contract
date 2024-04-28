@@ -9,10 +9,10 @@
     }
   },
   "cardano": {
-    "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e",
-    "policyId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48",
-    "assetName": "77724552472d6c6f656e",
-    "name": "wrERG-loen",
+    "tokenId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69.727374455247",
+    "policyId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69",
+    "assetName": "727374455247",
+    "name": "rstERG",
     "decimals": 9,
     "metaData": {
       "type": "CIP26",
