@@ -1,0 +1,22 @@
+{
+  "ergo": {
+    "tokenId": "5fb16afc63ef134bdb998df7fc27a76aae3718425d611fef74dc2e01c5286bc8",
+    "name": "rstTOK",
+    "decimals": 2,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69.544f4b",
+    "policyId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69",
+    "assetName": "544f4b",
+    "name": "TOK",
+    "decimals": 2,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "native"
+    }
+  }
+}

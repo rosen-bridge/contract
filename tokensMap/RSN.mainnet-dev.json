@@ -1,7 +1,7 @@
 {
   "ergo": {
-    "tokenId": "cdf549fccbb09ab8f38ecbf9a5ed37c926707753adf8fed19b039684a0772bfe",
-    "name": "RSN-loen",
+    "tokenId": "69bc3c774c04e848d55c33fc69deb7db744611d176baf08d351e3271bfb95989",
+    "name": "RSN-dev",
     "decimals": 3,
     "metaData": {
       "type": "EIP-004",
@@ -9,10 +9,10 @@
     }
   },
   "cardano": {
-    "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.777252534e2d6c6f656e",
+    "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.72737452534e",
     "policyId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48",
-    "assetName": "777252534e2d6c6f656e",
-    "name": "wrRSN-loen",
+    "assetName": "72737452534e",
+    "name": "rstRSN",
     "decimals": 3,
     "metaData": {
       "type": "CIP26",
