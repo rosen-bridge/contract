@@ -1,7 +1,7 @@
 {
   "ergo": {
-    "tokenId": "060c036dad88bb740310d4561db01cebe929c5f7b46f68e359bd6d56a5300804",
-    "name": "rstBTC",
+    "tokenId": "98bc813d77b8b938fddb08f75c5c686ffe38cf1d99a887f91403cc6f0c5c76bf",
+    "name": "rsBTC-loen",
     "decimals": 8,
     "metaData": {
       "type": "EIP-004",
@@ -9,10 +9,10 @@
     }
   },
   "cardano": {
-    "tokenId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69.727374425443",
-    "policyId": "c2065a9279d216ff6e59a4e2141ec01634ea40285ea12cc168ebea69",
-    "assetName": "727374425443",
-    "name": "rstBTC",
+    "tokenId": "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0.72734254432d6c6f656e",
+    "policyId": "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0",
+    "assetName": "72734254432d6c6f656e",
+    "name": "rsBTC-loen",
     "decimals": 8,
     "metaData": {
       "type": "CIP26",
