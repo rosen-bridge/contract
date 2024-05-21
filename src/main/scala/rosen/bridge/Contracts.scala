@@ -38,7 +38,6 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
       ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2)),
       ("WatcherCollateral", Json.fromString(WatcherCollateral._2)),
       ("RepoConfig", Json.fromString(RepoConfig._2)),
-      ("MinimumFeeAddress", Json.fromString(networkGeneral.minimumFeeAddress)),
     ))
   }
 
