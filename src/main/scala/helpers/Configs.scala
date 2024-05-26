@@ -88,9 +88,6 @@ object Configs extends ConfigHelper {
       readKeyDynamic(mainTokensConfig, "RSNRatioNFT")
     )
 
-    // Prepare general tokens
-    val minimumFeeAddress = readKeyDynamic(mainNetworkConfig, "MinimumFeeAddress")
-
     // Prepare general network config
     val node = readKeyDynamic(ergNetworkConfig, "node")
     val networkType: NetworkType = if (readKeyDynamic(ergNetworkConfig, "type").toLowerCase.equals("mainnet")) NetworkType.MAINNET else NetworkType.TESTNET
@@ -100,7 +97,7 @@ object Configs extends ConfigHelper {
     val addressEncoder = new ErgoAddressEncoder(networkType.networkPrefix)
     val ergoNetwork = ErgoNetwork(ergoClient, addressEncoder)
 
-    generalConfig(networkTypeName) = NetworkGeneral(ergoNetwork, mainTokens, minimumFeeAddress)
+    generalConfig(networkTypeName) = NetworkGeneral(ergoNetwork, mainTokens)
   })
 
   lazy val tokensMapDirPath: String = readKey("tokensMap.dirPath", "./tokensMap")
