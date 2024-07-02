@@ -65,9 +65,11 @@ object Configs extends ConfigHelper {
         readKeyDynamic(networkTokensConfig, "RepoConfigNFT"),
       )
       val lockAddress = if (networkName != "ergo") readKeyDynamic(networkDataConfig, "lock-address", "PLEASE SET LOCK_ADDRESS MANUALLY") else ""
+      val coldAddress = readKeyDynamic(networkDataConfig, "cold-address", "PLEASE SET COLD_ADDRESS MANUALLY")
       allNetworksToken((networkName, networkType.toString)) =  Network(
         tokens,
         lockAddress,
+        coldAddress,
         readKeyDynamic(networkDataConfig, "cleanup-confirm").toInt
       )
     })

@@ -33,6 +33,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
       ("WatcherPermit", Json.fromString(WatcherPermit._2)),
       ("Fraud", Json.fromString(Fraud._2)),
       ("lock", Json.fromString(lockAddress)),
+      ("cold", Json.fromString(networkConfig.coldAddress)),
       ("guardSign", Json.fromString(GuardSign._2)),
       ("Commitment", Json.fromString(Commitment._2)),
       ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2)),

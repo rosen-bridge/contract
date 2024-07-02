@@ -28,6 +28,6 @@ case class Tokens(CleanupNFT: String, RWTId: String, AwcNFT: String, RepoConfigN
   }
 }
 
-case class Network(tokens: Tokens, lockAddress: String, cleanupConfirm: Int)
+case class Network(tokens: Tokens, lockAddress: String, coldAddress: String, cleanupConfirm: Int)
 
 case class NetworkGeneral(ergoNetwork: ErgoNetwork, mainTokens: MainTokens)
