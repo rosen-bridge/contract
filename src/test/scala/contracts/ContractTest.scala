@@ -2071,6 +2071,7 @@ class ContractTest extends TestSuite {
         val emissionBox = Boxes.createEmissionBox(
           ctx,
           Configs.minBoxValue + Configs.fee,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
           new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
           new ErgoToken(ERSNId, 9000)
         ).convertToInputWith(Boxes.getRandomHexString(), 0)
@@ -2078,6 +2079,7 @@ class ContractTest extends TestSuite {
         val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
           .contract(ctx.newContract(prover.getAddress.asP2PK().script))
           .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
             new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
             new ErgoToken(ERSNId, 9000)
           )
@@ -2122,6 +2124,7 @@ class ContractTest extends TestSuite {
         val emissionBox = Boxes.createEmissionBox(
           ctx,
           Configs.minBoxValue + Configs.fee,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
           new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
           new ErgoToken(ERSNId, 9000)
         ).convertToInputWith(Boxes.getRandomHexString(), 0)
@@ -2129,6 +2132,7 @@ class ContractTest extends TestSuite {
         val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
           .contract(ctx.newContract(prover.getAddress.asP2PK().script))
           .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
             new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
             new ErgoToken(ERSNId, 9000)
           )
@@ -2173,6 +2177,7 @@ class ContractTest extends TestSuite {
         val emissionBox = Boxes.createEmissionBox(
           ctx,
           Configs.minBoxValue,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
           new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
           new ErgoToken(ERSNId, 9000)
         ).convertToInputWith(Boxes.getRandomHexString(), 0)
@@ -2181,6 +2186,7 @@ class ContractTest extends TestSuite {
           .contract(contracts.Emission._1)
           .value(Configs.minBoxValue)
           .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
             new ErgoToken(networkConfig._1.mainTokens.RSN, 9900),
             new ErgoToken(ERSNId, 9100)
           ).build()
@@ -2224,6 +2230,7 @@ class ContractTest extends TestSuite {
         val emissionBox = Boxes.createEmissionBox(
           ctx,
           Configs.minBoxValue,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
           new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
           new ErgoToken(ERSNId, 9000)
         ).convertToInputWith(Boxes.getRandomHexString(), 0)
@@ -2232,6 +2239,7 @@ class ContractTest extends TestSuite {
           .contract(contracts.Emission._1)
           .value(Configs.minBoxValue)
           .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
             new ErgoToken(networkConfig._1.mainTokens.RSN, 9800),
             new ErgoToken(ERSNId, 9100)
           ).build()
@@ -2277,6 +2285,7 @@ class ContractTest extends TestSuite {
         val emissionBox = Boxes.createEmissionBox(
           ctx,
           Configs.minBoxValue,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
           new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
           new ErgoToken(ERSNId, 9000)
         ).convertToInputWith(Boxes.getRandomHexString(), 0)
@@ -2285,6 +2294,7 @@ class ContractTest extends TestSuite {
           .contract(contracts.Emission._1)
           .value(Configs.minBoxValue)
           .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
             new ErgoToken(networkConfig._1.mainTokens.RSN, 10100),
             new ErgoToken(ERSNId, 8900)
           ).build()

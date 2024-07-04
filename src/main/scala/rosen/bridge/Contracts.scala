@@ -40,6 +40,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
       ("WatcherTriggerEvent", Json.fromString(WatcherTriggerEvent._2)),
       ("WatcherCollateral", Json.fromString(WatcherCollateral._2)),
       ("RepoConfig", Json.fromString(RepoConfig._2)),
+      ("Emission", Json.fromString(Emission._2)),
     ))
   }
 
@@ -182,6 +183,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
   private def generateEmissionContract(): (ErgoContract, String) = {
     networkGeneral.ergoNetwork.ergoClient.execute(ctx => {
       val emissionScript = readScript("Emission.es")
+        .replace("EMISSION_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.EmissionNFT).get))
         .replace("GUARD_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.GuardNFT).get))
       
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), emissionScript)

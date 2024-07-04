@@ -1,9 +1,11 @@
 {
   // ----------------- REGISTERS
   // ----------------- TOKENS
-  // 0: RSN
-  // 1: EmittedRSN
+  // 0: EmissionNFT
+  // 1: RSN
+  // 2: EmittedRSN
   
+  val EmissionNFT = fromBase64("EMISSION_NFT");
   val GuardNFT = fromBase64("GUARD_NFT");
 
   if (CONTEXT.dataInputs.size > 0) {
@@ -30,11 +32,13 @@
           emissionOut.propositionBytes == emission.propositionBytes,
           emissionOut.value >= emission.value,
           emissionOut.tokens.size == emission.tokens.size,
-          emission.tokens.size >= 2,
+          emission.tokens.size == 3,
           emissionOut.tokens(0)._1 == emission.tokens(0)._1,
+          emissionOut.tokens(0)._2 == emission.tokens(0)._2,
           emissionOut.tokens(1)._1 == emission.tokens(1)._1,
-          emissionOut.tokens(1)._2 > emission.tokens(1)._2,
-          emission.tokens(0)._2 - emissionOut.tokens(0)._2 == emissionOut.tokens(1)._2 - emission.tokens(1)._2
+          emissionOut.tokens(2)._1 == emission.tokens(2)._1,
+          emissionOut.tokens(2)._2 > emission.tokens(2)._2,
+          emission.tokens(1)._2 - emissionOut.tokens(1)._2 == emissionOut.tokens(2)._2 - emission.tokens(2)._2
         )
       )
     )
