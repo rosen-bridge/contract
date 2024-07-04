@@ -18,6 +18,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
   lazy val Lock: (ErgoContract, String) = generateLockContract()
   lazy val GuardSign: (ErgoContract, String) = generateGuardSignContract()
   lazy val RepoConfig: (ErgoContract, String) = generateRepoConfigContract()
+  lazy val Emission: (ErgoContract, String) = generateEmissionContract()
 
   def readScript(path: String) = {
     val scriptSource: BufferedSource = Source.fromFile("src/main/scala/rosen/bridge/scripts/" + path, "utf-8")
@@ -174,6 +175,18 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), testScript)
       val address = Utils.getContractAddress(contract, networkGeneral.ergoNetwork.addressEncoder)
       println(s"repo config address is : \t\t\t$address")
+      (contract, address)
+    })
+  }
+
+  private def generateEmissionContract(): (ErgoContract, String) = {
+    networkGeneral.ergoNetwork.ergoClient.execute(ctx => {
+      val emissionScript = readScript("Emission.es")
+        .replace("GUARD_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.GuardNFT).get))
+      
+      val contract = ctx.compileContract(ConstantsBuilder.create().build(), emissionScript)
+      val address = Utils.getContractAddress(contract, networkGeneral.ergoNetwork.addressEncoder)
+      println(s"emission address is : \t\t\t$address")
       (contract, address)
     })
   }
