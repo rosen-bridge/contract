@@ -2103,7 +2103,7 @@ class ContractTest extends TestSuite {
   }
 
   /**
-   * @target redeem emission box transaction should sign successfully
+   * @target redeem emission box transaction signing should throw error when signed by less than required guards
    * @dependencies
    * @scenario
    * - mock emission box
