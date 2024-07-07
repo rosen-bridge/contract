@@ -87,7 +87,8 @@ object Configs extends ConfigHelper {
       readKeyDynamic(mainTokensConfig, "RepoNFT"),
       readKeyDynamic(mainTokensConfig, "GuardNFT"),
       readKeyDynamic(mainTokensConfig, "RSN"),
-      readKeyDynamic(mainTokensConfig, "RSNRatioNFT")
+      readKeyDynamic(mainTokensConfig, "RSNRatioNFT"),
+      readKeyDynamic(mainTokensConfig, "EmissionNFT")
     )
 
     // Prepare general network config

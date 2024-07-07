@@ -2048,4 +2048,276 @@ class ContractTest extends TestSuite {
       }
     })
   }
+
+  /**
+   * @target redeem emission box transaction should sign successfully
+   * @dependencies
+   * @scenario
+   * - mock emission box
+   * - mock guards secrets, public keys and box with the guard NFT
+   * - build and sign the emission redeem transaction
+   * @expected
+   * - successful sign for emission redeem transaction
+   */
+  property("redeem emission box transaction should sign successfully") {
+    networkConfig._1.ergoNetwork.ergoClient.execute(ctx => {
+      try {
+        val prover = getProver()
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val ERSNId = Boxes.getRandomHexString()
+        val emissionBox = Boxes.createEmissionBox(
+          ctx,
+          Configs.minBoxValue + Configs.fee,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+          new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
+          new ErgoToken(ERSNId, 9000)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val inputs = Seq(emissionBox)
+        val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
+          .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+          .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+            new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
+            new ErgoToken(ERSNId, 9000)
+          )
+        boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
+        val tx = ctx.newTxBuilder().addInputs(emissionBox)
+          .fee(Configs.fee)
+          .addDataInputs(guardBox)
+          .addOutputs(boxBuilder.build())
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        multiSigProver.sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("transaction not signed")
+      }
+    })
+  }
+
+  /**
+   * @target redeem emission box transaction signing should throw error when signed by less than required guards
+   * @dependencies
+   * @scenario
+   * - mock emission box
+   * - mock guards secrets, public keys and box with the guard NFT
+   * - build and sign the emission redeem transaction with only 5 secrets
+   * @expected
+   * - sign error for emission redeem transaction
+   */
+  property("redeem emission box transaction signing should throw error when signed by less than required guards") {
+    networkConfig._1.ergoNetwork.ergoClient.execute(ctx => {
+      try {
+        val prover = getProver()
+        val secrets = (0 until 7).map(ind => Utils.randBigInt.bigInteger)
+        val guards = secrets.map(item => ctx.newProverBuilder().withDLogSecret(item).build())
+        val guardsPks = guards.map(item => item.getAddress.getPublicKey.pkBytes).toArray
+        val guardBox = Boxes.createGuardNftBox(ctx, guardsPks, 5, 6).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val ERSNId = Boxes.getRandomHexString()
+        val emissionBox = Boxes.createEmissionBox(
+          ctx,
+          Configs.minBoxValue + Configs.fee,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+          new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
+          new ErgoToken(ERSNId, 9000)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+        val inputs = Seq(emissionBox)
+        val boxBuilder = ctx.newTxBuilder().outBoxBuilder()
+          .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+          .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+            new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
+            new ErgoToken(ERSNId, 9000)
+          )
+        boxBuilder.value(inputs.map(item => item.getValue).sum - Configs.fee)
+        val tx = ctx.newTxBuilder().addInputs(emissionBox)
+          .fee(Configs.fee)
+          .addDataInputs(guardBox)
+          .addOutputs(boxBuilder.build())
+          .sendChangeTo(prover.getAddress)
+          .build()
+        val multiSigProverBuilder = ctx.newProverBuilder()
+        secrets.slice(0, 5).map(item => multiSigProverBuilder.withDLogSecret(item))
+        val multiSigProver = multiSigProverBuilder.build()
+        assertThrows[AnyRef] {
+          multiSigProver.sign(tx)
+        }
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("unexpected error")
+      }
+    })
+  }
+
+  /**
+   * @target emission transaction should sign successfully
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock valid emission box
+   * - mock valid output emission and user boxes
+   * - build and sign the emission transaction
+   * @expected
+   * - successful sign for emission transaction
+   */
+  property("emission transaction should sign successfully") {
+    networkConfig._1.ergoNetwork.ergoClient.execute(ctx => {
+      try {
+        val prover = getProver()
+        val ERSNId = Boxes.getRandomHexString()
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(ERSNId, 100L))
+        val emissionBox = Boxes.createEmissionBox(
+          ctx,
+          Configs.minBoxValue,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+          new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
+          new ErgoToken(ERSNId, 9000)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+
+        val emissionOut = ctx.newTxBuilder().outBoxBuilder()
+          .contract(contracts.Emission._1)
+          .value(Configs.minBoxValue)
+          .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+            new ErgoToken(networkConfig._1.mainTokens.RSN, 9900),
+            new ErgoToken(ERSNId, 9100)
+          ).build()
+        val userOut = ctx.newTxBuilder().outBoxBuilder()
+          .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+          .value(userBox.getValue() - Configs.fee)
+          .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.RSN, 100),
+          ).build()
+        val tx = ctx.newTxBuilder().addInputs(emissionBox, userBox)
+          .fee(Configs.fee)
+          .addOutputs(emissionOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        prover.sign(tx)
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("transaction not signed")
+      }
+    })
+  }
+
+  /**
+   * @target emission transaction signing should throw error when out RSN is more than in ERSN
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock valid emission box
+   * - mock valid output emission and user boxes with more RSN
+   * - build and sign the emission transaction
+   * @expected
+   * - sign error for emission transaction
+   */
+  property("emission transaction signing should throw error when out RSN is more than in ERSN") {
+    networkConfig._1.ergoNetwork.ergoClient.execute(ctx => {
+      try {
+        val prover = getProver()
+        val ERSNId = Boxes.getRandomHexString()
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(ERSNId, 100L))
+        val emissionBox = Boxes.createEmissionBox(
+          ctx,
+          Configs.minBoxValue,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+          new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
+          new ErgoToken(ERSNId, 9000)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+
+        val emissionOut = ctx.newTxBuilder().outBoxBuilder()
+          .contract(contracts.Emission._1)
+          .value(Configs.minBoxValue)
+          .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+            new ErgoToken(networkConfig._1.mainTokens.RSN, 9800),
+            new ErgoToken(ERSNId, 9100)
+          ).build()
+        val userOut = ctx.newTxBuilder().outBoxBuilder()
+          .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+          .value(userBox.getValue() - Configs.fee)
+          .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.RSN, 200),
+          ).build()
+        val tx = ctx.newTxBuilder().addInputs(emissionBox, userBox)
+          .fee(Configs.fee)
+          .addOutputs(emissionOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        assertThrows[AnyRef] {
+          prover.sign(tx)
+        }
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("unexpected error")
+      }
+    })
+  }
+
+  /**
+   * @target emission transaction signing should throw error when RSN is swapped for ERSN
+   * @dependencies
+   * @scenario
+   * - mock user input with RSN
+   * - mock valid emission box
+   * - mock valid output emission and user boxes
+   * - build and sign the emission transaction
+   * @expected
+   * - sign error for emission transaction
+   */
+  property("emission transaction signing should throw error when RSN is swapped for ERSN") {
+    networkConfig._1.ergoNetwork.ergoClient.execute(ctx => {
+      try {
+        val prover = getProver()
+        val ERSNId = Boxes.getRandomHexString()
+        val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(networkConfig._1.mainTokens.RSN, 100L))
+        val emissionBox = Boxes.createEmissionBox(
+          ctx,
+          Configs.minBoxValue,
+          new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+          new ErgoToken(networkConfig._1.mainTokens.RSN, 10000),
+          new ErgoToken(ERSNId, 9000)
+        ).convertToInputWith(Boxes.getRandomHexString(), 0)
+
+        val emissionOut = ctx.newTxBuilder().outBoxBuilder()
+          .contract(contracts.Emission._1)
+          .value(Configs.minBoxValue)
+          .tokens(
+            new ErgoToken(networkConfig._1.mainTokens.EmissionNFT, 1),
+            new ErgoToken(networkConfig._1.mainTokens.RSN, 10100),
+            new ErgoToken(ERSNId, 8900)
+          ).build()
+        val userOut = ctx.newTxBuilder().outBoxBuilder()
+          .contract(ctx.newContract(prover.getAddress.asP2PK().script))
+          .value(userBox.getValue() - Configs.fee)
+          .tokens(
+            new ErgoToken(ERSNId, 100),
+          ).build()
+        val tx = ctx.newTxBuilder().addInputs(emissionBox, userBox)
+          .fee(Configs.fee)
+          .addOutputs(emissionOut, userOut)
+          .sendChangeTo(prover.getAddress)
+          .build()
+        assertThrows[AnyRef] {
+          prover.sign(tx)
+        }
+      } catch {
+        case exp: Throwable =>
+          println(exp.toString)
+          fail("unexpected error")
+      }
+    })
+  }
+
 }
