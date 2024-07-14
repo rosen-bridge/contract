@@ -4,14 +4,15 @@ import io.circe.Json
 import org.ergoplatform.ErgoAddressEncoder
 import org.ergoplatform.appkit.ErgoClient
 
-case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String, RSNRatioNFT: String, EmissionNFT: String) {
+case class MainTokens(RepoNFT: String, GuardNFT: String, RSN: String, RSNRatioNFT: String, EmissionNFT: String, ERSN: String) {
   def toJson(): Json = {
     Json.fromFields(List(
       ("RepoNFT", Json.fromString(RepoNFT)),
       ("GuardNFT", Json.fromString(GuardNFT)),
       ("RSN", Json.fromString(RSN)),
       ("RSNRatioNFT", Json.fromString(RSNRatioNFT)),
-      ("EmissionNFT", Json.fromString(EmissionNFT))
+      ("EmissionNFT", Json.fromString(EmissionNFT)),
+      ("ERSN", Json.fromString(ERSN)),
     ))
   }
 }
