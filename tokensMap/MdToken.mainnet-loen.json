@@ -18,5 +18,14 @@
       "type": "CIP26",
       "residency": "native"
     }
+  },
+  "ethereum": {
+    "tokenId": "0x897f72F1C0bBBfa8dACbD33836b40861A43Ca9e1",
+    "name": "rsMdToken-loen ",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }
