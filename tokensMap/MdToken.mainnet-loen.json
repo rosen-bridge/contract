@@ -20,7 +20,7 @@
     }
   },
   "ethereum": {
-    "tokenId": "0x897f72F1C0bBBfa8dACbD33836b40861A43Ca9e1",
+    "tokenId": "0x897f72f1c0bbbfa8dacbd33836b40861a43ca9e1",
     "name": "rsMdToken-loen ",
     "decimals": 3,
     "metaData": {

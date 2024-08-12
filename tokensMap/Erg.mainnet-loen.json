@@ -20,7 +20,7 @@
     }
   },
   "ethereum": {
-    "tokenId": "0x46a700DEeFD4a51C9490fc6f6fcFF46B2e2a7539",
+    "tokenId": "0x46a700deefd4a51c9490fc6f6fcff46b2e2a7539",
     "name": "rsErg-loen",
     "decimals": 9,
     "metaData": {
