@@ -1,22 +1,31 @@
 {
-    "ergo": {
-      "tokenId": "erg",
-      "name": "ERG",
-      "decimals": 9,
-      "metaData": {
-        "type": "native",
-        "residency": "native"
-      }
-    },
-    "cardano": {
-      "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e",
-      "policyId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48",
-      "assetName": "77724552472d6c6f656e",
-      "name": "wrERG-loen",
-      "decimals": 9,
-      "metaData": {
-        "type": "CIP26",
-        "residency": "wrapped"
-      }
+  "ergo": {
+    "tokenId": "erg",
+    "name": "ERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "native",
+      "residency": "native"
+    }
+  },
+  "cardano": {
+    "tokenId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48.77724552472d6c6f656e",
+    "policyId": "fca58ef8ba9ef1961e132b611de2f8abcd2f34831e615a6f80c5bb48",
+    "assetName": "77724552472d6c6f656e",
+    "name": "wrERG-loen",
+    "decimals": 9,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x46a700DEeFD4a51C9490fc6f6fcFF46B2e2a7539",
+    "name": "rsErg-loen",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
     }
   }
+}

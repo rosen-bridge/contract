@@ -1,0 +1,31 @@
+{
+  "ergo": {
+    "tokenId": "7d6fc24cc6ee64cf00781741c44cf44925e01ad31e265f045adde4ac8cf2cc21",
+    "name": "rsMdERC20-loen",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0.72734d6445524332302d6c6f656e",
+    "policyId": "3122541486c983d637e7ed9330c94e490e1fe4a1758725fab7f6d9e0",
+    "assetName": "72734d6445524332302d6c6f656e",
+    "name": "rsMdERC20-loen ",
+    "decimals": 3,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x45D79fFa4717093129ec01a22D6c47a31523daf0",
+    "name": "MdERC20-loen ",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "native"
+    }
+  }
+}
