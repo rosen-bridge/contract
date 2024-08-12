@@ -20,7 +20,7 @@
     }
   },
   "ethereum": {
-    "tokenId": "0x45D79fFa4717093129ec01a22D6c47a31523daf0",
+    "tokenId": "0x45d79ffa4717093129ec01a22d6c47a31523daf0",
     "name": "MdERC20-loen ",
     "decimals": 9,
     "metaData": {

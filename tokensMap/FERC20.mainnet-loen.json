@@ -20,7 +20,7 @@
     }
   },
   "ethereum": {
-    "tokenId": "0xB15084A7833b1cC1DD535FcF9Bc07CA4Abb89ECd",
+    "tokenId": "0xb15084a7833b1cc1dd535fcf9bc07ca4abb89ecd",
     "name": "FERC20-loen",
     "decimals": 3,
     "metaData": {
