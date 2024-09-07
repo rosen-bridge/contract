@@ -393,4 +393,13 @@ object Boxes {
     tokens
   }
 
+  def createEmissionBox(ctx: BlockchainContext, amount: Long, tokens: ErgoToken*): OutBox = {
+    val txb = ctx.newTxBuilder()
+    txb.outBoxBuilder()
+      .value(amount)
+      .tokens(tokens: _*)
+      .contract(contracts.Emission._1)
+      .build()
+  }
+
 }

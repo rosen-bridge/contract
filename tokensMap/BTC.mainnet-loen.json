@@ -27,5 +27,14 @@
       "type": "native",
       "residency": "native"
     }
+  },
+  "ethereum": {
+    "tokenId": "0x0347618c0eec9e7a65d87e161673d77b6171f31f",
+    "name": "rsBTC-loen",
+    "decimals": 8,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

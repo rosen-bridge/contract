@@ -18,5 +18,14 @@
       "type": "native",
       "residency": "native"
     }
+  },
+  "ethereum": {
+    "tokenId": "0x67fe80cb2fd26e23a1f6baeb8ec20cddd69308f1",
+    "name": "rsAda-loen",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }
