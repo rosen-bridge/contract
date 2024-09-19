@@ -4,7 +4,6 @@ import helpers.{Network, NetworkGeneral, Utils}
 import org.ergoplatform.appkit.{ConstantsBuilder, ErgoContract}
 import scorex.util.encode.{Base16, Base64}
 import io.circe.Json
-
 import java.io.PrintWriter
 import scala.io.{BufferedSource, Source}
 
@@ -47,6 +46,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
   def createContractsJson(networkName: String, networkType: String, networkVersion: String): Unit = {
     val result = {
       Json.fromFields(List(
+        ("version", Json.fromString(networkVersion)),
         ("addresses", this.toJsonAddresses(networkName)),
         ("tokens", networkConfig.tokens.toJson().deepMerge(networkGeneral.mainTokens.toJson())),
         ("cleanupConfirm", Json.fromInt(networkConfig.cleanupConfirm))

@@ -29,3 +29,9 @@ Test / publishArtifact := false
 
 assembly / assemblyJarName := s"${name.value}-${organizationName.value}-${version.value}.jar"
 
+lazy val root = (project in file(".")).
+  enablePlugins(BuildInfoPlugin).
+  settings(
+    buildInfoKeys := Seq[BuildInfoKey](name, ThisBuild / version, ThisBuild / scalaVersion),
+    buildInfoPackage := "info"
+  )
