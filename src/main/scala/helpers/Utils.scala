@@ -1,5 +1,6 @@
 package helpers
 
+import io.circe.Json
 import org.ergoplatform.ErgoAddressEncoder
 import org.ergoplatform.appkit.ErgoContract
 import rosen.bridge.{Contracts, TokensMap}
@@ -29,7 +30,12 @@ object Utils {
         val fileType = conf ++ ".json"
         val tokensMap = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath, List(fileType))
         val idKeys = TokensMap.createIdKeysJson()
-        TokensMap.createTokensMapJsonFile(tokensMap.deepMerge(idKeys).toString(), conf, networkVersion)
+        val tokensMapJson = tokensMap.deepMerge(
+          idKeys
+        ).deepMerge(
+          Json.fromFields(List(("version", Json.fromString(networkVersion))))
+        ).toString()
+        TokensMap.createTokensMapJsonFile(tokensMapJson, conf, networkVersion)
         println(s"Json of TokensMap created for network type $conf!")
       }
     })
