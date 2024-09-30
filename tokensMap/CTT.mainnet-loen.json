@@ -20,7 +20,7 @@
     }
   },
   "ethereum": {
-    "tokenId": "0x1D88c3493D56a1a5f976b3BcD1BCD8aEBa786f47",
+    "tokenId": "0x1d88c3493d56a1a5f976b3bcd1bcd8aeba786f47",
     "name": "rsCTT-loen",
     "decimals": 4,
     "metaData": {
