@@ -18,5 +18,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "ethereum": {
+    "tokenId": "0xd207d3228ad136d56523ffbf04ee27062da82884",
+    "name": "rsRSN",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

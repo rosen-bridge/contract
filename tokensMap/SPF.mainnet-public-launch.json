@@ -18,5 +18,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "ethereum": {
+    "tokenId": "0x5d4d4e1ab6f66dd2239f3a83412a7e3fcaaee487",
+    "name": "rsSPF",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }
