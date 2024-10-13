@@ -27,5 +27,14 @@
       "type": "native",
       "residency": "native"
     }
+  },
+  "ethereum": {
+    "tokenId": "0xd753cd1f5cb336aec4836dc7269bc45ea8607fbc",
+    "name": "rsBTC",
+    "decimals": 8,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

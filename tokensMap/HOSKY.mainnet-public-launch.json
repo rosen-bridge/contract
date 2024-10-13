@@ -18,5 +18,14 @@
       "type": "CIP26",
       "residency": "native"
     }
+  },
+  "ethereum": {
+    "tokenId": "0x0f068432e1a1c6574fad1bc8ff751b76d5f95d43",
+    "name": "rsHOSKY",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }
