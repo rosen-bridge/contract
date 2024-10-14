@@ -18,5 +18,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "ethereum": {
+    "tokenId": "0x6c060ba738af39a09f3b45ac6487dfc9ebb885f6",
+    "name": "rsERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

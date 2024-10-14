@@ -18,5 +18,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "ethereum": {
+    "tokenId": "0xe4d00106b3b9c27b59b7f752417d00f6a8517019",
+    "name": "rsSigUSD",
+    "decimals": 2,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

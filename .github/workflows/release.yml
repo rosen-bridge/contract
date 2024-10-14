@@ -113,7 +113,7 @@ jobs:
         if: github.ref_type == 'tag'
         run: |
           ROSEN=$(find . -name 'contract-rosen-bridge-*.jar')
-          java -jar $ROSEN all --version ${{ github.ref_name }}
+          java -jar $ROSEN all
 
       - name: Upload JSON files
         uses: softprops/action-gh-release@v1

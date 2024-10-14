@@ -1,5 +1,6 @@
 package rosen.bridge
 
+import info.BuildInfo
 import helpers.Utils
 import scopt.OptionParser
 
@@ -30,7 +31,7 @@ object RosenContractsExecutor extends App {
         opt[String]('v', "version")
           .action((x, c) => c.copy(networkVersion = x))
           .text("Contracts file version")
-          .required()
+          .optional()
       )
 
     cmd("tokens")
@@ -45,7 +46,7 @@ object RosenContractsExecutor extends App {
         opt[String]('v', "version")
           .action((x, c) => c.copy(networkVersion = x))
           .text("tokens file version")
-          .required()
+          .optional()
       )
 
     cmd("all")
@@ -60,7 +61,7 @@ object RosenContractsExecutor extends App {
         opt[String]('v', "version")
           .action((x, c) => c.copy(networkVersion = x))
           .text("files version")
-          .required()
+          .optional()
       )
 
     help("help").text("prints this usage text")
@@ -68,17 +69,18 @@ object RosenContractsExecutor extends App {
 
   parser.parse(args, Config()) match {
     case Some(config) =>
+      val networkVersion = if (config.networkVersion.nonEmpty) config.networkVersion else BuildInfo.version
       if (config.mode == "contracts") {
-        Utils.createContracts(config.networkVersion, config.networkName, config.networkType)
+        Utils.createContracts(networkVersion, config.networkName, config.networkType)
         System.exit(0)
       }
       else if (config.mode == "tokens") {
-        Utils.createTokenMap(config.networkVersion, config.networkType)
+        Utils.createTokenMap(networkVersion, config.networkType)
         System.exit(0)
       }
       else if (config.mode == "all") {
-        Utils.createContracts(config.networkVersion, networkType = config.networkType)
-        Utils.createTokenMap(config.networkVersion, config.networkType)
+        Utils.createContracts(networkVersion, networkType = config.networkType)
+        Utils.createTokenMap(networkVersion, config.networkType)
         System.exit(0)
       }
 
