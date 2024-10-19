@@ -20,7 +20,7 @@
     }
   },
   "ethereum": {
-    "tokenId": "0x9ea8c7d432b2c4a5095f32a3092a7f513e7c19b1",
+    "tokenId": "0x00ea2a20351793c754f1d3f33ef6459642fd78d7",
     "name": "rsADA",
     "decimals": 6,
     "metaData": {
