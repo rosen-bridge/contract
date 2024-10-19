@@ -18,5 +18,14 @@
       "type": "native",
       "residency": "native"
     }
+  },
+  "ethereum": {
+    "tokenId": "0x00ea2a20351793c754f1d3f33ef6459642fd78d7",
+    "name": "rsADA",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }
