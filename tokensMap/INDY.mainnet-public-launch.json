@@ -1,0 +1,31 @@
+{
+  "cardano": {
+    "tokenId": "533bb94a8850ee3ccbe483106489399112b74c905342cb1792a797a0.494e4459",
+    "name": "INDY",
+    "decimals": 6,
+    "metaData": {
+      "type": "CIP-26",
+      "residency": "native"
+    },
+    "policyId": "533bb94a8850ee3ccbe483106489399112b74c905342cb1792a797a0",
+    "assetName": "494e4459"
+  },
+  "ergo": {
+    "tokenId": "8da6eec252f720a09bc0655abfc4ac943a9769728e1b167454ed9c3298d151ff",
+    "name": "rsINDY",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x09a7dc4e994afe7d1ed9f1a76843a1692944ee27",
+    "name": "rsINDY",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  }
+}
