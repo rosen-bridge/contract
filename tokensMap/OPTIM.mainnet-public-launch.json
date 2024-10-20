@@ -1,0 +1,31 @@
+{
+  "cardano": {
+    "tokenId": "e52964af4fffdb54504859875b1827b60ba679074996156461143dc1.4f5054494d",
+    "name": "OPTIM",
+    "decimals": 6,
+    "metaData": {
+      "type": "CIP-26",
+      "residency": "native"
+    },
+    "policyId": "e52964af4fffdb54504859875b1827b60ba679074996156461143dc1",
+    "assetName": "4f5054494d"
+  },
+  "ergo": {
+    "tokenId": "569d53ad945c5a671761c108cc0646a1c96d1d529647d75a4e96770cfa68bdd9",
+    "name": "rsOPTIM",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xbe0b10b24e93cc787088f06d34c47a606e60a953",
+    "name": "rsOPTIM",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  }
+}

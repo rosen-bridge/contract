@@ -1,0 +1,31 @@
+{
+  "cardano": {
+    "tokenId": "95a427e384527065f2f8946f5e86320d0117839a5e98ea2c0b55fb00.48554e54",
+    "name": "HUNT",
+    "decimals": 6,
+    "metaData": {
+      "type": "CIP-26",
+      "residency": "native"
+    },
+    "policyId": "95a427e384527065f2f8946f5e86320d0117839a5e98ea2c0b55fb00",
+    "assetName": "48554e54"
+  },
+  "ergo": {
+    "tokenId": "1a0dad7633c634ffda3578a3eab07e949c19b0c82f05fb00461c1e429a874298",
+    "name": "rsHUNT",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xe1db903a09b70688da692414f014f63ff1a12530",
+    "name": "rsHUNT",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  }
+}
