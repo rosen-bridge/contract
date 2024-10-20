@@ -1,0 +1,31 @@
+{
+  "cardano": {
+    "tokenId": "9a9693a9a37912a5097918f97918d15240c92ab729a0b7c4aa144d77.53554e444145",
+    "name": "SUNDAE",
+    "decimals": 6,
+    "metaData": {
+      "type": "CIP-26",
+      "residency": "native"
+    },
+    "policyId": "9a9693a9a37912a5097918f97918d15240c92ab729a0b7c4aa144d77",
+    "assetName": "53554e444145"
+  },
+  "ergo": {
+    "tokenId": "d1dcfca3330bc884298c7111a9ef1e7b2970ab0c1d11bbcbacf31d319f0c2d55",
+    "name": "rsSUNDAE",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xc60df4e02152670073b6b41eb3a7267e7f3a1aa1",
+    "name": "rsSUNDAE",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  }
+}
