@@ -1,0 +1,31 @@
+{
+  "ergo": {
+    "tokenId": "9944ff273ff169f32b851b96bbecdbb67f223101c15ae143de82b3e7f75b19d2",
+    "name": "GluonW GAUC",
+    "decimals": 9,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x6f26b2260341e57fc56be3dff14f660dfaaae63b",
+    "name": "rsGluonW GAUC",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273476c756f6e572047415543",
+    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+    "assetName": "7273476c756f6e572047415543",
+    "name": "rsGluonW GAUC",
+    "decimals": 9,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "ergo": {
+    "tokenId": "59ee24951ce668f0ed32bdb2e2e5731b6c36128748a3b23c28407c5f8ccbf0f6",
+    "name": "WALRUS",
+    "decimals": 0,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xea8449729c7f5ff7adff31a43d816183cd01dfcd",
+    "name": "rsWALRUS",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.727357414c525553",
+    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+    "assetName": "727357414c525553",
+    "name": "rsWALRUS",
+    "decimals": 0,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "ergo": {
+    "tokenId": "00bd762484086cf560d3127eb53f0769d76244d9737636b2699d55c56cd470bf",
+    "name": "EPOS",
+    "decimals": 4,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xb8dc34b4199d60780503b51926a3679272bb482c",
+    "name": "rsEPOS",
+    "decimals": 4,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.727345504f53",
+    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+    "assetName": "727345504f53",
+    "name": "rsEPOS",
+    "decimals": 4,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}

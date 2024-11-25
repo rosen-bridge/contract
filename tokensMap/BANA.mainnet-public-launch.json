@@ -1,0 +1,31 @@
+{
+  "cardano": {
+    "tokenId": "3a89cf5f2f18887fcaec3d2e9bd4fee52caeaebc50f338ff23861cec.42414e41",
+    "name": "BANA",
+    "decimals": 4,
+    "metaData": {
+      "type": "CIP-26",
+      "residency": "native"
+    },
+    "policyId": "3a89cf5f2f18887fcaec3d2e9bd4fee52caeaebc50f338ff23861cec",
+    "assetName": "42414e41"
+  },
+  "ethereum": {
+    "tokenId": "0x1ac593d366ee64eb4b63b509f357eaf042b2dc1b",
+    "name": "rsBANA",
+    "decimals": 4,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "ergo": {
+    "tokenId": "993e5e617ac834a5f57409b39e408fc5f2e674fa5e33cf488e7dfe1fa1b7930f",
+    "name": "rsBANA",
+    "decimals": 4,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  }
+}

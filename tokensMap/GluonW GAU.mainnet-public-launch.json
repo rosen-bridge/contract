@@ -1,0 +1,31 @@
+{
+  "ergo": {
+    "tokenId": "886b7721bef42f60c6317d37d8752da8aca01898cae7dae61808c4a14225edc8",
+    "name": "GluonW GAU",
+    "decimals": 9,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x785c1771d7ba16397ca104a8bb6dd128383f020d",
+    "name": "rsGluonW GAU",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273476c756f6e5720474155",
+    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+    "assetName": "7273476c756f6e5720474155",
+    "name": "rsGluonW GAU",
+    "decimals": 9,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}

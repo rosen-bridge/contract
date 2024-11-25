@@ -1,0 +1,31 @@
+{
+  "cardano": {
+    "tokenId": "02a574e2f048e288e2a77f48872bf8ffd61d73f9476ac5a83601610b.",
+    "name": "sOADA",
+    "decimals": 6,
+    "metaData": {
+      "type": "CIP-26",
+      "residency": "native"
+    },
+    "policyId": "02a574e2f048e288e2a77f48872bf8ffd61d73f9476ac5a83601610b",
+    "assetName": ""
+  },
+  "ethereum": {
+    "tokenId": "0x736fe438dcf98e3653151f1349c866baed9a5e4f",
+    "name": "rssOADA",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "ergo": {
+    "tokenId": "92df4099f4b801d55a463d6c914ba96a9d470f5e59f4f65f9989223c350d6a53",
+    "name": "rssOADA",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  }
+}
