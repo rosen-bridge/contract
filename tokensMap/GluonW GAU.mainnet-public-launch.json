@@ -10,7 +10,7 @@
   },
   "ethereum": {
     "tokenId": "0x785c1771d7ba16397ca104a8bb6dd128383f020d",
-    "name": "rsGluonW GAU",
+    "name": "rsGAU",
     "decimals": 9,
     "metaData": {
       "type": "ERC-20",
@@ -21,7 +21,7 @@
     "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273476c756f6e5720474155",
     "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
     "assetName": "7273476c756f6e5720474155",
-    "name": "rsGluonW GAU",
+    "name": "rsGAU",
     "decimals": 9,
     "metaData": {
       "type": "CIP26",

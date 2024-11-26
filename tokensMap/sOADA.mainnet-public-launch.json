@@ -1,7 +1,7 @@
 {
   "cardano": {
     "tokenId": "02a574e2f048e288e2a77f48872bf8ffd61d73f9476ac5a83601610b.",
-    "name": "SOADA",
+    "name": "sOADA",
     "decimals": 6,
     "metaData": {
       "type": "CIP-26",
