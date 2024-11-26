@@ -1,0 +1,31 @@
+{
+  "cardano": {
+    "tokenId": "2852268cf6e2db42e20f2fd3125f541e5d6c5a3d70b4dda17c2daa82.",
+    "name": "O",
+    "decimals": 6,
+    "metaData": {
+      "type": "CIP-26",
+      "residency": "native"
+    },
+    "policyId": "2852268cf6e2db42e20f2fd3125f541e5d6c5a3d70b4dda17c2daa82",
+    "assetName": ""
+  },
+  "ethereum": {
+    "tokenId": "0xb951b650daee775d3cd446567d5248c54a7202ed",
+    "name": "rsO",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "ergo": {
+    "tokenId": "f31bfeaa68564b49775eface452f831d9f60b4567837bbeb909c6401e0a19485",
+    "name": "rsO",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  }
+}

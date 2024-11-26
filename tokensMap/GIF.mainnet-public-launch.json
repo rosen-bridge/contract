@@ -1,0 +1,31 @@
+{
+  "ergo": {
+    "tokenId": "843b5a2a0658550339c38f29827861fe459ce5206edaf17163113cccafc77af1",
+    "name": "GIF",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "cardano": {
+    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273474946",
+    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+    "assetName": "7273474946",
+    "name": "rsGIF",
+    "decimals": 6,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xa43d9f9982ba219e8cbc442aec1304ad014caaa5",
+    "name": "rsGIF",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  }
+}
