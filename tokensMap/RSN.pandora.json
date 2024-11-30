@@ -1,0 +1,40 @@
+{
+  "ergo": {
+    "tokenId": "d752bede1a85891fff344604431fd6dc30ba685b382f2e0fe15da8141d36e34e",
+    "name": "RSN-Pandora",
+    "decimals": 3,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xd56a632afd90e68a4b3147720b1b4e974bca82ad",
+    "name": "rpnRSN",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e52534e",
+    "policyId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb",
+    "assetName": "72706e52534e",
+    "name": "rpnRSN",
+    "decimals": 3,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  },
+  "binance": {
+    "tokenId": "0xae7d4d48939d3edcae1b8103a2e01acd3f51ecea",
+    "name": "rpnRSN",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  }
+}

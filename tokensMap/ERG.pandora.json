@@ -1,0 +1,40 @@
+{
+  "ergo": {
+    "tokenId": "erg",
+    "name": "ERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "native",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x96544b7c03c00da7bfddc560351429ee1376f7d8",
+    "name": "rpnERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "binance": {
+    "tokenId": "0xa102afbd5461c9ef971cb70f6ea736eea6fdb441",
+    "name": "rpnERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e455247",
+    "policyId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb",
+    "assetName": "72706e455247",
+    "name": "rpnERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}
