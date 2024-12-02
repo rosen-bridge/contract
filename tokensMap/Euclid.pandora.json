@@ -1,0 +1,40 @@
+{
+  "ergo": {
+    "tokenId": "36cd0ff2a2e12fd9ede563b07808684dbe6bb4b85ce831b92c23cc8322ca784c",
+    "name": "Euclid",
+    "decimals": 3,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x1b339754f1ff09ef98deaf6ea1b1c2a86e3df40a",
+    "name": "rpnEuclid",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "binance": {
+    "tokenId": "0xbda81585b76a4b52955e68da77aad4398c1bb2d3",
+    "name": "rpnEuclid",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e4575636c6964",
+    "policyId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb",
+    "assetName": "72706e4575636c6964",
+    "name": "rpnEuclid",
+    "decimals": 3,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}
