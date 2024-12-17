@@ -1,13 +1,14 @@
 {
   "cardano": {
     "tokenId": "ada",
+    "policyId": "",
+    "assetName": "414441",
     "name": "ADA",
     "decimals": 6,
     "metaData": {
       "type": "native",
       "residency": "native"
-    },
-    "policyId": "ada"
+    }
   },
   "ethereum": {
     "tokenId": "0xdc775c392479a4a6a69db564bb495d2f0d8ef366",
