@@ -27,5 +27,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x7067bcefd0dc5af87449ad0fc1380f45c8462686",
+    "name": "rsBober",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

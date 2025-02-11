@@ -27,5 +27,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x4cd2f21407f8cc854919a451ea9edba79615e29b",
+    "name": "rsCYPX",
+    "decimals": 4,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

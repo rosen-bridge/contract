@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x0b77aeaa694f42cfe6a8075e21e4e8e0b4c9b3f2",
+    "name": "rsCOMET",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

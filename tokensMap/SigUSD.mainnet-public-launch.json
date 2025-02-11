@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xe5e7a549339644c8df4a69ab493a47fbe41f4372",
+    "name": "rsSigUSD",
+    "decimals": 2,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

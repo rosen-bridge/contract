@@ -36,5 +36,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xd6416c1b66484ea7d1b3fb20a4d49b73d25a65d2",
+    "name": "rsBTC",
+    "decimals": 8,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xe84434a3e8423ff9cdcbc706f89389f2a74b4bee",
+    "name": "rsSNEK",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

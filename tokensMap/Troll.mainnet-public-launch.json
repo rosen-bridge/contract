@@ -27,5 +27,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x2cf7d28159464d64eaaec73fa1164fc9ce6e4380",
+    "name": "rsTroll",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

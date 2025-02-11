@@ -27,5 +27,14 @@
       "type": "EIP-004",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x94654ab49c8bcec591aed536eb6e78e693bc1111",
+    "name": "rsNIKEPIG",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xe2bb0b82b3f6647ca08497b83f3accfdf15648aa",
+    "name": "rsSPLASH",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

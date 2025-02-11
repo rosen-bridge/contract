@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xa3e1ba3397fa7388ad11206935b08514dd729264",
+    "name": "rsSigRSV",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

@@ -27,5 +27,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xd169fa8c9c33bd5bb2cc9bdd7cc3eeabcd1fffbc",
+    "name": "rsMEW",
+    "decimals": 2,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

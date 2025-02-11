@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x64935bb405da9a761a9c0c13d81c6c91e78d42b7",
+    "name": "rsLQ",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }
