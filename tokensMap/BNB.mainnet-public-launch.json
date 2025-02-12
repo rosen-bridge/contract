@@ -1,0 +1,40 @@
+{
+  "binance": {
+    "tokenId": "bnb",
+    "name": "BNB",
+    "decimals": 18,
+    "metaData": {
+      "type": "native",
+      "residency": "native"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xd8cB11D1F33AFe61BF090c2c08Ed0966A833253E",
+    "name": "rsBNB",
+    "decimals": 18,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
+  },
+  "ergo": {
+    "tokenId": "050322548722d36f094e341f59ed93eb22118b363eb4efe8c461a52c4d93e2c3",
+    "name": "rsBNB",
+    "decimals": 9,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
+  "cardano": {
+    "tokenId": "acf4acc66ec68969dc27b74727f85e44ab317c3060c5993929651fb7.7273424e42",
+    "policyId": "acf4acc66ec68969dc27b74727f85e44ab317c3060c5993929651fb7",
+    "assetName": "7273424e42",
+    "name": "rsBNB",
+    "decimals": 9,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  }
+}

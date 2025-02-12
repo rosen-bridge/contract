@@ -29,9 +29,9 @@
     }
   },
   "binance": {
-    "tokenId": "0x95b4e19e1038d07a43aa22f1b06b8c0e6705d0f0",
-    "name": "rsSUNDAE",
-    "decimals": 6,
+    "tokenId": "0xbeb98005288df49f977449303bc549b983df0178",
+    "name": "rsSUGAR",
+    "decimals": 0,
     "metaData": {
       "type": "ERC-20",
       "residency": "wrapped"
