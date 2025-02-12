@@ -9,7 +9,7 @@
     }
   },
   "ethereum": {
-    "tokenId": "0xd8cB11D1F33AFe61BF090c2c08Ed0966A833253E",
+    "tokenId": "0xd8cb11d1f33afe61bf090c2c08ed0966a833253e",
     "name": "rsBNB",
     "decimals": 18,
     "metaData": {
