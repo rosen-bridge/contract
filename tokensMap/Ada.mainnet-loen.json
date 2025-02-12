@@ -27,14 +27,5 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
-  },
-  "binance": {
-    "tokenId": "0xc8c652bcc20048f27c0fa8d96324e8bab8be5599",
-    "name": "rsADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
-    }
   }
 }
