@@ -27,5 +27,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xfc59134953b67197951b9b04e2c88397c74fb883",
+    "name": "rsEPOS",
+    "decimals": 4,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

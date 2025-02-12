@@ -27,5 +27,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xf64df3cc2b8a599ce207c578005e6c32cc370d0b",
+    "name": "rsErgOne",
+    "decimals": 8,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

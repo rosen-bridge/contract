@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xe0e8a04242f35b95dc64b07e0eae23a8e43a78e4",
+    "name": "rsERG",
+    "decimals": 9,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

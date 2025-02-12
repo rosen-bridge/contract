@@ -27,5 +27,14 @@
       "type": "CIP26",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x092c1a96e92b15ad31407ec41fcc48bf4f8c1e7a",
+    "name": "rsAHT",
+    "decimals": 4,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

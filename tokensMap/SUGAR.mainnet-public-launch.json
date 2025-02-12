@@ -27,5 +27,14 @@
       "type": "EIP-004",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xbeb98005288df49f977449303bc549b983df0178",
+    "name": "rsSUGAR",
+    "decimals": 0,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

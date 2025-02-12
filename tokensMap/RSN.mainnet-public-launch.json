@@ -27,5 +27,14 @@
       "type": "ERC-20",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x1b1c907edf8a563d0a1f702973db6d8c812df77e",
+    "name": "rsRSN",
+    "decimals": 3,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

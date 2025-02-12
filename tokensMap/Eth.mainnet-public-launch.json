@@ -27,5 +27,14 @@
       "type": "EIP-004",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x35811ea62e8e738ebe34bf084f062d79b31d5a96",
+    "name": "rsETH",
+    "decimals": 18,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

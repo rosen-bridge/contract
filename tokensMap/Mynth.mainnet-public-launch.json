@@ -27,5 +27,14 @@
       "type": "EIP-004",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0xb402f6e4e6df7db4085a520aeb25914af88c1ed1",
+    "name": "rsMNT",
+    "decimals": 6,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }
