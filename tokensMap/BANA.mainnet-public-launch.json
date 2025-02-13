@@ -27,5 +27,14 @@
       "type": "EIP-004",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x73abfd06c67375f388eec927a41ec40fbcaeff39",
+    "name": "rsBANA",
+    "decimals": 4,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

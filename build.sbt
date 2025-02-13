@@ -21,7 +21,7 @@ libraryDependencies ++= Seq(
 
 name := "contract"
 ThisBuild / scalaVersion := "2.12.7"
-ThisBuild / version := "3.4.2"
+ThisBuild / version := "3.5.0"
 ThisBuild / organization := "rosen.bridge"
 ThisBuild / organizationName := "rosen-bridge"
 ThisBuild / publishMavenStyle := true

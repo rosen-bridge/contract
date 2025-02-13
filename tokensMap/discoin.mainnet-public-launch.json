@@ -27,5 +27,14 @@
       "type": "EIP-004",
       "residency": "wrapped"
     }
+  },
+  "binance": {
+    "tokenId": "0x8e66f6521fbbe06af88356ccc98f20f5122336ea",
+    "name": "rsDIS",
+    "decimals": 8,
+    "metaData": {
+      "type": "ERC-20",
+      "residency": "wrapped"
+    }
   }
 }

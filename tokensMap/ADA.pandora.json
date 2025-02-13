@@ -1,13 +1,4 @@
 {
-  "ergo": {
-    "tokenId": "e023c5f382b6e96fbd878f6811aac73345489032157ad5affb84aefd4956c297",
-    "name": "rsADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
-    }
-  },
   "cardano": {
     "tokenId": "ada",
     "policyId": "",
@@ -20,17 +11,26 @@
     }
   },
   "ethereum": {
-    "tokenId": "0x00ea2a20351793c754f1d3f33ef6459642fd78d7",
-    "name": "rsADA",
+    "tokenId": "0xdc775c392479a4a6a69db564bb495d2f0d8ef366",
+    "name": "rpnADA",
     "decimals": 6,
     "metaData": {
       "type": "ERC-20",
       "residency": "wrapped"
     }
   },
+  "ergo": {
+    "tokenId": "08779df8d22fe096de6b382264af0ed6859326a47212484fffffe3fb212d7a1f",
+    "name": "rpnADA",
+    "decimals": 6,
+    "metaData": {
+      "type": "EIP-004",
+      "residency": "wrapped"
+    }
+  },
   "binance": {
-    "tokenId": "0xc8c652bcc20048f27c0fa8d96324e8bab8be5599",
-    "name": "rsADA",
+    "tokenId": "0x788b22ca96bd6a6f8094e1ec11a82c77b7ecfec4",
+    "name": "rpnADA",
     "decimals": 6,
     "metaData": {
       "type": "ERC-20",
