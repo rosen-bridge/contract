@@ -1,40 +1,43 @@
 {
-  "cardano": {
-    "tokenId": "c881c20e49dbaca3ff6cef365969354150983230c39520b917f5cf7c.4e696b65",
-    "name": "NIKEPIG",
-    "decimals": 0,
-    "metaData": {
-      "type": "CIP-26",
-      "residency": "native"
-    },
-    "policyId": "c881c20e49dbaca3ff6cef365969354150983230c39520b917f5cf7c",
-    "assetName": "4e696b65"
-  },
-  "ethereum": {
-    "tokenId": "0x6281a14b1e599e4aeeb72ce01c388dc7fa495f5e",
-    "name": "rsNIKEPIG",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "c881c20e49dbaca3ff6cef365969354150983230c39520b917f5cf7c.4e696b65",
+    "name" : "NIKEPIG",
+    "decimals" : 0,
+    "type" : "CIP-26",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "c881c20e49dbaca3ff6cef365969354150983230c39520b917f5cf7c",
+      "assetName" : "4e696b65"
     }
   },
-  "ergo": {
-    "tokenId": "46936b4b906f8853696f533427af2099bf07fbc25f20f3273e1def166b7c88d0",
-    "name": "rsNIKEPIG",
-    "decimals": 0,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x6281a14b1e599e4aeeb72ce01c388dc7fa495f5e",
+    "name" : "rsNIKEPIG",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0x94654ab49c8bcec591aed536eb6e78e693bc1111",
-    "name": "rsNIKEPIG",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "46936b4b906f8853696f533427af2099bf07fbc25f20f3273e1def166b7c88d0",
+    "name" : "rsNIKEPIG",
+    "decimals" : 0,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  },
+  "binance" : {
+    "tokenId" : "0x94654ab49c8bcec591aed536eb6e78e693bc1111",
+    "name" : "rsNIKEPIG",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

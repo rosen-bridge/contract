@@ -1,40 +1,43 @@
 {
-  "ergo": {
-    "tokenId": "886b7721bef42f60c6317d37d8752da8aca01898cae7dae61808c4a14225edc8",
-    "name": "GluonW GAU",
-    "decimals": 9,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "native"
+  "ergo" : {
+    "tokenId" : "886b7721bef42f60c6317d37d8752da8aca01898cae7dae61808c4a14225edc8",
+    "name" : "GluonW GAU",
+    "decimals" : 9,
+    "type" : "EIP-004",
+    "residency" : "native",
+    "extra" : {
+      
     }
   },
-  "ethereum": {
-    "tokenId": "0x785c1771d7ba16397ca104a8bb6dd128383f020d",
-    "name": "rsGAU",
-    "decimals": 9,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x785c1771d7ba16397ca104a8bb6dd128383f020d",
+    "name" : "rsGAU",
+    "decimals" : 9,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273476c756f6e5720474155",
-    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
-    "assetName": "7273476c756f6e5720474155",
-    "name": "rsGAU",
-    "decimals": 9,
-    "metaData": {
-      "type": "CIP26",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273476c756f6e5720474155",
+    "name" : "rsGAU",
+    "decimals" : 9,
+    "type" : "CIP26",
+    "residency" : "wrapped",
+    "extra" : {
+      "policyId" : "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+      "assetName" : "7273476c756f6e5720474155"
     }
   },
-  "binance": {
-    "tokenId": "0x26c2eb9227aeb2cb29054fb62376c3360f778401",
-    "name": "rsGAU",
-    "decimals": 9,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "binance" : {
+    "tokenId" : "0x26c2eb9227aeb2cb29054fb62376c3360f778401",
+    "name" : "rsGAU",
+    "decimals" : 9,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

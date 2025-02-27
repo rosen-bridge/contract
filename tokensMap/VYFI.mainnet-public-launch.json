@@ -1,40 +1,43 @@
 {
-  "cardano": {
-    "tokenId": "804f5544c1962a40546827cab750a88404dc7108c0f588b72964754f.56594649",
-    "name": "VYFI",
-    "decimals": 6,
-    "metaData": {
-      "type": "CIP-26",
-      "residency": "native"
-    },
-    "policyId": "804f5544c1962a40546827cab750a88404dc7108c0f588b72964754f",
-    "assetName": "56594649"
-  },
-  "ergo": {
-    "tokenId": "eeb17283c641d1c74c1d44b1dee7509766350ec31ca954c420ddd788bff8f412",
-    "name": "rsVYFI",
-    "decimals": 6,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "804f5544c1962a40546827cab750a88404dc7108c0f588b72964754f.56594649",
+    "name" : "VYFI",
+    "decimals" : 6,
+    "type" : "CIP-26",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "804f5544c1962a40546827cab750a88404dc7108c0f588b72964754f",
+      "assetName" : "56594649"
     }
   },
-  "ethereum": {
-    "tokenId": "0x916eae0b2514c3057974c74b86626d21e4d31dd6",
-    "name": "rsVYFI",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "eeb17283c641d1c74c1d44b1dee7509766350ec31ca954c420ddd788bff8f412",
+    "name" : "rsVYFI",
+    "decimals" : 6,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0x400b9a9628e258e2b3fe2403e10c1f461db6b1bf",
-    "name": "rsVYFI",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x916eae0b2514c3057974c74b86626d21e4d31dd6",
+    "name" : "rsVYFI",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  },
+  "binance" : {
+    "tokenId" : "0x400b9a9628e258e2b3fe2403e10c1f461db6b1bf",
+    "name" : "rsVYFI",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

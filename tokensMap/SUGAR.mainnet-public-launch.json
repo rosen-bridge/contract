@@ -1,40 +1,43 @@
 {
-  "cardano": {
-    "tokenId": "766fce8055f39d40fcfc19721677b3deb2e7846950ae08dce757f1e7.53554741522042555348",
-    "name": "SUGAR",
-    "decimals": 0,
-    "metaData": {
-      "type": "CIP-26",
-      "residency": "native"
-    },
-    "policyId": "766fce8055f39d40fcfc19721677b3deb2e7846950ae08dce757f1e7",
-    "assetName": "53554741522042555348"
-  },
-  "ethereum": {
-    "tokenId": "0x97334b49dad0b1df7fb2fe9f75c5cd8672c27474",
-    "name": "rsSUGAR",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "766fce8055f39d40fcfc19721677b3deb2e7846950ae08dce757f1e7.53554741522042555348",
+    "name" : "SUGAR",
+    "decimals" : 0,
+    "type" : "CIP-26",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "766fce8055f39d40fcfc19721677b3deb2e7846950ae08dce757f1e7",
+      "assetName" : "53554741522042555348"
     }
   },
-  "ergo": {
-    "tokenId": "556598b2ca017610a0c5911f1eb1185f1d5a539287979730394d291dbd87186f",
-    "name": "rsSUGAR",
-    "decimals": 0,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x97334b49dad0b1df7fb2fe9f75c5cd8672c27474",
+    "name" : "rsSUGAR",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0xbeb98005288df49f977449303bc549b983df0178",
-    "name": "rsSUGAR",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "556598b2ca017610a0c5911f1eb1185f1d5a539287979730394d291dbd87186f",
+    "name" : "rsSUGAR",
+    "decimals" : 0,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  },
+  "binance" : {
+    "tokenId" : "0xbeb98005288df49f977449303bc549b983df0178",
+    "name" : "rsSUGAR",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

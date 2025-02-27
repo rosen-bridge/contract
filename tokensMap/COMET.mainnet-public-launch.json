@@ -1,40 +1,43 @@
 {
-  "ergo": {
-    "tokenId": "0cd8c9f416e5b1ca9f986a7f10a84191dfb85941619e49e53c0dc30ebf83324b",
-    "name": "COMET",
-    "decimals": 0,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "native"
+  "ergo" : {
+    "tokenId" : "0cd8c9f416e5b1ca9f986a7f10a84191dfb85941619e49e53c0dc30ebf83324b",
+    "name" : "COMET",
+    "decimals" : 0,
+    "type" : "EIP-004",
+    "residency" : "native",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "d85d4588d4625b370121597ff88f3c1fa66f2a0cb7e4a7a9573a3c3e.7273434f4d4554",
-    "policyId": "d85d4588d4625b370121597ff88f3c1fa66f2a0cb7e4a7a9573a3c3e",
-    "assetName": "7273434f4d4554",
-    "name": "rsCOMET",
-    "decimals": 0,
-    "metaData": {
-      "type": "CIP26",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "d85d4588d4625b370121597ff88f3c1fa66f2a0cb7e4a7a9573a3c3e.7273434f4d4554",
+    "name" : "rsCOMET",
+    "decimals" : 0,
+    "type" : "CIP26",
+    "residency" : "wrapped",
+    "extra" : {
+      "policyId" : "d85d4588d4625b370121597ff88f3c1fa66f2a0cb7e4a7a9573a3c3e",
+      "assetName" : "7273434f4d4554"
     }
   },
-  "ethereum": {
-    "tokenId": "0x725dcf18e942e7d5b4696f7a2490cc48334a9d67",
-    "name": "rsCOMET",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x725dcf18e942e7d5b4696f7a2490cc48334a9d67",
+    "name" : "rsCOMET",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0x0b77aeaa694f42cfe6a8075e21e4e8e0b4c9b3f2",
-    "name": "rsCOMET",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "binance" : {
+    "tokenId" : "0x0b77aeaa694f42cfe6a8075e21e4e8e0b4c9b3f2",
+    "name" : "rsCOMET",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

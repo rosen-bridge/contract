@@ -1,6 +1,5 @@
 package rosen.bridge
 
-import helpers.Configs
 import io.circe.{Json, parser}
 
 import java.io.{File, PrintWriter}
@@ -67,16 +66,4 @@ object TokensMap {
       close()
     }
   }
-
-  /**
-   * Json of network's idKey
-   */
-  def createIdKeysJson(): Json = {
-    var networkIdKeysObj: List[(String, Json)] = List.empty
-    Configs.allNetworksIdKey.foreach(network => {
-      networkIdKeysObj = networkIdKeysObj :+ (network._1, network._2)
-    })
-    Json.fromFields(List(("idKeys", Json.fromFields(networkIdKeysObj))))
-  }
-
 }

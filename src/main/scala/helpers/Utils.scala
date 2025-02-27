@@ -29,11 +29,12 @@ object Utils {
       if ((conf contains networkType) || networkType.isEmpty){
         val fileType = conf ++ ".json"
         val tokensMap = TokensMap.readTokensFromFiles(Configs.tokensMapDirPath, List(fileType))
-        val idKeys = TokensMap.createIdKeysJson()
         val tokensMapJson = tokensMap.deepMerge(
-          idKeys
-        ).deepMerge(
-          Json.fromFields(List(("version", Json.fromString(networkVersion))))
+          Json.fromFields(
+            List(
+              ("version", Json.fromString(networkVersion))
+            )
+          )
         ).toString()
         TokensMap.createTokensMapJsonFile(tokensMapJson, conf, networkVersion)
         println(s"Json of TokensMap created for network type $conf!")

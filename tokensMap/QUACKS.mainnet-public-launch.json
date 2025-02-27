@@ -1,40 +1,43 @@
 {
-  "ergo": {
-    "tokenId": "089990451bb430f05a85f4ef3bcb6ebf852b3d6ee68d86d78658b9ccef20074f",
-    "name": "QUACKS",
-    "decimals": 6,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "native"
+  "ergo" : {
+    "tokenId" : "089990451bb430f05a85f4ef3bcb6ebf852b3d6ee68d86d78658b9ccef20074f",
+    "name" : "QUACKS",
+    "decimals" : 6,
+    "type" : "EIP-004",
+    "residency" : "native",
+    "extra" : {
+      
     }
   },
-  "ethereum": {
-    "tokenId": "0xd2443e724e30fc67b1034b3100ec3836f1dbc7da",
-    "name": "rsQUACKS",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0xd2443e724e30fc67b1034b3100ec3836f1dbc7da",
+    "name" : "rsQUACKS",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273515541434b53",
-    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
-    "assetName": "7273515541434b53",
-    "name": "rsQUACKS",
-    "decimals": 6,
-    "metaData": {
-      "type": "CIP26",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273515541434b53",
+    "name" : "rsQUACKS",
+    "decimals" : 6,
+    "type" : "CIP26",
+    "residency" : "wrapped",
+    "extra" : {
+      "policyId" : "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+      "assetName" : "7273515541434b53"
     }
   },
-  "binance": {
-    "tokenId": "0x635ccce00385b88ef177c4ba8f13e803abfc365e",
-    "name": "rsQUACKS",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "binance" : {
+    "tokenId" : "0x635ccce00385b88ef177c4ba8f13e803abfc365e",
+    "name" : "rsQUACKS",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

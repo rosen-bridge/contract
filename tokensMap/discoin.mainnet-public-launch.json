@@ -1,40 +1,43 @@
 {
-  "cardano": {
-    "tokenId": "5612bee388219c1b76fd527ed0fa5aa1d28652838bcab4ee4ee63197.446973636f696e",
-    "name": "DIS",
-    "decimals": 8,
-    "metaData": {
-      "type": "CIP-26",
-      "residency": "native"
-    },
-    "policyId": "5612bee388219c1b76fd527ed0fa5aa1d28652838bcab4ee4ee63197",
-    "assetName": "446973636f696e"
-  },
-  "ethereum": {
-    "tokenId": "0x1336d2829dc39557e3efd6442faf8b8589143a63",
-    "name": "rsDIS",
-    "decimals": 8,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "5612bee388219c1b76fd527ed0fa5aa1d28652838bcab4ee4ee63197.446973636f696e",
+    "name" : "DIS",
+    "decimals" : 8,
+    "type" : "CIP-26",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "5612bee388219c1b76fd527ed0fa5aa1d28652838bcab4ee4ee63197",
+      "assetName" : "446973636f696e"
     }
   },
-  "ergo": {
-    "tokenId": "b780a9682ba1ea68eedfe3dd00169e414ea8968d96142ee95e2391d64df05c3d",
-    "name": "rsDIS",
-    "decimals": 8,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x1336d2829dc39557e3efd6442faf8b8589143a63",
+    "name" : "rsDIS",
+    "decimals" : 8,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0x8e66f6521fbbe06af88356ccc98f20f5122336ea",
-    "name": "rsDIS",
-    "decimals": 8,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "b780a9682ba1ea68eedfe3dd00169e414ea8968d96142ee95e2391d64df05c3d",
+    "name" : "rsDIS",
+    "decimals" : 8,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  },
+  "binance" : {
+    "tokenId" : "0x8e66f6521fbbe06af88356ccc98f20f5122336ea",
+    "name" : "rsDIS",
+    "decimals" : 8,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }
