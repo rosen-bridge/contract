@@ -1,40 +1,43 @@
 {
-  "ergo": {
-    "tokenId": "f0d5bdf474fcbd4249608e6dc6e9cf34a327b218f66445ea545b4c711b4676e3",
-    "name": "COS",
-    "decimals": 0,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "native"
+  "ergo" : {
+    "tokenId" : "f0d5bdf474fcbd4249608e6dc6e9cf34a327b218f66445ea545b4c711b4676e3",
+    "name" : "COS",
+    "decimals" : 0,
+    "type" : "EIP-004",
+    "residency" : "native",
+    "extra" : {
+      
     }
   },
-  "ethereum": {
-    "tokenId": "0x1192848d2c33333885d3067ed146d8e79b3f24f8",
-    "name": "rsCOS",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x1192848d2c33333885d3067ed146d8e79b3f24f8",
+    "name" : "rsCOS",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273434f53",
-    "policyId": "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
-    "assetName": "7273434f53",
-    "name": "rsCOS",
-    "decimals": 0,
-    "metaData": {
-      "type": "CIP26",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8.7273434f53",
+    "name" : "rsCOS",
+    "decimals" : 0,
+    "type" : "CIP26",
+    "residency" : "wrapped",
+    "extra" : {
+      "policyId" : "12f76218ef19e357b0684d3a9ebe0c66aa18dd9e4cf496161e6d98a8",
+      "assetName" : "7273434f53"
     }
   },
-  "binance": {
-    "tokenId": "0xc72f2645229e8a3c9e45f367a630cf63ea33a07b",
-    "name": "rsCOS",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "binance" : {
+    "tokenId" : "0xc72f2645229e8a3c9e45f367a630cf63ea33a07b",
+    "name" : "rsCOS",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

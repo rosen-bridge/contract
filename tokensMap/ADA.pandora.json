@@ -1,40 +1,43 @@
 {
-  "cardano": {
-    "tokenId": "ada",
-    "policyId": "",
-    "assetName": "414441",
-    "name": "ADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "native",
-      "residency": "native"
+  "cardano" : {
+    "tokenId" : "ada",
+    "name" : "ADA",
+    "decimals" : 6,
+    "type" : "native",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "",
+      "assetName" : "414441"
     }
   },
-  "ethereum": {
-    "tokenId": "0xdc775c392479a4a6a69db564bb495d2f0d8ef366",
-    "name": "rpnADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0xdc775c392479a4a6a69db564bb495d2f0d8ef366",
+    "name" : "rpnADA",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "ergo": {
-    "tokenId": "08779df8d22fe096de6b382264af0ed6859326a47212484fffffe3fb212d7a1f",
-    "name": "rpnADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "08779df8d22fe096de6b382264af0ed6859326a47212484fffffe3fb212d7a1f",
+    "name" : "rpnADA",
+    "decimals" : 6,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0x788b22ca96bd6a6f8094e1ec11a82c77b7ecfec4",
-    "name": "rpnADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "binance" : {
+    "tokenId" : "0x788b22ca96bd6a6f8094e1ec11a82c77b7ecfec4",
+    "name" : "rpnADA",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

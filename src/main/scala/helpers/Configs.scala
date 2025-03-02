@@ -1,7 +1,6 @@
 package helpers
 
 import com.typesafe.config.{Config, ConfigFactory, ConfigObject}
-import io.circe.Json
 import org.ergoplatform.ErgoAddressEncoder
 import org.ergoplatform.appkit.{ErgoClient, NetworkType, RestApiErgoClient}
 
@@ -50,12 +49,9 @@ object Configs extends ConfigHelper {
   private lazy val ergoNetworksConfig = config.getObject("networks")
   // (String, String) => (networkName, networkType)
   var allNetworksToken = mutable.Map.empty[(String, String), Network]
-  // networkName => Json of idKey
-  var allNetworksIdKey = mutable.Map.empty[String, Json]
   ergoNetworksConfig.keySet().forEach(networkName => {
     val networkConfig = ergoNetworksConfig.get(networkName).asInstanceOf[ConfigObject]
-    allNetworksIdKey(networkName) = Json.fromString(readKeyDynamic(networkConfig, "idKey"))
-    networkConfig.keySet().toArray.toSeq.filterNot(obj => obj == "idKey").foreach(networkType => {
+    networkConfig.keySet().toArray.toSeq.foreach(networkType => {
       val networkDataConfig = networkConfig.get(networkType.toString).asInstanceOf[ConfigObject]
       val networkTokensConfig = networkDataConfig.get("tokens").asInstanceOf[ConfigObject]
       val tokens = Tokens(

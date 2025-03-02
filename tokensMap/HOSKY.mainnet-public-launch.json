@@ -1,40 +1,43 @@
 {
-  "ergo": {
-    "tokenId": "6ad70cdbf928a2bdd397041a36a5c2490a35beb4d20eabb5666f004b103c7189",
-    "name": "rsHOSKY",
-    "decimals": 0,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "6ad70cdbf928a2bdd397041a36a5c2490a35beb4d20eabb5666f004b103c7189",
+    "name" : "rsHOSKY",
+    "decimals" : 0,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235.484f534b59",
-    "policyId": "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235",
-    "assetName": "484f534b59",
-    "name": "HOSKY",
-    "decimals": 0,
-    "metaData": {
-      "type": "CIP26",
-      "residency": "native"
+  "cardano" : {
+    "tokenId" : "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235.484f534b59",
+    "name" : "HOSKY",
+    "decimals" : 0,
+    "type" : "CIP26",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "a0028f350aaabe0545fdcb56b039bfb08e4bb4d8c4d7c3c7d481c235",
+      "assetName" : "484f534b59"
     }
   },
-  "ethereum": {
-    "tokenId": "0x0f068432e1a1c6574fad1bc8ff751b76d5f95d43",
-    "name": "rsHOSKY",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x0f068432e1a1c6574fad1bc8ff751b76d5f95d43",
+    "name" : "rsHOSKY",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0xaadf6aaabf0b2cca2b91c3a32803fa426b786af2",
-    "name": "rsHOSKY",
-    "decimals": 0,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "binance" : {
+    "tokenId" : "0xaadf6aaabf0b2cca2b91c3a32803fa426b786af2",
+    "name" : "rsHOSKY",
+    "decimals" : 0,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

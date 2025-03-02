@@ -1,40 +1,43 @@
 {
-  "binance": {
-    "tokenId": "bnb",
-    "name": "BNB",
-    "decimals": 18,
-    "metaData": {
-      "type": "native",
-      "residency": "native"
+  "binance" : {
+    "tokenId" : "bnb",
+    "name" : "BNB",
+    "decimals" : 18,
+    "type" : "native",
+    "residency" : "native",
+    "extra" : {
+      
     }
   },
-  "ethereum": {
-    "tokenId": "0x3189b3d05ddff3c5e9755579830be2cbe512f200",
-    "name": "rpnBNB",
-    "decimals": 18,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x3189b3d05ddff3c5e9755579830be2cbe512f200",
+    "name" : "rpnBNB",
+    "decimals" : 18,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "ergo": {
-    "tokenId": "82f7cec6d682e8a0d965e6d93de66ec18933f72181c59a5d85802f0fe2afc98c",
-    "name": "rpnBNB",
-    "decimals": 9,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "82f7cec6d682e8a0d965e6d93de66ec18933f72181c59a5d85802f0fe2afc98c",
+    "name" : "rpnBNB",
+    "decimals" : 9,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e424e42",
-    "policyId": "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb",
-    "assetName": "72706e424e42",
-    "name": "rpnBNB",
-    "decimals": 9,
-    "metaData": {
-      "type": "CIP26",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb.72706e424e42",
+    "name" : "rpnBNB",
+    "decimals" : 9,
+    "type" : "CIP26",
+    "residency" : "wrapped",
+    "extra" : {
+      "policyId" : "57abe42f549784c88f14e78872127d62fc0a7bfbed0ad7d41e5eb2fb",
+      "assetName" : "72706e424e42"
     }
   }
 }
