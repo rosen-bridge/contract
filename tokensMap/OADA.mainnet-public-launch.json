@@ -1,40 +1,43 @@
 {
-  "cardano": {
-    "tokenId": "f6099832f9563e4cf59602b3351c3c5a8a7dda2d44575ef69b82cf8d.",
-    "name": "OADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "CIP-26",
-      "residency": "native"
-    },
-    "policyId": "f6099832f9563e4cf59602b3351c3c5a8a7dda2d44575ef69b82cf8d",
-    "assetName": ""
-  },
-  "ethereum": {
-    "tokenId": "0xd3f08c6b01d3aefcf9e457396a9c6727d2e60d7d",
-    "name": "rsOADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "f6099832f9563e4cf59602b3351c3c5a8a7dda2d44575ef69b82cf8d.",
+    "name" : "OADA",
+    "decimals" : 6,
+    "type" : "CIP-26",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "f6099832f9563e4cf59602b3351c3c5a8a7dda2d44575ef69b82cf8d",
+      "assetName" : ""
     }
   },
-  "ergo": {
-    "tokenId": "8b607006f2d9b9f4d6875b54026a191676ab23d2c8e49c2593bca87b26757579",
-    "name": "rsOADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0xd3f08c6b01d3aefcf9e457396a9c6727d2e60d7d",
+    "name" : "rsOADA",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0x35aea122df1c3772b08f8695da3a13eedbd1994b",
-    "name": "rsOADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "8b607006f2d9b9f4d6875b54026a191676ab23d2c8e49c2593bca87b26757579",
+    "name" : "rsOADA",
+    "decimals" : 6,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  },
+  "binance" : {
+    "tokenId" : "0x35aea122df1c3772b08f8695da3a13eedbd1994b",
+    "name" : "rsOADA",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

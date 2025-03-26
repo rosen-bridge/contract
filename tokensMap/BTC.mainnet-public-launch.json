@@ -1,49 +1,53 @@
 {
-  "ergo": {
-    "tokenId": "7a51950e5f548549ec1aa63ffdc38279505b11e7e803d01bcf8347e0123c88b0",
-    "name": "rsBTC",
-    "decimals": 8,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "7a51950e5f548549ec1aa63ffdc38279505b11e7e803d01bcf8347e0123c88b0",
+    "name" : "rsBTC",
+    "decimals" : 8,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "2dbc49f682ad21f6d18705cf446f9f7a277731ab70ae21a454f888b2.7273425443",
-    "policyId": "2dbc49f682ad21f6d18705cf446f9f7a277731ab70ae21a454f888b2",
-    "assetName": "7273425443",
-    "name": "rsBTC",
-    "decimals": 8,
-    "metaData": {
-      "type": "CIP26",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "2dbc49f682ad21f6d18705cf446f9f7a277731ab70ae21a454f888b2.7273425443",
+    "name" : "rsBTC",
+    "decimals" : 8,
+    "type" : "CIP26",
+    "residency" : "wrapped",
+    "extra" : {
+      "policyId" : "2dbc49f682ad21f6d18705cf446f9f7a277731ab70ae21a454f888b2",
+      "assetName" : "7273425443"
     }
   },
-  "bitcoin": {
-    "tokenId": "btc",
-    "name": "BTC",
-    "decimals": 8,
-    "metaData": {
-      "type": "native",
-      "residency": "native"
+  "bitcoin" : {
+    "tokenId" : "btc",
+    "name" : "BTC",
+    "decimals" : 8,
+    "type" : "native",
+    "residency" : "native",
+    "extra" : {
+      
     }
   },
-  "ethereum": {
-    "tokenId": "0xd753cd1f5cb336aec4836dc7269bc45ea8607fbc",
-    "name": "rsBTC",
-    "decimals": 8,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0xd753cd1f5cb336aec4836dc7269bc45ea8607fbc",
+    "name" : "rsBTC",
+    "decimals" : 8,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0xd6416c1b66484ea7d1b3fb20a4d49b73d25a65d2",
-    "name": "rsBTC",
-    "decimals": 8,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "binance" : {
+    "tokenId" : "0xd6416c1b66484ea7d1b3fb20a4d49b73d25a65d2",
+    "name" : "rsBTC",
+    "decimals" : 8,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

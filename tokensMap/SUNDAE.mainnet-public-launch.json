@@ -1,40 +1,43 @@
 {
-  "cardano": {
-    "tokenId": "9a9693a9a37912a5097918f97918d15240c92ab729a0b7c4aa144d77.53554e444145",
-    "name": "SUNDAE",
-    "decimals": 6,
-    "metaData": {
-      "type": "CIP-26",
-      "residency": "native"
-    },
-    "policyId": "9a9693a9a37912a5097918f97918d15240c92ab729a0b7c4aa144d77",
-    "assetName": "53554e444145"
-  },
-  "ergo": {
-    "tokenId": "d1dcfca3330bc884298c7111a9ef1e7b2970ab0c1d11bbcbacf31d319f0c2d55",
-    "name": "rsSUNDAE",
-    "decimals": 6,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "cardano" : {
+    "tokenId" : "9a9693a9a37912a5097918f97918d15240c92ab729a0b7c4aa144d77.53554e444145",
+    "name" : "SUNDAE",
+    "decimals" : 6,
+    "type" : "CIP-26",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "9a9693a9a37912a5097918f97918d15240c92ab729a0b7c4aa144d77",
+      "assetName" : "53554e444145"
     }
   },
-  "ethereum": {
-    "tokenId": "0xc60df4e02152670073b6b41eb3a7267e7f3a1aa1",
-    "name": "rsSUNDAE",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "d1dcfca3330bc884298c7111a9ef1e7b2970ab0c1d11bbcbacf31d319f0c2d55",
+    "name" : "rsSUNDAE",
+    "decimals" : 6,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "binance": {
-    "tokenId": "0x95b4e19e1038d07a43aa22f1b06b8c0e6705d0f0",
-    "name": "rsSUNDAE",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0xc60df4e02152670073b6b41eb3a7267e7f3a1aa1",
+    "name" : "rsSUNDAE",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  },
+  "binance" : {
+    "tokenId" : "0x95b4e19e1038d07a43aa22f1b06b8c0e6705d0f0",
+    "name" : "rsSUNDAE",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }

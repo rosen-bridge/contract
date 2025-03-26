@@ -1,31 +1,33 @@
 {
-  "ergo": {
-    "tokenId": "0bf47c19e49944a38948c635c0aef93d89737aa68df5ad881b07c8f9a63e398d",
-    "name": "wrADA-loen",
-    "decimals": 6,
-    "metaData": {
-      "type": "EIP-004",
-      "residency": "wrapped"
+  "ergo" : {
+    "tokenId" : "0bf47c19e49944a38948c635c0aef93d89737aa68df5ad881b07c8f9a63e398d",
+    "name" : "wrADA-loen",
+    "decimals" : 6,
+    "type" : "EIP-004",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   },
-  "cardano": {
-    "tokenId": "ada",
-    "policyId": "",
-    "assetName": "414441",
-    "name": "ADA",
-    "decimals": 6,
-    "metaData": {
-      "type": "native",
-      "residency": "native"
+  "cardano" : {
+    "tokenId" : "ada",
+    "name" : "ADA",
+    "decimals" : 6,
+    "type" : "native",
+    "residency" : "native",
+    "extra" : {
+      "policyId" : "",
+      "assetName" : "414441"
     }
   },
-  "ethereum": {
-    "tokenId": "0x67fe80cb2fd26e23a1f6baeb8ec20cddd69308f1",
-    "name": "rsAda-loen",
-    "decimals": 6,
-    "metaData": {
-      "type": "ERC-20",
-      "residency": "wrapped"
+  "ethereum" : {
+    "tokenId" : "0x67fe80cb2fd26e23a1f6baeb8ec20cddd69308f1",
+    "name" : "rsAda-loen",
+    "decimals" : 6,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
     }
   }
 }
