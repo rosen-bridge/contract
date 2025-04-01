@@ -1,0 +1,29 @@
+{
+  "cardano": {
+    "tokenId": "b7c5cd554f3e83c8aa0900a0c9053284a5348244d23d0406c28eaf4d.50414c4d0a",
+    "name": "PALM",
+    "decimals": 6,
+    "type": "EIP-004",
+    "residency": "native",
+    "extra": {
+      "policyId": "b7c5cd554f3e83c8aa0900a0c9053284a5348244d23d0406c28eaf4d",
+      "assetName": "50414c4d0a"
+    }
+  },
+  "binance": {
+    "tokenId": "0x502a641decfe32b1e3d030e05effb8ae5146e64b",
+    "name": "rsPALM",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "49cb7b7cbdb799b8dff2d1378ce9ebaf1e48945b34b47865b3d1b6ae4a467011",
+    "name": "rsPALM",
+    "decimals": 6,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}
