@@ -1,0 +1,37 @@
+{
+  "cardano": {
+    "tokenId": "e13f55c16b8718edac43614146c00cadc45991af3a5355d0386a9f03.43727970746f536f636b7a",
+    "name": "SOCKZ",
+    "decimals": 0,
+    "type": "CIP-26",
+    "residency": "native",
+    "extra": {
+      "policyId": "e13f55c16b8718edac43614146c00cadc45991af3a5355d0386a9f03",
+      "assetName": "43727970746f536f636b7a"
+    }
+  },
+  "binance": {
+    "tokenId": "0x7b9f7269d1b6c2381f881476c260670baf080f86",
+    "name": "rsSOCKZ",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "285776315233d73976a50e4d8121606e53cfd3c9ecf03dd455d72cfa0a762631",
+    "name": "rsSOCKZ",
+    "decimals": 0,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "ethereum": {
+    "tokenId": "0xa54ab6f54209e135e6a20379674fa0cea10d6fe2",
+    "name": "rsSOCKZ",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}
