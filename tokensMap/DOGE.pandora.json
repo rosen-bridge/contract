@@ -1,0 +1,53 @@
+{
+    "doge" : {
+        "tokenId" : "doge",
+        "name" : "DOGE",
+        "decimals" : 8,
+        "type" : "native",
+        "residency" : "native",
+        "extra" : {
+
+        }
+    },
+    "ergo" : {
+        "tokenId" : "3221ed4809af2534910a6d80cfd3697114358313269d93784eca6f0171afea95",
+        "name" : "rpnDoge",
+        "decimals" : 6,
+        "type" : "EIP-004",
+        "residency" : "wrapped",
+        "extra" : {
+
+        }
+    },
+    "ethereum" : {
+      "tokenId" : "0xc864ddd4ae02d8fea194016e76ff5ab77c8aa769",
+      "name" : "rpnDoge",
+      "decimals" : 6,
+      "type" : "ERC-20",
+      "residency" : "wrapped",
+      "extra" : {
+        
+      }
+    },
+    "binance" : {
+      "tokenId" : "0xfa0f85673a4a83ea19d09448e02f3f98e82f1a6d",
+      "name" : "rpnDoge",
+      "decimals" : 6,
+      "type" : "ERC-20",
+      "residency" : "wrapped",
+      "extra" : {
+        
+      }
+    },
+    "cardano" : {
+      "tokenId" : "92210c500a405bc2c2b6c9666fe74cb4f2ac26251968e3e779887b63.72706e446f6765",
+      "name" : "rpnDoge",
+      "decimals" : 6,
+      "type" : "CIP26",
+      "residency" : "wrapped",
+      "extra" : {
+        "policyId" : "92210c500a405bc2c2b6c9666fe74cb4f2ac26251968e3e779887b63",
+        "assetName" : "72706e446f6765"
+      }
+    }
+  }
