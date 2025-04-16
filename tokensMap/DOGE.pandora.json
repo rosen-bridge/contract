@@ -6,6 +6,7 @@
         "type" : "native",
         "residency" : "native",
         "extra" : {
+
         }
     },
     "ergo" : {
@@ -15,6 +16,7 @@
         "type" : "EIP-004",
         "residency" : "wrapped",
         "extra" : {
+          
         }
     },
     "ethereum" : {
