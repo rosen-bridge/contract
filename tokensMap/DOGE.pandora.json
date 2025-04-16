@@ -16,7 +16,7 @@
         "type" : "EIP-004",
         "residency" : "wrapped",
         "extra" : {
-          
+
         }
     },
     "ethereum" : {
@@ -51,3 +51,4 @@
       }
     }
   }
+  
