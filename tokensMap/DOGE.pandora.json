@@ -10,7 +10,7 @@
         }
     },
     "ergo" : {
-        "tokenId" : "3221ed4809af2534910a6d80cfd3697114358313269d93784eca6f0171afea95",
+        "tokenId" : "03bd83b5aa8774e0cb8bbb35bb8e95949d4222168aeb1d896d422f2d40c15f34",
         "name" : "rpnDoge",
         "decimals" : 6,
         "type" : "EIP-004",
