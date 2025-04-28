@@ -1,0 +1,22 @@
+{
+  "ergo" : {
+    "tokenId" : "01c4809f78c0210e4d1406e025abf27ef8df51639355184e8ac891fa9e6d201b",
+    "name" : "Avicenna",
+    "decimals" : 3,
+    "type" : "EIP-004",
+    "residency" : "native",
+    "extra" : {
+      
+    }
+  },
+  "ethereum" : {
+    "tokenId" : "0xdd13f2d5661723041be3353d90170244462254ce",
+    "name" : "rpnAvicenna",
+    "decimals" : 3,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "ergo" : {
+    "tokenId" : "45c1c80de3ca1c0f0d21cb9862032894496671071aa923289c6dee1576478e23",
+    "name" : "Foxtrot",
+    "decimals" : 3,
+    "type" : "EIP-004",
+    "residency" : "native",
+    "extra" : {
+      
+    }
+  },
+  "binance" : {
+    "tokenId" : "0xce5307d968c5d298239ffb7a6b0abd31aba5712e",
+    "name" : "rpnFoxtrot",
+    "decimals" : 3,
+    "type" : "ERC-20",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
+  }
+}
