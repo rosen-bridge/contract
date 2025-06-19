@@ -1,0 +1,45 @@
+{
+  "doge": {
+    "tokenId": "doge",
+    "name": "DOGE",
+    "decimals": 8,
+    "type": "native",
+    "residency": "native",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "48132396ebd00831e603c73cf01e01f248dd1966d2cc976caf52ef76f7ac6e36",
+    "name": "rsDOGE",
+    "decimals": 6,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "14e81567e5650354ad7c0ea6a705b53d4fd3a61da873b8c20379ca6e.7273444f4745",
+    "name": "rsDOGE",
+    "decimals": 6,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "14e81567e5650354ad7c0ea6a705b53d4fd3a61da873b8c20379ca6e",
+      "assetName": "7273444f4745"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xcd7d30d224c940ca93c9943661c25533d9d420b1",
+    "name": "rsDOGE",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0xd101ebe047b99e227474de6d4d0753dc0c40b45d",
+    "name": "rsDOGE",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}
