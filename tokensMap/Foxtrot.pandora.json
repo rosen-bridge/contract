@@ -18,5 +18,24 @@
     "extra" : {
       
     }
+  },
+  "cardano": {
+    "tokenId": "3165be65a0d4c496d0e77e7569618240da85135ed35f32db212cc935.72706e466f7874726f74",
+    "policyId": "3165be65a0d4c496d0e77e7569618240da85135ed35f32db212cc935",
+    "assetName": "72706e466f7874726f74",
+    "name": "rpnFoxtrot",
+    "decimals": 3,
+    "metaData": {
+      "type": "CIP26",
+      "residency": "wrapped"
+    }
+  },
+  "bitcoin-runes": {
+    "tokenId": "914223:1465",
+    "name": "RPN•FOXTROT",
+    "decimals": 3,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {}
   }
 }

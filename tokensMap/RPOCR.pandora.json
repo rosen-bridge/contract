@@ -1,0 +1,45 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "880887:3052",
+    "name": "ROSEN•POC•RUNE",
+    "decimals": 3,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "8b35fd2dabc9bdf2b69aa9c25eb7e7818297add61b2dd3b5ab039439e100e487",
+    "name": "rpnRPOCR",
+    "decimals": 3,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x70735aa53b8efff4aa655995df2e6c91fe8d1c50",
+    "name": "rpnRPOCR",
+    "decimals": 3,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "ethereum": {
+    "tokenId": "0x8427bb8e57b4d5b517a6d642f4d398a170aa06ef",
+    "name": "rpnRPOCR",
+    "decimals": 3,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "e8699f09f993366363e2354a7520770ded59d23f5aeaad6717e73614.72706e52504f4352",
+    "name": "rpnRPOCR",
+    "decimals": 3,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "e8699f09f993366363e2354a7520770ded59d23f5aeaad6717e73614",
+      "assetName": "72706e52504f4352"
+    }
+  }
+}
