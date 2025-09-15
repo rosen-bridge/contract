@@ -1,0 +1,45 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "914209:2664",
+    "name": "PYTHAGORAS",
+    "decimals": 3,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "ea94bcd86000d85518ae4fd9ec328018e4be9eee4d1081e3c42746c5bf62c352",
+    "name": "rpnPyth",
+    "decimals": 1,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x2ad2474f38572a1b408d42d66f63244a02f406ab",
+    "name": "rpnPyth",
+    "decimals": 3,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "ethereum": {
+    "tokenId": "0xb7d308f2d4f20e90244e21daf7acc5ef3a2832e8",
+    "name": "rpnPyth",
+    "decimals": 1,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "3165be65a0d4c496d0e77e7569618240da85135ed35f32db212cc935.72706e50797468",
+    "name": "rpnPyth",
+    "decimals": 1,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "3165be65a0d4c496d0e77e7569618240da85135ed35f32db212cc935",
+      "assetName": "72706e50797468"
+    }
+  }
+}
