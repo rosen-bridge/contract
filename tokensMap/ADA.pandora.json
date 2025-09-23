@@ -39,5 +39,15 @@
     "extra" : {
       
     }
+  },
+    "bitcoin-runes": {
+    "tokenId" : "915909:3639",
+    "name" : "RPN•CARDANO•ADA",
+    "decimals" : 6,
+    "type": "Runes",
+    "residency" : "wrapped",
+    "extra" : {
+      
+    }
   }
 }
