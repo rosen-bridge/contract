@@ -5,7 +5,9 @@
     "decimals": 3,
     "type": "Runes",
     "residency": "native",
-    "extra": {}
+    "extra": {
+      "uniqueName": "ROSENPOCRUNE"
+    }
   },
   "ergo": {
     "tokenId": "8b35fd2dabc9bdf2b69aa9c25eb7e7818297add61b2dd3b5ab039439e100e487",

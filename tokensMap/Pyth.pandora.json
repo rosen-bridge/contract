@@ -5,7 +5,9 @@
     "decimals": 3,
     "type": "Runes",
     "residency": "native",
-    "extra": {}
+    "extra": {
+      "uniqueName": "PYTHAGORAS"
+    }
   },
   "ergo": {
     "tokenId": "ea94bcd86000d85518ae4fd9ec328018e4be9eee4d1081e3c42746c5bf62c352",
