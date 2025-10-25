@@ -47,7 +47,7 @@
     "type": "Runes",
     "residency" : "wrapped",
     "extra" : {
-      
+      "uniqueName": "RPNCARDANOADA"
     }
   }
 }

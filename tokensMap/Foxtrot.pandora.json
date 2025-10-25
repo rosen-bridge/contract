@@ -36,6 +36,8 @@
     "decimals": 3,
     "type": "Runes",
     "residency": "wrapped",
-    "extra": {}
+    "extra": {
+      "uniqueName": "RPNFOXTROT"
+    }
   }
 }
