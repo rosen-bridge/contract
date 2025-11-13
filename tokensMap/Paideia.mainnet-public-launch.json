@@ -39,5 +39,15 @@
     "extra" : {
       
     }
+  },
+  "bitcoin-runes": {
+    "tokenId": "923462:1755",
+    "name": "PAIDEIA•ROSEN•TECH",
+    "decimals": 4,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "PAIDEIAROSENTECH"
+    }
   }
 }
