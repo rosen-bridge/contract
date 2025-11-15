@@ -1,0 +1,47 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "840000:41",
+    "name": "PUPS•WORLD•PEACE",
+    "decimals": 18,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {
+      "uniqueName": "PUPSWORLDPEACE"
+    }
+  },
+  "ergo": {
+    "tokenId": "6cc0b3bec5fc5916d0e8e53776103641c439bece5ea2b62ddc15a892118dcc30",
+    "name": "rsPUPS",
+    "decimals": 9,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601.727350555053",
+    "name": "rsPUPS",
+    "decimals": 9,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601",
+      "assetName": "727350555053"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x0d7500ba42a548ec6c58c05938851596712040fa",
+    "name": "rsPUPS",
+    "decimals": 9,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x98ca5b1e641bcaf06e18f6ff5715c644cd8aeaad",
+    "name": "rsPUPS",
+    "decimals": 9,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}

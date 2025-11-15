@@ -1,0 +1,47 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "865193:4006",
+    "name": "GIZMO•IMAGINARY•KITTEN",
+    "decimals": 8,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {
+      "uniqueName": "GIZMOIMAGINARYKITTEN"
+    }
+  },
+  "ergo": {
+    "tokenId": "0019fd2bf9b619bc3c181c5f727139fdd2a4139371f48a5c31af0703953ddeaf",
+    "name": "rsGIZMO",
+    "decimals": 8,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601.727347495a4d4f",
+    "name": "rsGIZMO",
+    "decimals": 8,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601",
+      "assetName": "727347495a4d4f"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x95bfdd5b284ae10f27943d67b5b363421fa489fc",
+    "name": "rsGIZMO",
+    "decimals": 8,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x9739b141883c7290000cca393fed2d9db8125bd0",
+    "name": "rsGIZMO",
+    "decimals": 8,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}

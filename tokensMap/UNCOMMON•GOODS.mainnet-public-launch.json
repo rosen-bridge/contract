@@ -1,0 +1,47 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "1:0",
+    "name": "UNCOMMON•GOODS",
+    "decimals": 0,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {
+      "uniqueName": "UNCOMMONGOODS"
+    }
+  },
+  "ergo": {
+    "tokenId": "567486ce7a1a9aef42362e3c65f7ae6cfc7d0ce5626234f1948bc321dc16fcde",
+    "name": "rsUCGOODS",
+    "decimals": 0,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601.72735543474f4f4453",
+    "name": "rsUCGOODS",
+    "decimals": 0,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601",
+      "assetName": "72735543474f4f4453"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xc86012da3cb785e629e4cf743398acfc3a727675",
+    "name": "rsUCGOODS",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x9e1f3176cedf35c620eba545bacee29fcfb3d06f",
+    "name": "rsUCGOODS",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}
