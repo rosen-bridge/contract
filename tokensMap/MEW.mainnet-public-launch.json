@@ -39,5 +39,15 @@
     "extra" : {
       
     }
+  },
+  "bitcoin-runes": {
+    "tokenId": "923440:1446",
+    "name": "MEW•ROSEN•TECH",
+    "decimals": 2,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "MEWROSENTECH"
+    }
   }
 }

@@ -1,0 +1,47 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "840000:45",
+    "name": "MAGIC•INTERNET•MONEY",
+    "decimals": 0,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {
+      "uniqueName": "MAGICINTERNETMONEY"
+    }
+  },
+  "ergo": {
+    "tokenId": "20116c9d694800f8e71ab8fbc03c19d46fdb3a0746e85263eaa5812576112fde",
+    "name": "rsMIM",
+    "decimals": 0,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601.72734d494d",
+    "name": "rsMIM",
+    "decimals": 0,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601",
+      "assetName": "72734d494d"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x0ef565052882cbb6772a1539c369336def396175",
+    "name": "rsMIM",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0xf9bbf70010f1cbccd82b979829bf08cde6a1315b",
+    "name": "rsMIM",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}

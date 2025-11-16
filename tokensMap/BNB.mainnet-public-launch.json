@@ -39,5 +39,15 @@
       "policyId" : "acf4acc66ec68969dc27b74727f85e44ab317c3060c5993929651fb7",
       "assetName" : "7273424e42"
     }
+  },
+  "bitcoin-runes": {
+    "tokenId": "923462:1752",
+    "name": "BNB•ROSEN•TECH",
+    "decimals": 9,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "BNBROSENTECH"
+    }
   }
 }

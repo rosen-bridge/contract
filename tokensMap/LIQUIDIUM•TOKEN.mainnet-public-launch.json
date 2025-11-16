@@ -1,0 +1,47 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "840010:907",
+    "name": "LIQUIDIUM•TOKEN",
+    "decimals": 2,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {
+      "uniqueName": "LIQUIDIUMTOKEN"
+    }
+  },
+  "ergo": {
+    "tokenId": "2839764c15f72c47e85dd4e8a21ca86c8e0bdd561438c2fff052f484d58b683e",
+    "name": "rsLIQ",
+    "decimals": 2,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601.72734c4951",
+    "name": "rsLIQ",
+    "decimals": 2,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601",
+      "assetName": "72734c4951"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xf13e34c9290eb62406d469213d669a42ccf3b4a9",
+    "name": "rsLIQ",
+    "decimals": 2,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0xe32b8404bd40fd19a4a781716a04ff38a18bf976",
+    "name": "rsLIQ",
+    "decimals": 2,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}
