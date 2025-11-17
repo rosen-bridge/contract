@@ -1,0 +1,47 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "840000:3",
+    "name": "DOG•GO•TO•THE•MOON",
+    "decimals": 5,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {
+      "uniqueName": "DOGGOTOTHEMOON"
+    }
+  },
+  "ergo": {
+    "tokenId": "9a2349affa9ab70cfbfd221fc889052279f241b65a2eb171190bef2f69ef9348",
+    "name": "rsDOG",
+    "decimals": 5,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601.7273444f47",
+    "name": "rsDOG",
+    "decimals": 5,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601",
+      "assetName": "7273444f47"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x99ebf260e939d00dfcaf9cfaab01564487918d06",
+    "name": "rsDOG",
+    "decimals": 5,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x976925ae77922f0c5db1db835d4b83ce115c613a",
+    "name": "rsDOG",
+    "decimals": 5,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}

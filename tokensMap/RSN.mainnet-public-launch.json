@@ -39,5 +39,15 @@
     "extra" : {
       
     }
+  },
+  "bitcoin-runes": {
+    "tokenId": "923489:1220",
+    "name": "ROSEN•TECH",
+    "decimals": 3,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "ROSENTECH"
+    }
   }
 }

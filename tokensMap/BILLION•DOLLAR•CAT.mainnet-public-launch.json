@@ -1,0 +1,47 @@
+{
+  "bitcoin-runes": {
+    "tokenId": "845764:84",
+    "name": "BILLION•DOLLAR•CAT",
+    "decimals": 0,
+    "type": "Runes",
+    "residency": "native",
+    "extra": {
+      "uniqueName": "BILLIONDOLLARCAT"
+    }
+  },
+  "ergo": {
+    "tokenId": "09a39277e042c71a14ff44a30daac7082a09c1d746d794de93da2e25919b8394",
+    "name": "rsBDC",
+    "decimals": 0,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601.7273424443",
+    "name": "rsBDC",
+    "decimals": 0,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "941eee950c8074a2bc55826de02a8bd1de8f1dd62caabac02d37b601",
+      "assetName": "7273424443"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x87fc57a2be29960fe6362a9710f468be232cd5d8",
+    "name": "rsBDC",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x182fe4102f94645e0df0f2a3ca2386b21c94818f",
+    "name": "rsBDC",
+    "decimals": 0,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  }
+}
