@@ -1,0 +1,47 @@
+{
+  "ergo": {
+    "tokenId": "a55b8735ed1a99e46c2c89f8994aacdf4b1109bdcf682f1e5b34479c6e392669",
+    "name": "USE",
+    "decimals": 3,
+    "type": "EIP-004",
+    "residency": "native",
+    "extra": {}
+  },
+  "ethereum": {
+    "tokenId": "0xe275e4739b5eaafea596b983ab344d34fb0d00c8",
+    "name": "USE",
+    "decimals": 3,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x04458bd623824e7e7df04be619b553fc5f286151",
+    "name": "USE",
+    "decimals": 3,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "ca769ee7ee7307ceff20508dbb01a873a5b3226f0a563a81912c67b5.555345",
+    "name": "USE",
+    "decimals": 3,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "ca769ee7ee7307ceff20508dbb01a873a5b3226f0a563a81912c67b5",
+      "assetName": "555345"
+    }
+  },
+  "bitcoin-runes": {
+    "tokenId": "925403:591",
+    "name": "USE•ROSEN•TECH",
+    "decimals": 6,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "USEROSENTECH"
+    }
+  }
+}
