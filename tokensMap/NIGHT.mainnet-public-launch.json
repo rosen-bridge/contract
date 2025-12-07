@@ -1,0 +1,47 @@
+{
+  "cardano": {
+    "tokenId": "0691b2fecca1ac4f53cb6dfb00b7013e561d1f34403b957cbb5af1fa.4e49474854",
+    "name": "NIGHT",
+    "decimals": 6,
+    "type": "CIP-26",
+    "residency": "native",
+    "extra": {
+      "policyId": "0691b2fecca1ac4f53cb6dfb00b7013e561d1f34403b957cbb5af1fa",
+      "assetName": "4e49474854"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xfd6859deb1d76db10ed462a7eac099ca5adce2df",
+    "name": "rsNIGHT",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x71bfff96e44534bd1d2a64c922796d3fda07ee7c",
+    "name": "rsNIGHT",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "76dfd2a08bb3d586f1b75136915d051c1de31ba3252c1240cafdc1699a4f777c",
+    "name": "rsNIGHT",
+    "decimals": 6,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "bitcoin-runes": {
+    "tokenId": "926675:814",
+    "name": "NIGHT•ROSEN•TECH",
+    "decimals": 6,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "NIGHTROSENTECH"
+    }
+  }
+}
