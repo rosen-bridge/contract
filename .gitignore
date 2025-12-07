@@ -5,3 +5,4 @@ target/
 .bsp/
 *.json
 !tokensMap/*.json
+.DS_Store
