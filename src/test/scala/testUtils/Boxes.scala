@@ -62,7 +62,7 @@ class Commitment {
 
 object Boxes {
 
-  val networkConfig: (NetworkGeneral, Network) = Utils.selectConfig("cardano", "mainnet")
+  val networkConfig = (Configs.generalConfig("mainnet"), Configs.allNetworksToken(("cardano", "mainnet")))
   val contracts = new Contracts(networkConfig._1, networkConfig._2)
 
   def getRandomHexString(length: Int = 64): String = {

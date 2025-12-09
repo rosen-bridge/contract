@@ -10,7 +10,7 @@ import testUtils.{Boxes, Commitment, TestSuite}
 class ContractTest extends TestSuite {
   val sk: BigInt = Utils.randBigInt
 
-  val networkConfig: (NetworkGeneral, Network) = Utils.selectConfig("cardano", "mainnet")
+  val networkConfig = (Configs.generalConfig("mainnet"), Configs.allNetworksToken(("cardano", "mainnet")))
   val contracts = new Contracts(networkConfig._1, networkConfig._2)
 
   def getProver(): ErgoProver = {

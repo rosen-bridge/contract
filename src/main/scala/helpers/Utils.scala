@@ -86,13 +86,13 @@ object Utils {
       ))
     }
     
-    val jsonObj = Json.fromFields(List(
-      ("tokens", generalTokens.toJson())
-    )).deepMerge(Json.fromFields(chainEntries))
     
-    val finalJson = Json.fromFields(List(
-      ("version", Json.fromString(networkVersion))
-    )).deepMerge(jsonObj)
+    val finalJson = Json.fromFields(
+      List(
+        ("version", Json.fromString(networkVersion)),
+        ("tokens", generalTokens.toJson())
+      ) ++ chainEntries
+    )
     
     val outputName = s"contracts-$networkType-$networkVersion.json"
     writeJsonToFile(outputName, finalJson)
