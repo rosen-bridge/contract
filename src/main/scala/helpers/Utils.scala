@@ -7,21 +7,16 @@ import rosen.bridge.{Contracts, TokensMap}
 import scorex.crypto.hash.Digest32
 
 import java.math.BigInteger
+import java.io.PrintWriter
 
 object Utils {
   private val secureRandom = new java.security.SecureRandom
 
-  def selectConfig(networkName: String, networkType: String) : (NetworkGeneral, Network) = {
-    (
-      Configs.generalConfig(networkType),
-      Configs.allNetworksToken((networkName, networkType))
-    )
-  }
 
   /**
    * Create json of TokenMap
    * @param networkVersion String ex: 1.0.0
-   * @param networkType String ex: mainnet-alpha-1
+   * @param networkType String ex: public-launch or pandora
    */
   def createTokenMap(networkVersion: String, networkType: String = ""): Unit = {
     val generalConfig = Configs.generalConfig
@@ -45,38 +40,65 @@ object Utils {
   /**
    * Create json of contracts
    * @param networkVersion String ex: 1.0.0
-   * @param networkName String ex: cardano
-   * @param networkType String ex: mainnet-alpha-1
+   * @param networkType String ex: public-launch or pandora
    */
-  def createContracts(networkVersion: String, networkName: String = "", networkType: String = ""): Unit = {
-    if(networkName.nonEmpty) {
-      val networkConfig: (NetworkGeneral, Network) = selectConfig(networkName, networkType)
-      val contracts = new Contracts(networkConfig._1, networkConfig._2)
-      contracts.createContractsJson(
-        networkName,
-        networkType,
-        networkVersion,
-      )
-      println("Json of Contracts created!")
+  def createContracts(networkVersion: String, networkType: String = ""): Unit = {
+    if (networkType.isEmpty) {
+      println("Creating contracts for ALL network types...")
+      createContracts(networkVersion,"public-launch")
+      createContracts(networkVersion, "pandora")
+      return
     }
-    else{
-      val generalConfig = Configs.generalConfig
-      val allNetworksToken = Configs.allNetworksToken
-
-      allNetworksToken.keys.toSeq.foreach(network => {
-        if ((network._2 contains networkType) || networkType.isEmpty){
-          val networkObj = allNetworksToken(network)
-          val generalObj = generalConfig(network._2)
-          val contracts = new Contracts(generalObj, networkObj)
-          contracts.createContractsJson(
-            network._1,
-            network._2,
-            networkVersion,
-          )
-          println(s"Json of Contracts created for network ${network._1} with type ${network._2}!")
-        }
-      })
+    
+    def writeJsonToFile(filename: String, json: Json): Unit = {
+      val writer = new PrintWriter(filename)
+      try {
+        writer.write(json.spaces2)
+      } finally {
+        writer.close()
+      }
     }
+        
+    val generalConfig = Configs.generalConfig
+    val allNetworks = Configs.allNetworksToken
+    
+    val chainsForType = allNetworks.collect {
+      case ((chainName, chainType), netCfg) 
+        if chainType == networkType => (chainName, chainType, netCfg)
+    }.toList
+    
+    if (chainsForType.isEmpty) {
+      println(s"No networks found for type: $networkType")
+      return
+    }
+    
+    val networkTypeKey = networkType
+    val generalTokens = generalConfig(networkTypeKey).mainTokens
+    
+    val chainEntries = chainsForType.map { case (chainName, chainType, netCfg) =>
+      val general = generalConfig(chainType)
+      val contracts = new Contracts(general, netCfg)
+      
+      chainName -> Json.fromFields(List(
+        ("addresses", contracts.toJsonAddresses(chainName)),
+        ("tokens", netCfg.tokens.toJson()),
+        ("cleanupConfirm", Json.fromInt(netCfg.cleanupConfirm))
+      ))
+    }
+    
+    val jsonObj = Json.fromFields(List(
+      ("tokens", generalTokens.toJson())
+    )).deepMerge(Json.fromFields(chainEntries))
+    
+    val finalJson = Json.fromFields(List(
+      ("version", Json.fromString(networkVersion))
+    )).deepMerge(jsonObj)
+    
+    val outputName = s"contracts-$networkType-$networkVersion.json"
+    writeJsonToFile(outputName, finalJson)
+    
+    println(s"Merged contract file created: $outputName")
+    println(s"Contains ${chainsForType.size} chains: ${chainsForType.map(_._1).mkString(", ")}")
   }
 
   def randBigInt: BigInt = new BigInteger(256, secureRandom)
