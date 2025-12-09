@@ -1480,7 +1480,7 @@ class ContractTest extends TestSuite {
         10001L,
         100L,
         7,
-        networkConfig._1.mainTokens.RepoNFT,
+        networkConfig._1.mainTokens.RWTRepoNFT,
         Boxes.getRandomHexString(),
         networkConfig._2.tokens.AwcNFT
       ).convertToInputWith(Boxes.getRandomHexString(), 1)

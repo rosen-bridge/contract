@@ -228,7 +228,7 @@ object Boxes {
                   watcherCount: Long,
                   value: Long = Configs.minBoxValue,
                 ): OutBox = {
-    createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, watcherCount, networkConfig._1.mainTokens.RepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, value)
+    createRepoWithTokens(ctx, RWTCount, RSNCount, AwcCount, watcherCount, networkConfig._1.mainTokens.RWTRepoNFT, networkConfig._2.tokens.RWTId, networkConfig._2.tokens.AwcNFT, value)
   }
 
   def createRepoInput(

@@ -46,7 +46,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
   private def generateWatcherCollateralContract(): (ErgoContract, String) = {
     networkGeneral.ergoNetwork.ergoClient.execute(ctx => {
       val watcherCollateralScript = readScript("Collateral.es")
-        .replace("REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RepoNFT).get))
+        .replace("RWT_REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RWTRepoNFT).get))
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), watcherCollateralScript)
       val address = Utils.getContractAddress(contract, networkGeneral.ergoNetwork.addressEncoder)
       println(s"Watcher collateral address is : \t\t\t$address")
@@ -74,7 +74,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
     networkGeneral.ergoNetwork.ergoClient.execute(ctx => {
       val commitmentHash = Base64.encode(Utils.getContractScriptHash(Commitment._1))
       val watcherPermitScript = readScript("Permit.es")
-        .replace("REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RepoNFT).get))
+        .replace("RWT_REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RWTRepoNFT).get))
         .replace("COMMITMENT_SCRIPT_HASH", commitmentHash)
 
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), watcherPermitScript)
@@ -88,7 +88,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
     networkGeneral.ergoNetwork.ergoClient.execute(ctx => {
       val triggerEvent = Base64.encode(Utils.getContractScriptHash(WatcherTriggerEvent._1))
       val commitmentScript = readScript("Commitment.es")
-        .replace("REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RepoNFT).get))
+        .replace("RWT_REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RWTRepoNFT).get))
         .replace("REPO_CONFIG_NFT", Base64.encode(Base16.decode(networkConfig.tokens.RepoConfigNFT).get))
         .replace("EVENT_TRIGGER_SCRIPT_HASH", triggerEvent)
 
@@ -120,7 +120,7 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
     networkGeneral.ergoNetwork.ergoClient.execute(ctx => {
       val fraudScript = readScript("Fraud.es")
         .replace("CLEANUP_NFT", Base64.encode(Base16.decode(networkConfig.tokens.CleanupNFT).get))
-        .replace("REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RepoNFT).get))
+        .replace("RWT_REPO_NFT", Base64.encode(Base16.decode(networkGeneral.mainTokens.RWTRepoNFT).get))
 
       val contract = ctx.compileContract(ConstantsBuilder.create().build(), fraudScript)
       val address = Utils.getContractAddress(contract, networkGeneral.ergoNetwork.addressEncoder)

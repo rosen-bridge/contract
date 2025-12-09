@@ -4,7 +4,7 @@
   // ----------------- TOKENS
   // 0: X-RWT
 
-  val repoNFT = fromBase64("REPO_NFT");
+  val RWTRepoNFT = fromBase64("RWT_REPO_NFT");
   val commitmentScriptHash = fromBase64("COMMITMENT_SCRIPT_HASH");
   val WID = SELF.R4[Coll[Byte]].get
   val inputPermitsRwt = INPUTS.filter{
@@ -15,7 +15,7 @@
     }
     .map{(box:Box) => box.tokens(0)._2}
     .fold(0L, { (a: Long, b: Long) => a + b })
-  if(OUTPUTS(0).tokens(0)._1 == repoNFT){
+  if(OUTPUTS(0).tokens(0)._1 == RWTRepoNFT){
     // Returning Permit
     // [Repo, Collateral, Permit(SELF), WID] => [Repo, Collateral, Permit(optional), WID(+userChange)]
     val transferedRwt = OUTPUTS(0).tokens(1)._2 - INPUTS(0).tokens(1)._2
