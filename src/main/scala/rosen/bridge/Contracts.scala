@@ -19,6 +19,15 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
   lazy val RepoConfig: (ErgoContract, String) = generateRepoConfigContract()
   lazy val Emission: (ErgoContract, String) = generateEmissionContract()
 
+  def buildContractsJson(networkName: String, networkVersion: String): Json = {
+    Json.fromFields(List(
+      "version" -> Json.fromString(networkVersion),
+      "addresses" -> this.toJsonAddresses(networkName),
+      "tokens" -> networkConfig.tokens.toJson().deepMerge(networkGeneral.mainTokens.toJson()),
+      "cleanupConfirm" -> Json.fromInt(networkConfig.cleanupConfirm)
+    ))
+  }
+
   def readScript(path: String) = {
     val scriptSource: BufferedSource = Source.fromFile("src/main/scala/rosen/bridge/scripts/" + path, "utf-8")
     val script: String = scriptSource.getLines.mkString("\n")

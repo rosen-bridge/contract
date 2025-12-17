@@ -16,7 +16,7 @@ object Utils {
   /**
    * Create json of TokenMap
    * @param networkVersion String ex: 1.0.0
-   * @param networkType String ex: public-launch or pandora
+   * @param networkType String ex: mainnet-alpha-1
    */
   def createTokenMap(networkVersion: String, networkType: String = ""): Unit = {
     val generalConfig = Configs.generalConfig
@@ -40,66 +40,53 @@ object Utils {
   /**
    * Create json of contracts
    * @param networkVersion String ex: 1.0.0
-   * @param networkType String ex: public-launch or pandora
+   * @param networkType String ex: mainnet-alpha-1
    */
   def createContracts(networkVersion: String, networkType: String = ""): Unit = {
-    if (networkType.isEmpty) {
-      println("Creating contracts for ALL network types...")
-      createContracts(networkVersion,"public-launch")
-      createContracts(networkVersion, "pandora")
-      return
-    }
-    
-    def writeJsonToFile(filename: String, json: Json): Unit = {
-      val writer = new PrintWriter(filename)
-      try {
-        writer.write(json.spaces2)
-      } finally {
-        writer.close()
+
+    val generalConfig = Configs.generalConfig
+    val allNetworks   = Configs.allNetworksToken
+
+    val networkTypes: Seq[String] =
+      if (networkType.nonEmpty)
+        Seq(networkType)
+      else
+        generalConfig.keys.toSeq
+
+    networkTypes.foreach { nt =>
+      val chainsForType = allNetworks.collect {
+        case ((chainName, chainType), netCfg) if chainType == nt =>
+          (chainName, netCfg)
+      }.toList
+
+      if (chainsForType.isEmpty) {
+        println(s"No networks found for type: $nt")
+      } else {
+
+        val generalTokens = generalConfig(nt).mainTokens
+
+        val chainEntries = chainsForType.map { case (chainName, netCfg) =>
+        val contracts = new Contracts(generalConfig(nt), netCfg)
+        chainName -> contracts.buildContractsJson(chainName, networkVersion)
+      }
+
+        val finalJson = Json.fromFields(
+          List(
+            "version" -> Json.fromString(networkVersion),
+            "tokens" -> generalTokens.toJson()
+          ) ++ chainEntries
+        )
+
+        val outputName = s"contracts-$nt-$networkVersion.json"
+        val writer = new PrintWriter(outputName)
+        try writer.write(finalJson.spaces2)
+        finally writer.close()
+
+        println(s"Contracts json created for network type: $nt")
       }
     }
-        
-    val generalConfig = Configs.generalConfig
-    val allNetworks = Configs.allNetworksToken
-    
-    val chainsForType = allNetworks.collect {
-      case ((chainName, chainType), netCfg) 
-        if chainType == networkType => (chainName, chainType, netCfg)
-    }.toList
-    
-    if (chainsForType.isEmpty) {
-      println(s"No networks found for type: $networkType")
-      return
-    }
-    
-    val networkTypeKey = networkType
-    val generalTokens = generalConfig(networkTypeKey).mainTokens
-    
-    val chainEntries = chainsForType.map { case (chainName, chainType, netCfg) =>
-      val general = generalConfig(chainType)
-      val contracts = new Contracts(general, netCfg)
-      
-      chainName -> Json.fromFields(List(
-        ("addresses", contracts.toJsonAddresses(chainName)),
-        ("tokens", netCfg.tokens.toJson()),
-        ("cleanupConfirm", Json.fromInt(netCfg.cleanupConfirm))
-      ))
-    }
-    
-    
-    val finalJson = Json.fromFields(
-      List(
-        ("version", Json.fromString(networkVersion)),
-        ("tokens", generalTokens.toJson())
-      ) ++ chainEntries
-    )
-    
-    val outputName = s"contracts-$networkType-$networkVersion.json"
-    writeJsonToFile(outputName, finalJson)
-    
-    println(s"Merged contract file created: $outputName")
-    println(s"Contains ${chainsForType.size} chains: ${chainsForType.map(_._1).mkString(", ")}")
   }
+
 
   def randBigInt: BigInt = new BigInteger(256, secureRandom)
 
