@@ -65,10 +65,11 @@ object Utils {
 
         val generalTokens = generalConfig(nt).mainTokens
 
-        val chainEntries = chainsForType.map { case (chainName, netCfg) =>
-        val contracts = new Contracts(generalConfig(nt), netCfg)
-        chainName -> contracts.buildContractsJson(chainName)
-      }
+        val chainEntries = chainsForType.map {
+          case (chainName, netCfg) =>
+            val contracts = new Contracts(generalConfig(nt), netCfg)
+            chainName -> contracts.buildContractsJson(chainName)
+        }
 
         val finalJson = Json.fromFields(
           List(
