@@ -19,11 +19,10 @@ class Contracts(networkGeneral: NetworkGeneral, networkConfig: Network) {
   lazy val RepoConfig: (ErgoContract, String) = generateRepoConfigContract()
   lazy val Emission: (ErgoContract, String) = generateEmissionContract()
 
-  def buildContractsJson(networkName: String, networkVersion: String): Json = {
+  def buildContractsJson(networkName: String): Json = {
     Json.fromFields(List(
-      "version" -> Json.fromString(networkVersion),
       "addresses" -> this.toJsonAddresses(networkName),
-      "tokens" -> networkConfig.tokens.toJson().deepMerge(networkGeneral.mainTokens.toJson()),
+      "tokens" -> networkConfig.tokens.toJson(),
       "cleanupConfirm" -> Json.fromInt(networkConfig.cleanupConfirm)
     ))
   }

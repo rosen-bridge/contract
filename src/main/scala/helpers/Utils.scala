@@ -67,7 +67,7 @@ object Utils {
 
         val chainEntries = chainsForType.map { case (chainName, netCfg) =>
         val contracts = new Contracts(generalConfig(nt), netCfg)
-        chainName -> contracts.buildContractsJson(chainName, networkVersion)
+        chainName -> contracts.buildContractsJson(chainName)
       }
 
         val finalJson = Json.fromFields(
