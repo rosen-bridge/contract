@@ -80,10 +80,10 @@ object Configs extends ConfigHelper {
 
     // Prepare general tokens
     val mainTokens = MainTokens(
-      readKeyDynamic(mainTokensConfig, "RepoNFT"),
+      readKeyDynamic(mainTokensConfig, "RWTRepoNFT"),
       readKeyDynamic(mainTokensConfig, "GuardNFT"),
       readKeyDynamic(mainTokensConfig, "RSN"),
-      readKeyDynamic(mainTokensConfig, "RSNRatioNFT"),
+      readKeyDynamic(mainTokensConfig, "MinFeeNFT"),
       readKeyDynamic(mainTokensConfig, "EmissionNFT"),
       readKeyDynamic(mainTokensConfig, "ERSN")
     )

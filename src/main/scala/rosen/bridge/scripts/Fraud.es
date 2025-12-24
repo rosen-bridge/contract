@@ -4,7 +4,7 @@
   // ----------------- TOKENS
   // 0: X-RWT
 
-  val repoNFT = fromBase64("REPO_NFT");
+  val RWTRepoNFT = fromBase64("RWT_REPO_NFT");
   val cleanupNFT = fromBase64("CLEANUP_NFT");
   // RSN Slash
   // [Repo, Collateral, Fraud, Cleanup] => [Repo, Collateral, Cleanup, Slashed]
@@ -14,7 +14,7 @@
       Coll(
         SELF.tokens(0)._2 == transferedRwt,
         SELF.id == INPUTS(2).id,
-        INPUTS(0).tokens(0)._1 == repoNFT,
+        INPUTS(0).tokens(0)._1 == RWTRepoNFT,
         INPUTS(3).tokens(0)._1 == cleanupNFT,
       )
     )

@@ -8,7 +8,7 @@
   // 0: X-RWT
 
   val eventTriggerHash = fromBase64("EVENT_TRIGGER_SCRIPT_HASH");
-  val repoNFT = fromBase64("REPO_NFT");
+  val RWTRepoNFT = fromBase64("RWT_REPO_NFT");
   val repoConfigNft = fromBase64("REPO_CONFIG_NFT");
   val trigger = if (blake2b256(INPUTS(0).propositionBytes) == eventTriggerHash) INPUTS(0) else OUTPUTS(0)
   val myWID = SELF.R4[Coll[Byte]].get
@@ -77,7 +77,7 @@
         Coll(
           //check repo
           repoConfigBox.tokens(0)._1 == repoConfigNft,
-          repo.tokens(0)._1 == repoNFT,
+          repo.tokens(0)._1 == RWTRepoNFT,
           repo.tokens(1)._1 == SELF.tokens(0)._1,
           // prevent duplicate commitments
           myWIDCommitments.size == 1,

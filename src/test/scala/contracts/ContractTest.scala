@@ -10,7 +10,7 @@ import testUtils.{Boxes, Commitment, TestSuite}
 class ContractTest extends TestSuite {
   val sk: BigInt = Utils.randBigInt
 
-  val networkConfig: (NetworkGeneral, Network) = Utils.selectConfig("cardano", "mainnet")
+  val networkConfig = (Configs.generalConfig("mainnet"), Configs.allNetworksToken(("cardano", "mainnet")))
   val contracts = new Contracts(networkConfig._1, networkConfig._2)
 
   def getProver(): ErgoProver = {
@@ -1480,7 +1480,7 @@ class ContractTest extends TestSuite {
         10001L,
         100L,
         7,
-        networkConfig._1.mainTokens.RepoNFT,
+        networkConfig._1.mainTokens.RWTRepoNFT,
         Boxes.getRandomHexString(),
         networkConfig._2.tokens.AwcNFT
       ).convertToInputWith(Boxes.getRandomHexString(), 1)

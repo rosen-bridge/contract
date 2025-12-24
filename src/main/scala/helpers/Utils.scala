@@ -7,16 +7,11 @@ import rosen.bridge.{Contracts, TokensMap}
 import scorex.crypto.hash.Digest32
 
 import java.math.BigInteger
+import java.io.PrintWriter
 
 object Utils {
   private val secureRandom = new java.security.SecureRandom
 
-  def selectConfig(networkName: String, networkType: String) : (NetworkGeneral, Network) = {
-    (
-      Configs.generalConfig(networkType),
-      Configs.allNetworksToken((networkName, networkType))
-    )
-  }
 
   /**
    * Create json of TokenMap
@@ -45,39 +40,54 @@ object Utils {
   /**
    * Create json of contracts
    * @param networkVersion String ex: 1.0.0
-   * @param networkName String ex: cardano
    * @param networkType String ex: mainnet-alpha-1
    */
-  def createContracts(networkVersion: String, networkName: String = "", networkType: String = ""): Unit = {
-    if(networkName.nonEmpty) {
-      val networkConfig: (NetworkGeneral, Network) = selectConfig(networkName, networkType)
-      val contracts = new Contracts(networkConfig._1, networkConfig._2)
-      contracts.createContractsJson(
-        networkName,
-        networkType,
-        networkVersion,
-      )
-      println("Json of Contracts created!")
-    }
-    else{
-      val generalConfig = Configs.generalConfig
-      val allNetworksToken = Configs.allNetworksToken
+  def createContracts(networkVersion: String, networkType: String = ""): Unit = {
 
-      allNetworksToken.keys.toSeq.foreach(network => {
-        if ((network._2 contains networkType) || networkType.isEmpty){
-          val networkObj = allNetworksToken(network)
-          val generalObj = generalConfig(network._2)
-          val contracts = new Contracts(generalObj, networkObj)
-          contracts.createContractsJson(
-            network._1,
-            network._2,
-            networkVersion,
-          )
-          println(s"Json of Contracts created for network ${network._1} with type ${network._2}!")
+    val generalConfig = Configs.generalConfig
+    val allNetworks   = Configs.allNetworksToken
+
+    val networkTypes: Seq[String] =
+      if (networkType.nonEmpty)
+        Seq(networkType)
+      else
+        generalConfig.keys.toSeq
+
+    networkTypes.foreach { nt =>
+      val chainsForType = allNetworks.collect {
+        case ((chainName, chainType), netCfg) if chainType == nt =>
+          (chainName, netCfg)
+      }.toList
+
+      if (chainsForType.isEmpty) {
+        println(s"No networks found for type: $nt")
+      } else {
+
+        val generalTokens = generalConfig(nt).mainTokens
+
+        val chainEntries = chainsForType.map {
+          case (chainName, netCfg) =>
+            val contracts = new Contracts(generalConfig(nt), netCfg)
+            chainName -> contracts.buildContractsJson(chainName)
         }
-      })
+
+        val finalJson = Json.fromFields(
+          List(
+            "version" -> Json.fromString(networkVersion),
+            "tokens" -> generalTokens.toJson()
+          ) ++ chainEntries
+        )
+
+        val outputName = s"contracts-$nt-$networkVersion.json"
+        val writer = new PrintWriter(outputName)
+        try writer.write(finalJson.spaces2)
+        finally writer.close()
+
+        println(s"Contracts json created for network type: $nt")
+      }
     }
   }
+
 
   def randBigInt: BigInt = new BigInteger(256, secureRandom)
 
