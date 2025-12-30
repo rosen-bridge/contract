@@ -6,7 +6,7 @@
   // 0: X-AWC NFT
   // 1: RSN collateral
 
-  val repoNFT = fromBase64("REPO_NFT");
+  val RWTRepoNFT = fromBase64("RWT_REPO_NFT");
   val repo = INPUTS(0);
   val repoOut = OUTPUTS(0);
   val WID = SELF.R4[Coll[Byte]].get;
@@ -22,7 +22,7 @@
       allOf(
         Coll(
           SELF.id == INPUTS(1).id,
-          repo.tokens(0)._1 == repoNFT,
+          repo.tokens(0)._1 == RWTRepoNFT,
           repo.tokens(3)._1 == SELF.tokens(0)._1,
           outCollateral.value == SELF.value,
           outCollateral.tokens(0)._1 == SELF.tokens(0)._1,
@@ -56,7 +56,7 @@
           widBox.tokens(0)._1 == WID,
           widBox.tokens(0)._2 >= 2,
           repoOut.R5[Long].get + 1 == repo.R5[Long].get,
-          repo.tokens(0)._1 == repoNFT,
+          repo.tokens(0)._1 == RWTRepoNFT,
           repo.tokens(3)._1 == SELF.tokens(0)._1,
         )
       )

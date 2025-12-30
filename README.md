@@ -1,4 +1,30 @@
 
+## How to use ?
+To build:
+```shell
+sbt run assembly
+```
+
+To create TokenMap file run this command (this is an example for testnet):
+```shell
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar  tokens --type testnet --version 1.0.0
+```
+
+To create address of all contracts run this command (this is an example for testnet type):
+```shell
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar  contracts --type testnet --version 1.0.0
+```
+
+To create both TokenMaps and address of contracts for each network type run this command (there's a `-f` flag for filter networkTypes):
+```shell
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar  all --version 1.0.0
+```
+
+You can see all commands with:
+```shell
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar  --help 
+```
+
 # Rosen Bridge
 The Rosen Bridge is an Ergo-centric bridge designed to facilitate the seamless exchange of coins and tokens between the Ergo blockchain and other supported chains. In this document, we will delve into the technical intricacies of the Rosen Bridge's design. For a broader understanding of the Rosen Bridge's high-level concepts, you can refer to this [link](https://github.com/rosen-bridge).
 
@@ -267,29 +293,3 @@ The verifier only needs to verify that "A bridge payment is made if and only if 
 
 # Contract Project
 This project is used for creating a centralized file to the address of contracts and TokenMaps depending on network and network type, all libraries and projects in Rosen Bridge are compatible with the outputs of these files.
-
-## How to use ?
-To build:
-```shell
-sbt run assembly
-```
-
-To create TokenMap file run this command (this is an example for testnet):
-```shell
-java -jar target/scala-2.12/contract-assembly-0.1.0-SNAPSHOT.jar tokens --type testnet --version 1.0.0
-```
-
-To create address of all contracts run this command (this is an example for cardano network with testnet type):
-```shell
-java -jar target/scala-2.12/contract-assembly-0.1.0-SNAPSHOT.jar contracts --network cardano --type testnet --version 1.0.0
-```
-
-To create both TokenMaps and address of contracts for each network type run this command (there's a `-f` flag for filter networkTypes):
-```shell
-java -jar target/scala-2.12/contract-assembly-0.1.0-SNAPSHOT.jar all --version 1.0.0
-```
-
-You can see all commands with:
-```shell
-java -jar target/scala-2.12/contract-assembly-0.1.0-SNAPSHOT.jar --help 
-```

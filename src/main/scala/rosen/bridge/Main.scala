@@ -5,7 +5,6 @@ import helpers.Utils
 import scopt.OptionParser
 
 case class Config(
-                   networkName: String = "",
                    networkType: String = "",
                    networkVersion: String = "",
                    mode: String = ""
@@ -18,10 +17,6 @@ object RosenContractsExecutor extends App {
       .action((_, c) => c.copy(mode = "contracts"))
       .text("generate contract file.")
       .children(
-        opt[String]('n', "network")
-          .action((x, c) => c.copy(networkName = x.toLowerCase()))
-          .text("network name")
-          .required(),
 
         opt[String]('t', "type")
           .action((x, c) => c.copy(networkType = x.toLowerCase()))
@@ -69,19 +64,19 @@ object RosenContractsExecutor extends App {
 
   parser.parse(args, Config()) match {
     case Some(config) =>
-      val networkVersion = if (config.networkVersion.nonEmpty) config.networkVersion else BuildInfo.version
-      if (config.mode == "contracts") {
-        Utils.createContracts(networkVersion, config.networkName, config.networkType)
-        System.exit(0)
-      }
-      else if (config.mode == "tokens") {
-        Utils.createTokenMap(networkVersion, config.networkType)
-        System.exit(0)
-      }
-      else if (config.mode == "all") {
-        Utils.createContracts(networkVersion, networkType = config.networkType)
-        Utils.createTokenMap(networkVersion, config.networkType)
-        System.exit(0)
+        val networkVersion = if (config.networkVersion.nonEmpty) config.networkVersion else BuildInfo.version
+        if (config.mode == "contracts") {
+          Utils.createContracts(networkVersion, config.networkType)
+          System.exit(0)
+        }
+        else if (config.mode == "tokens") {
+          Utils.createTokenMap(networkVersion, config.networkType)
+          System.exit(0)
+        }
+        else if (config.mode == "all") {
+          Utils.createContracts(networkVersion, config.networkType)
+          Utils.createTokenMap(networkVersion, config.networkType)
+          System.exit(0)
       }
 
     case None =>
