@@ -3,7 +3,7 @@
   // R4: Coll[Long] = [Commitment RWT count, Watcher quorum percentage, approval offset, maximum needed approval, 
   //                   Collateral Erg amount, Collateral Rsn Amount]
   // (Minimum number of commitments needed for an event is: 
-  //  min(R4[3], R4[1] * (total number of watchers) / 100 + R4[2]))
+  //  min(R4[3], floor(R4[1] * (total number of watchers) / 100) + R4[2]) + 1
   // ----------------- TOKENS
   // 0: X-Repo Config NFT
   
