@@ -26,6 +26,7 @@
           repo.tokens(3)._1 == SELF.tokens(0)._1,
           outCollateral.value == SELF.value,
           outCollateral.tokens(0)._1 == SELF.tokens(0)._1,
+          outCollateral.propositionBytes == SELF.propositionBytes,
           if (SELF.tokens.size > 1) {
             // RSN collateral check
             outCollateral.tokens(1)._1 == SELF.tokens(1)._1 &&

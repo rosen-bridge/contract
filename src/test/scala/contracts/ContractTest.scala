@@ -407,6 +407,41 @@ class ContractTest extends TestSuite {
     })
   }
 
+  /**
+   * @target extend permit transaction should throws error when collateral address is wrong
+   * @dependencies
+   * @scenario
+   * - mock user input
+   * - mock valid input repo and wid box
+   * - mock valid collateral
+   * - mock valid output repo, permit and wid box
+   * - mock invalid collateral (user address instead of collateral script)
+   * - build and sign the extend permit transaction
+   * @expected
+   * - sign error for invalid script for output collateral
+   */
+  property("extend permit transaction should throws error when collateral address is wrong") {
+    networkConfig._1.ergoNetwork.ergoClient.execute(ctx => {
+      val prover = getProver()
+      val WID = Base16.decode(Boxes.getRandomHexString()).get
+      val userBox = Boxes.createBoxForUser(ctx, prover.getAddress, 1e9.toLong, new ErgoToken(WID, 2L), new ErgoToken(networkConfig._1.mainTokens.RSN, 100L))
+      val repoBox = Boxes.createRepoInput(ctx, 100000, 5801L, 100L, 1)
+      val collateral = Boxes.createWatcherCollateralBoxInput(ctx, 1e9.toLong, 100, WID, 100)
+      val repoOut = Boxes.createRepo(ctx, 99900, 5901L, 100L, 1)
+      val outCollateral = Boxes.createWatcherCollateralBox(ctx, 1e9.toLong, 100, WID, 200L, ctx.newContract(prover.getAddress.asP2PK().script))
+      val permitBox = Boxes.createPermitBox(ctx, 100L, WID)
+      val WIDBox = Boxes.createBoxCandidateForUser(ctx, prover.getAddress, Configs.minBoxValue, new ErgoToken(WID, 2L))
+      val tx = ctx.newTxBuilder().addInputs(repoBox, collateral, userBox)
+        .fee(Configs.fee)
+        .addOutputs(repoOut, outCollateral, permitBox, WIDBox)
+        .sendChangeTo(prover.getAddress)
+        .build()
+      assertThrows[AnyRef] {
+        prover.sign(tx)
+      }
+    })
+  }
+
 
   property("test extend permit using one wid token") {
     networkConfig._1.ergoNetwork.ergoClient.execute(ctx => {
