@@ -5,10 +5,11 @@ import helpers.Utils
 import scopt.OptionParser
 
 case class Config(
-                   networkType: String = "",
-                   networkVersion: String = "",
-                   mode: String = ""
-                 )
+  networkType: String = "",
+  networkVersion: String = "",
+  mode: String = "",
+  tag: String = "",
+)
 
 object RosenContractsExecutor extends App {
 
@@ -59,6 +60,23 @@ object RosenContractsExecutor extends App {
           .optional()
       )
 
+    cmd("build-ts-package")
+      .action((_, c) => c.copy(mode = "build-ts-package"))
+      .text("build TypeScript package from contracts and tokens JSON files.")
+      .children(
+        opt[String]('t', "type")
+          .action((x, c) => c.copy(networkType = x.toLowerCase()))
+          .text("network type (e.g., mainnet, pandora)")
+          .required(),
+        opt[String]('v', "version")
+          .action((x, c) => c.copy(networkVersion = x))
+          .text("package version")
+          .required(),
+        opt[String]('g', "tag")
+          .action((x, c) => c.copy(tag = x))
+          .text("release tag (stable, develop)")
+          .required(),
+      )
     help("help").text("prints this usage text")
   }
 
@@ -77,7 +95,15 @@ object RosenContractsExecutor extends App {
           Utils.createContracts(networkVersion, config.networkType)
           Utils.createTokenMap(networkVersion, config.networkType)
           System.exit(0)
-      }
+        }
+        else if (config.mode == "build-ts-package") {
+          Utils.buildTypeScriptPackage(
+            networkType = config.networkType,
+            version = networkVersion,
+            tag = config.tag,
+          )
+          System.exit(0)
+        }
 
     case None =>
       // arguments are bad, error message will have been displayed
