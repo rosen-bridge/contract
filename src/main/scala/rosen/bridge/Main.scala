@@ -71,7 +71,7 @@ object RosenContractsExecutor extends App {
         opt[String]('v', "version")
           .action((x, c) => c.copy(networkVersion = x))
           .text("package version")
-          .required(),
+          .optional(),
         opt[String]('g', "tag")
           .action((x, c) => c.copy(tag = x))
           .text("release tag (stable, develop)")

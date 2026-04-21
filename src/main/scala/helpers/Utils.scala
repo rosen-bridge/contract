@@ -1,7 +1,6 @@
 package helpers
 
 import io.circe.Json
-import io.circe.parser.parse
 import org.ergoplatform.ErgoAddressEncoder
 import org.ergoplatform.appkit.ErgoContract
 import rosen.bridge.{Contracts, TokensMap}
@@ -9,19 +8,21 @@ import scorex.crypto.hash.Digest32
 
 import java.io.{File, PrintWriter}
 import java.math.BigInteger
-import scala.io.Source
 
 object Utils {
   private val secureRandom = new java.security.SecureRandom
-
 
   /**
    * Create json of TokenMap
    * @param networkVersion String ex: 1.0.0
    * @param networkType String ex: mainnet-alpha-1
-   */
-  def createTokenMap(networkVersion: String, networkType: String = ""): Unit = {
+   * @param saved Boolean default true, if true the json file will be saved
+   * @return Json of TokenMap
+    */  
+  def createTokenMap(networkVersion: String, networkType: String = "", saved: Boolean = true): Json = {
     val generalConfig = Configs.generalConfig
+    var resultJson: Json = Json.Null
+    
     generalConfig.keys.toSeq.foreach(conf => {
       if ((conf contains networkType) || networkType.isEmpty){
         val fileType = conf ++ ".json"
@@ -32,22 +33,28 @@ object Utils {
               ("version", Json.fromString(networkVersion))
             )
           )
-        ).toString()
-        TokensMap.createTokensMapJsonFile(tokensMapJson, conf, networkVersion)
+        )
+        resultJson = tokensMapJson
+        if (saved) {
+          TokensMap.createTokensMapJsonFile(tokensMapJson.spaces2, conf, networkVersion)
+        }
         println(s"Json of TokensMap created for network type $conf!")
       }
     })
+    resultJson
   }
 
   /**
    * Create json of contracts
    * @param networkVersion String ex: 1.0.0
    * @param networkType String ex: mainnet-alpha-1
+   * @param saved Boolean default true, if true the json file will be saved
+   * @return Json of contracts
    */
-  def createContracts(networkVersion: String, networkType: String = ""): Unit = {
-
+  def createContracts(networkVersion: String, networkType: String = "", saved: Boolean = true): Json = {
     val generalConfig = Configs.generalConfig
     val allNetworks   = Configs.allNetworksToken
+    var resultJson    = Json.Null
 
     val networkTypes: Seq[String] =
       if (networkType.nonEmpty)
@@ -79,17 +86,20 @@ object Utils {
             "tokens" -> generalTokens.toJson()
           ) ++ chainEntries
         )
-
-        val outputName = s"contracts-$nt-$networkVersion.json"
-        val writer = new PrintWriter(outputName)
-        try writer.write(finalJson.spaces2)
-        finally writer.close()
+        resultJson = finalJson
+        
+        if (saved) {
+          val outputName = s"contracts-$nt-$networkVersion.json"
+          val writer = new PrintWriter(outputName)
+          try writer.write(finalJson.spaces2)
+          finally writer.close()
+        }
 
         println(s"Contracts json created for network type: $nt")
       }
     }
+    resultJson
   }
-
 
   def randBigInt: BigInt = new BigInteger(256, secureRandom)
 
@@ -110,55 +120,49 @@ object Utils {
     println(s"Building TypeScript package for network type: $networkType")
     println(s"Version: $version, Tag: $tag")
     
-    val contractsFile = s"contracts-$networkType-$version.json"
-    val tokensFile = s"tokensMap-$networkType-$version.json"
-    
-    if (!new File(contractsFile).exists()) {
-      println(s"Error: $contractsFile not found. Please run 'all' command first.")
-      System.exit(1)
-    }
-    
-    val contractsJsonString = readFileContent(contractsFile)
-    val tokensJsonString = if (new File(tokensFile).exists()) readFileContent(tokensFile) else "{}"
-    
-    val contractsJson = parse(contractsJsonString).getOrElse(Json.Null)
-    val tokensJson = parse(tokensJsonString).getOrElse(Json.Null)
-    
-    val packageDir = s"./ts-packages/${networkType}-contracts"
+    val contractsJson = createContracts(version, networkType, saved = false)
+    val tokensJson = createTokenMap(version, networkType, saved = false)
+
+    val packageName = s"@rosen-bridge/contract"
+    val packageDir = s"./ts-package/contract"
     val distDir = s"$packageDir/dist"
     
     new File(packageDir).mkdirs()
     new File(distDir).mkdirs()
     
-    generatePackageJson(packageDir, s"${networkType}-contracts", version, tag)
+    generatePackageJson(packageDir, packageName, version, tag, networkType)
     
-    generateIndexJs(distDir, contractsJsonString, tokensJsonString)
+    generateContractsJs(distDir, contractsJson)
+    generateTokensJs(distDir, tokensJson)
     
-    generateIndexDts(distDir, contractsJson, tokensJson)
+    generateContractsDts(distDir, contractsJson)
+    generateTokensDts(distDir, tokensJson)
+    
+    generateIndexJs(distDir)
+    generateIndexDts(distDir)
     
     println(s"TypeScript package generated successfully at: $packageDir")
-    println(s"To install: npm install $packageDir")
+    println(s"To install: npm install $packageName")
   }
 
-  def readFileContent(filename: String): String = {
-    val source = Source.fromFile(filename)
-    val content = try source.mkString finally source.close()
-    content
-  }
-
-  def generatePackageJson(dir: String, packageName: String, version: String, tag: String): Unit = {
+  def generatePackageJson(dir: String, packageName: String, version: String, tag: String, networkType: String): Unit = {
     val packageJson = 
       s"""{
          |  "name": "$packageName",
-         |  "version": "$version",
-         |  "description": "TypeScript package with tag $tag for Rosen Bridge contracts and tokens",
-         |  "main": "dist/index.js",
+         |  "version": "$version-$tag",
+         |  "description": "TypeScript package for Rosen Bridge $networkType contracts and tokens",
+         |  "repository": {
+         |     "type": "git",
+         |     "url": "git+https://github.com/rosen-bridge/contract.git"
+         |   },
+         |  "license": "MIT",
+         |  "author": "Rosen Team",
          |  "types": "dist/index.d.ts",
+         |  "main": "dist/index.js",
          |  "type": "module",
          |  "files": [
          |    "dist"
          |  ],
-         |  "license": "MIT",
          |  "engines": {
          |    "node": ">=22.18.0",
          |    "npm": "11.6.2"
@@ -171,94 +175,123 @@ object Utils {
     writer.close()
   }
 
-  def generateIndexJs(distDir: String, contractsJsonString: String, tokensJsonString: String): Unit = {
-    val indexJs = 
+  def generateContractsJs(distDir: String, contractsJson: Json): Unit = {
+    val contractsJs = s"""export const contracts = ${contractsJson.spaces2};\n"""
+    new PrintWriter(s"$distDir/contracts.js") { write(contractsJs); close() }
+  }
+
+  def generateTokensJs(distDir: String, tokensJson: Json): Unit = {
+    val tokensJs = s"""export const tokens = ${tokensJson.spaces2};\n"""
+    new PrintWriter(s"$distDir/tokens.js") { write(tokensJs); close() }
+  }
+
+  def generateContractsDts(distDir: String, json: Json): Unit = {
+    val chains = extractChainNames(json)
+    val globalTokens = extractKeys(json, "tokens")
+    val addresses = extractNestedKeys(json, chains.headOption, "addresses")
+    val chainTokens = extractNestedKeys(json, chains.headOption, "tokens")
+
+    val content =
       s"""
-export const contracts = $contractsJsonString;
+export interface GlobalTokens {
+${globalTokens.map(k => s"""  "$k": string;""").mkString("\n")}
+}
 
-export const tokens = $tokensJsonString;
+export interface ChainAddresses {
+${addresses.map(k => s"""  "$k": string;""").mkString("\n")}
+}
+
+export interface ChainTokens {
+${chainTokens.map(k => s"""  "$k": string;""").mkString("\n")}
+}
+
+export interface ChainConfig {
+  "addresses": ChainAddresses;
+  "tokens": ChainTokens;
+  "cleanupConfirm": number;
+}
+
+export interface Contracts {
+  "version": string;
+  "tokens": GlobalTokens;
+${chains.map(c => s"""  "$c": ChainConfig;""").mkString("\n")}
+}
+
+export declare const contracts: Contracts;
 """
-    
-    val writer = new PrintWriter(s"$distDir/index.js")
-    writer.write(indexJs)
-    writer.close()
+    new PrintWriter(s"$distDir/contracts.d.ts") { write(content.trim()); close() }
   }
 
-  def generateIndexDts(distDir: String, contractsJson: Json, tokensJson: Json): Unit = {
-    val contractsType = generateInterface(contractsJson, "Contracts", 0)
-    val tokensType = generateInterface(tokensJson, "Tokens", 0)
-    
-    val indexDts = 
+  def generateTokensDts(distDir: String, json: Json): Unit = {
+    val networks = extractAllTokenNetworks(json)
+
+    val content =
       s"""
-${contractsType}
+export interface TokenInfo {
+  "tokenId": string;
+  "name": string;
+  "decimals": number;
+  "type": string;
+  "residency": string;
+  "extra"?: Record<string, any>;
+}
 
-${tokensType}
+export interface Tokens {
+  "version": string;
+  "tokens": {
+${networks.map(n => s"""    "$n"?: TokenInfo;""").mkString("\n")}
+  }[];
+}
 
-export const contracts: Contracts;
-export const tokens: Tokens;
-
+export declare const tokens: Tokens;
 """
-    
-    val writer = new PrintWriter(s"$distDir/index.d.ts")
-    writer.write(indexDts)
-    writer.close()
+    new PrintWriter(s"$distDir/tokens.d.ts") { write(content.trim()); close() }
   }
 
-  def generateInterface(json: Json, name: String, indentLevel: Int): String = {
-    val indent = "  " * indentLevel
-    val nextIndent = "  " * (indentLevel + 1)
-    
-    json.fold(
-      jsonNull = s"${indent}export type $name = null;",
-      jsonBoolean = b => s"${indent}export type $name = boolean;",
-      jsonNumber = n => s"${indent}export type $name = number;",
-      jsonString = s => s"${indent}export type $name = string;",
-      jsonArray = arr => {
-        if (arr.isEmpty) s"${indent}export type $name = any[];"
-        else {
-          val itemType = generateInterface(arr.head, s"${name}Item", indentLevel)
-          s"${itemType}\n\n${indent}export type $name = ${name}Item[];"
-        }
-      },
-      jsonObject = obj => {
-        val fields = obj.toList.sortBy(_._1).map { case (key, value) =>
-          val fieldType = generateInlineType(value, indentLevel + 2)
-          s"""${nextIndent}"$key": $fieldType;"""
-        }.mkString("\n")
-        s"""${indent}export interface $name {
-${fields}
-${indent}}"""
-      }
-    )
-  }
+  def generateIndexJs(distDir: String): Unit =
+    new PrintWriter(s"$distDir/index.js") {
+      write("export { contracts } from './contracts.js';\nexport { tokens } from './tokens.js';\n")
+      close()
+    }
 
-  def generateInlineType(json: Json, indentLevel: Int): String = {
-    val indent = "  " * indentLevel
+  def generateIndexDts(distDir: String): Unit =
+    new PrintWriter(s"$distDir/index.d.ts") {
+      write(
+        """export type { Contracts } from './contracts.d.ts';
+export type { Tokens } from './tokens.d.ts';
+export { contracts } from './contracts.js';
+export { tokens } from './tokens.js';
+"""
+      )
+      close()
+    }
+
+  def extractChainNames(json: Json): List[String] =
+    json.hcursor.keys.map(_.filterNot(k => k == "version" || k == "tokens").toList).getOrElse(Nil)
+
+  def extractKeys(json: Json, field: String): List[String] =
+    json.hcursor.downField(field).keys.map(_.toList).getOrElse(Nil)
+
+  def extractNestedKeys(json: Json, chainOpt: Option[String], field: String): List[String] =
+    chainOpt.flatMap { chain =>
+      json.hcursor.downField(chain).downField(field).keys.map(_.toList)
+    }.getOrElse(Nil)
+
+  def extractAllTokenNetworks(json: Json): List[String] = {
+    val allNetworks = scala.collection.mutable.Set[String]()
     
-    json.fold(
-      jsonNull = "null",
-      jsonBoolean = b => "boolean",
-      jsonNumber = n => "number",
-      jsonString = s => "string",
-      jsonArray = arr => {
-        if (arr.isEmpty) "any[]"
-        else {
-          val itemType = generateInlineType(arr.head, indentLevel)
-          s"${itemType}[]"
-        }
-      },
-      jsonObject = obj => {
-        if (obj.isEmpty) "{}"
-        else {
-          val fields = obj.toList.sortBy(_._1).map { case (key, value) =>
-            val fieldType = generateInlineType(value, indentLevel + 1)
-            s"""${indent}  "$key": $fieldType;"""
-          }.mkString("\n")
-          s"""{
-${fields}
-${indent}}"""
+    json.hcursor
+      .downField("tokens")
+      .focus
+      .flatMap(_.asArray)
+      .foreach { array =>
+        array.foreach { tokenObj =>
+          tokenObj.asObject.foreach { obj =>
+            obj.keys.foreach(allNetworks.add)
+          }
         }
       }
-    )
+    
+    allNetworks.toList.sorted
   }
 }
