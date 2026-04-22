@@ -15,9 +15,18 @@ To create address of all contracts run this command (this is an example for test
 java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar  contracts --type testnet --version 1.0.0
 ```
 
-To create both TokenMaps and address of contracts for each network type run this command (there's a `-f` flag for filter networkTypes):
+To create JSON file and TypeScript packages both TokenMaps and address of contracts for each network type run this command (there's a `-f` flag for filter networkTypes):
 ```shell
-java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar  all --version 1.0.0
+# Generate for all networks
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar all --version 1.0.0
+
+# Generate for specific network only
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar all --filter testnet --version 1.0.0
+```
+
+Generate TypeScript package only (no JSON files)
+```shell
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar build-ts-package --type testnet --version 1.0.0
 ```
 
 You can see all commands with:

@@ -112,159 +112,77 @@ object Utils {
     addressEncoder.fromProposition(ergoTree).get.toString
   }
 
-  def buildTypeScriptPackage(
+  def buildTypeScriptPackage (
     networkType: String,
     version: String,
-    tag: String,
+    saved: Boolean,
   ): Unit = {
-    println(s"Building TypeScript package for network type: $networkType")
-    println(s"Version: $version, Tag: $tag")
+    println(s"Generating TypeScript package for network type: $networkType with Version: $version")
     
-    val contractsJson = createContracts(version, networkType, saved = false)
-    val tokensJson = createTokenMap(version, networkType, saved = false)
+    val contractsJson = createContracts(version, networkType, saved)
+    val tokensJson = createTokenMap(version, networkType, saved)
 
     val packageName = s"@rosen-bridge/contract"
-    val packageDir = s"./ts-package/contract"
+    val packageDir = s"./ts-packages/contract-$networkType"
     val distDir = s"$packageDir/dist"
     
     new File(packageDir).mkdirs()
     new File(distDir).mkdirs()
     
-    generatePackageJson(packageDir, packageName, version, tag, networkType)
-    
-    generateContractsJs(distDir, contractsJson)
-    generateTokensJs(distDir, tokensJson)
-    
-    generateContractsDts(distDir, contractsJson)
-    generateTokensDts(distDir, tokensJson)
-    
-    generateIndexJs(distDir)
-    generateIndexDts(distDir)
+    writeFile(s"$packageDir/package.json", renderPackageJson(packageName, version, networkType))
+    writeFile(s"$packageDir/README.md", generateReadmeContent(networkType))
+    writeFile(s"$distDir/contracts.js", renderContractsJs(contractsJson))
+    writeFile(s"$distDir/tokens.js", renderTokensJs(tokensJson))
+    writeFile(s"$distDir/contracts.d.ts", renderContractsDts(contractsJson))
+    writeFile(s"$distDir/tokens.d.ts", renderTokensDts())
+    writeFile(s"$distDir/index.js", Templates.indexJsTemplate)
+    writeFile(s"$distDir/index.d.ts", Templates.indexDtsTemplate)
     
     println(s"TypeScript package generated successfully at: $packageDir")
-    println(s"To install: npm install $packageName")
   }
 
-  def generatePackageJson(dir: String, packageName: String, version: String, tag: String, networkType: String): Unit = {
-    val packageJson = 
-      s"""{
-         |  "name": "$packageName",
-         |  "version": "$version-$tag",
-         |  "description": "TypeScript package for Rosen Bridge $networkType contracts and tokens",
-         |  "repository": {
-         |     "type": "git",
-         |     "url": "git+https://github.com/rosen-bridge/contract.git"
-         |   },
-         |  "license": "MIT",
-         |  "author": "Rosen Team",
-         |  "types": "dist/index.d.ts",
-         |  "main": "dist/index.js",
-         |  "type": "module",
-         |  "files": [
-         |    "dist"
-         |  ],
-         |  "engines": {
-         |    "node": ">=22.18.0",
-         |    "npm": "11.6.2"
-         |  }
-         |}
-         |""".stripMargin
-    
-    val writer = new PrintWriter(s"$dir/package.json")
-    writer.write(packageJson)
+  def writeFile(path: String, content: String): Unit = {
+    val writer = new PrintWriter(path)
+    writer.write(content)
     writer.close()
   }
 
-  def generateContractsJs(distDir: String, contractsJson: Json): Unit = {
-    val contractsJs = s"""export const contracts = ${contractsJson.spaces2};\n"""
-    new PrintWriter(s"$distDir/contracts.js") { write(contractsJs); close() }
+  def renderPackageJson(packageName: String, version: String, networkType: String): String = {
+    Templates.packageJsonTemplate
+      .replace("$packageName", packageName)
+      .replace("$version", version)
+      .replace("$networkType", networkType)
   }
 
-  def generateTokensJs(distDir: String, tokensJson: Json): Unit = {
-    val tokensJs = s"""export const tokens = ${tokensJson.spaces2};\n"""
-    new PrintWriter(s"$distDir/tokens.js") { write(tokensJs); close() }
+  def renderContractsJs(contractsJson: Json): String = {
+    Templates.contractsJsTemplate.replace("$contractsJson", contractsJson.spaces2)
   }
 
-  def generateContractsDts(distDir: String, json: Json): Unit = {
-    val chains = extractChainNames(json)
-    val globalTokens = extractKeys(json, "tokens")
-    val addresses = extractNestedKeys(json, chains.headOption, "addresses")
-    val chainTokens = extractNestedKeys(json, chains.headOption, "tokens")
-
-    val content =
-      s"""
-export interface GlobalTokens {
-${globalTokens.map(k => s"""  "$k": string;""").mkString("\n")}
-}
-
-export interface ChainAddresses {
-${addresses.map(k => s"""  "$k": string;""").mkString("\n")}
-}
-
-export interface ChainTokens {
-${chainTokens.map(k => s"""  "$k": string;""").mkString("\n")}
-}
-
-export interface ChainConfig {
-  "addresses": ChainAddresses;
-  "tokens": ChainTokens;
-  "cleanupConfirm": number;
-}
-
-export interface Contracts {
-  "version": string;
-  "tokens": GlobalTokens;
-${chains.map(c => s"""  "$c": ChainConfig;""").mkString("\n")}
-}
-
-export declare const contracts: Contracts;
-"""
-    new PrintWriter(s"$distDir/contracts.d.ts") { write(content.trim()); close() }
+  def renderTokensJs(tokensJson: Json): String = {
+    Templates.tokensJsTemplate.replace("$tokensJson", tokensJson.spaces2)
   }
 
-  def generateTokensDts(distDir: String, json: Json): Unit = {
-    val networks = extractAllTokenNetworks(json)
+  def renderContractsDts(contractsJson: Json): String = {
+    val chains = extractChainNames(contractsJson)
+    val globalTokens = extractKeys(contractsJson, "tokens")
+    val addresses = extractNestedKeys(contractsJson, chains.headOption, "addresses")
+    val chainTokens = extractNestedKeys(contractsJson, chains.headOption, "tokens")
 
-    val content =
-      s"""
-export interface TokenInfo {
-  "tokenId": string;
-  "name": string;
-  "decimals": number;
-  "type": string;
-  "residency": string;
-  "extra"?: Record<string, any>;
-}
+    val globalTokensStr = globalTokens.map(k => s"""  "$k": string;""").mkString("\n")
+    val addressesStr = addresses.map(k => s"""  "$k": string;""").mkString("\n")
+    val chainTokensStr = chainTokens.map(k => s"""  "$k": string;""").mkString("\n")
+    val networkUnion = chains.map(c => s"""  | "$c"""").mkString("\n")
 
-export interface Tokens {
-  "version": string;
-  "tokens": {
-${networks.map(n => s"""    "$n"?: TokenInfo;""").mkString("\n")}
-  }[];
-}
-
-export declare const tokens: Tokens;
-"""
-    new PrintWriter(s"$distDir/tokens.d.ts") { write(content.trim()); close() }
+    Templates.contractsDtsTemplate
+      .replace("$globalTokens", globalTokensStr)
+      .replace("$addresses", addressesStr)
+      .replace("$chainTokens", chainTokensStr)
+      .replace("$networkUnion", networkUnion)
   }
 
-  def generateIndexJs(distDir: String): Unit =
-    new PrintWriter(s"$distDir/index.js") {
-      write("export { contracts } from './contracts.js';\nexport { tokens } from './tokens.js';\n")
-      close()
-    }
-
-  def generateIndexDts(distDir: String): Unit =
-    new PrintWriter(s"$distDir/index.d.ts") {
-      write(
-        """export type { Contracts } from './contracts.d.ts';
-export type { Tokens } from './tokens.d.ts';
-export { contracts } from './contracts.js';
-export { tokens } from './tokens.js';
-"""
-      )
-      close()
-    }
+  def renderTokensDts(): String = {
+    Templates.tokensDtsTemplate
+  }
 
   def extractChainNames(json: Json): List[String] =
     json.hcursor.keys.map(_.filterNot(k => k == "version" || k == "tokens").toList).getOrElse(Nil)
@@ -277,21 +195,9 @@ export { tokens } from './tokens.js';
       json.hcursor.downField(chain).downField(field).keys.map(_.toList)
     }.getOrElse(Nil)
 
-  def extractAllTokenNetworks(json: Json): List[String] = {
-    val allNetworks = scala.collection.mutable.Set[String]()
-    
-    json.hcursor
-      .downField("tokens")
-      .focus
-      .flatMap(_.asArray)
-      .foreach { array =>
-        array.foreach { tokenObj =>
-          tokenObj.asObject.foreach { obj =>
-            obj.keys.foreach(allNetworks.add)
-          }
-        }
-      }
-    
-    allNetworks.toList.sorted
+  def generateReadmeContent(networkType: String): String = {
+    Templates.readmeTemplate
+      .replace("$networkType", networkType)
   }
 }
+

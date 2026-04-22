@@ -8,7 +8,6 @@ case class Config(
   networkType: String = "",
   networkVersion: String = "",
   mode: String = "",
-  tag: String = "",
 )
 
 object RosenContractsExecutor extends App {
@@ -72,10 +71,6 @@ object RosenContractsExecutor extends App {
           .action((x, c) => c.copy(networkVersion = x))
           .text("package version")
           .optional(),
-        opt[String]('g', "tag")
-          .action((x, c) => c.copy(tag = x))
-          .text("release tag (stable, develop)")
-          .required(),
       )
     help("help").text("prints this usage text")
   }
@@ -92,15 +87,30 @@ object RosenContractsExecutor extends App {
           System.exit(0)
         }
         else if (config.mode == "all") {
-          Utils.createContracts(networkVersion, config.networkType)
-          Utils.createTokenMap(networkVersion, config.networkType)
+          val networkTypes = if (config.networkType.nonEmpty) {
+            List(config.networkType)
+          } else {
+            helpers.Configs.generalConfig.keys.toList
+          }
+                    
+          networkTypes.foreach { nt =>
+            println(s"\nProcessing network: $nt")
+            
+            Utils.buildTypeScriptPackage(
+              networkType = nt,
+              version = networkVersion,
+              saved = true,
+            )
+          }
+          
+          println(s"\nAll tasks completed successfully!")
           System.exit(0)
         }
         else if (config.mode == "build-ts-package") {
           Utils.buildTypeScriptPackage(
             networkType = config.networkType,
             version = networkVersion,
-            tag = config.tag,
+            saved = false,
           )
           System.exit(0)
         }

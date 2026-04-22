@@ -6,4 +6,4 @@ target/
 *.json
 !tokensMap/*.json
 .DS_Store
-ts-package/*
+ts-packages/*
