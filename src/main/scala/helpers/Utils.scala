@@ -112,15 +112,54 @@ object Utils {
     addressEncoder.fromProposition(ergoTree).get.toString
   }
 
-  def buildTypeScriptPackage (
+  def generateAllResources(
+    version: String,
+    networkType: String = "",
+  ): Unit = {
+    val networkTypes: Seq[String] =
+      if (networkType.nonEmpty)
+        Seq(networkType)
+      else
+        Configs.generalConfig.keys.toSeq
+    
+    networkTypes.foreach(nt =>
+      { 
+        println(s"Generating resources for network type: $nt")
+        val contractsJson = createContracts(version, nt, saved = true)
+        val tokensJson = createTokenMap(version, nt, saved = true)
+        
+        generateTypeScriptPackage(
+          networkType = nt,
+          version = version,
+          contractsJson = contractsJson,
+          tokensJson = tokensJson
+        )
+      }
+    ) 
+  }
+
+  def generateTypeScriptPackage (
     networkType: String,
     version: String,
-    saved: Boolean,
+    contractsJson: Json = Json.Null,
+    tokensJson: Json = Json.Null,
   ): Unit = {
     println(s"Generating TypeScript package for network type: $networkType with Version: $version")
     
-    val contractsJson = createContracts(version, networkType, saved)
-    val tokensJson = createTokenMap(version, networkType, saved)
+    
+    val finalContractsJson = if (contractsJson == Json.Null) {
+      println("Contracts JSON not provided, creating contracts JSON...")
+      createContracts(version, networkType, saved = false)
+    } else {
+      contractsJson
+    }
+    
+    val finalTokensJson = if (tokensJson == Json.Null) {
+      println("Tokens JSON not provided, creating tokens JSON...")
+      createTokenMap(version, networkType, saved = false)
+    } else {
+      tokensJson
+    }
 
     val packageName = s"@rosen-bridge/contract"
     val packageDir = s"./ts-packages/contract-$networkType"
@@ -129,11 +168,11 @@ object Utils {
     new File(packageDir).mkdirs()
     new File(distDir).mkdirs()
     
-    writeFile(s"$packageDir/package.json", renderPackageJson(packageName, version, networkType))
-    writeFile(s"$packageDir/README.md", generateReadmeContent(networkType))
-    writeFile(s"$distDir/contracts.js", renderContractsJs(contractsJson))
-    writeFile(s"$distDir/tokens.js", renderTokensJs(tokensJson))
-    writeFile(s"$distDir/contracts.d.ts", renderContractsDts(contractsJson))
+    writeFile(s"$packageDir/package.json", renderPackageJson(packageName, version))
+    writeFile(s"$packageDir/README.md", generateReadmeContent())
+    writeFile(s"$distDir/contracts.js", renderContractsJs(finalContractsJson))
+    writeFile(s"$distDir/tokens.js", renderTokensJs(finalTokensJson))
+    writeFile(s"$distDir/contracts.d.ts", renderContractsDts(finalContractsJson))
     writeFile(s"$distDir/tokens.d.ts", renderTokensDts())
     writeFile(s"$distDir/index.js", Templates.indexJsTemplate)
     writeFile(s"$distDir/index.d.ts", Templates.indexDtsTemplate)
@@ -147,15 +186,18 @@ object Utils {
     writer.close()
   }
 
-  def renderPackageJson(packageName: String, version: String, networkType: String): String = {
+  def renderPackageJson(packageName: String, version: String): String = {
     Templates.packageJsonTemplate
       .replace("$packageName", packageName)
       .replace("$version", version)
-      .replace("$networkType", networkType)
   }
 
   def renderContractsJs(contractsJson: Json): String = {
-    Templates.contractsJsTemplate.replace("$contractsJson", contractsJson.spaces2)
+    val chains = extractChainNames(contractsJson)
+    val networkChainsArray = chains.map(c => s""""$c"""").mkString("[", ", ", "]")
+    Templates.contractsJsTemplate
+    .replace("$contractsJson", contractsJson.spaces2)
+    .replace("$networkChainsArray", networkChainsArray)
   }
 
   def renderTokensJs(tokensJson: Json): String = {
@@ -195,9 +237,6 @@ object Utils {
       json.hcursor.downField(chain).downField(field).keys.map(_.toList)
     }.getOrElse(Nil)
 
-  def generateReadmeContent(networkType: String): String = {
+  def generateReadmeContent(): String = 
     Templates.readmeTemplate
-      .replace("$networkType", networkType)
-  }
 }
-

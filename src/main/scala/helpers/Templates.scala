@@ -6,7 +6,7 @@ object Templates {
     """{
       |  "name": "$packageName",
       |  "version": "$version-$networkType",
-      |  "description": "TypeScript package for Rosen Bridge $networkType contracts and tokens",
+      |  "description": "TypeScript package for Rosen Bridge contracts and tokens",
       |  "repository": {
       |    "type": "git",
       |    "url": "git+https://github.com/rosen-bridge/contract.git"
@@ -28,6 +28,7 @@ object Templates {
 
   val contractsJsTemplate: String = 
     """export const contracts = $contractsJson;
+      |export const NETWORK_CHAINS = $networkChainsArray;
       |""".stripMargin
 
   val tokensJsTemplate: String = 
@@ -35,7 +36,7 @@ object Templates {
       |""".stripMargin
 
   val indexJsTemplate: String = 
-    """export { contracts } from './contracts.js';
+    """export { contracts, NETWORK_CHAINS } from './contracts.js';
       |export { tokens } from './tokens.js';
       |""".stripMargin
 
@@ -64,9 +65,10 @@ object Templates {
       |export interface Contracts extends Record<NetworkChain, ChainConfig> {
       |  "version": string;
       |  "tokens": GlobalTokens;
-      |};
+      |}
       |
       |export declare const contracts: Contracts;
+      |export declare const NETWORK_CHAINS: readonly NetworkChain[];
       |""".stripMargin
 
   val tokensDtsTemplate: String =
@@ -83,7 +85,9 @@ object Templates {
        |
        |export interface Tokens {
        |  "version": string;
-       |  "tokens": Partial<Record<NetworkChain, TokenInfo>>[];
+       |  "tokens": {
+       |     [K in NetworkChain]?: TokenInfo;
+       | }[];
        |}
        |
        |export declare const tokens: Tokens;
@@ -92,7 +96,7 @@ object Templates {
   val indexDtsTemplate: String =
     """export type { Contracts, ChainConfig, ChainAddresses, ChainTokens, GlobalTokens, NetworkChain } from './contracts.d.ts';
       |export type { Tokens, TokenInfo } from './tokens.d.ts';
-      |export { contracts } from './contracts.js';
+      |export { contracts, NETWORK_CHAINS } from './contracts.js';
       |export { tokens } from './tokens.js';
       |""".stripMargin
 
@@ -107,7 +111,7 @@ val readmeTemplate: String =
       |
       |## Introduction
       |
-      |`@rosen-bridge/contract` contains the TokenMaps and address of contracts for the **$networkType** network of the Rosen Bridge.
+      |`@rosen-bridge/contract` contains the TokenMaps and address of contracts for the Rosen Bridge.
       |
       |This package provides TypeScript definitions and exports for:
       |- Contract addresses for all supported chains

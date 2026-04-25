@@ -26,7 +26,7 @@ java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar all --filter testnet
 
 Generate TypeScript package only (no JSON files)
 ```shell
-java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar build-ts-package --type testnet --version 1.0.0
+java -jar target/scala-2.12/contract-rosen-bridge-1.0.0.jar generate-ts-package --type testnet --version 1.0.0
 ```
 
 You can see all commands with:

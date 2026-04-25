@@ -59,9 +59,9 @@ object RosenContractsExecutor extends App {
           .optional()
       )
 
-    cmd("build-ts-package")
-      .action((_, c) => c.copy(mode = "build-ts-package"))
-      .text("build TypeScript package from contracts and tokens JSON files.")
+    cmd("generate-ts-package")
+      .action((_, c) => c.copy(mode = "generate-ts-package"))
+      .text("generate TypeScript package from contracts and tokens JSON files.")
       .children(
         opt[String]('t', "type")
           .action((x, c) => c.copy(networkType = x.toLowerCase()))
@@ -86,31 +86,17 @@ object RosenContractsExecutor extends App {
           Utils.createTokenMap(networkVersion, config.networkType)
           System.exit(0)
         }
-        else if (config.mode == "all") {
-          val networkTypes = if (config.networkType.nonEmpty) {
-            List(config.networkType)
-          } else {
-            helpers.Configs.generalConfig.keys.toList
-          }
-                    
-          networkTypes.foreach { nt =>
-            println(s"\nProcessing network: $nt")
-            
-            Utils.buildTypeScriptPackage(
-              networkType = nt,
-              version = networkVersion,
-              saved = true,
-            )
-          }
-          
-          println(s"\nAll tasks completed successfully!")
+        else if (config.mode == "all") {               
+          Utils.generateAllResources(
+            version = networkVersion,
+            networkType = config.networkType,
+          )
           System.exit(0)
         }
-        else if (config.mode == "build-ts-package") {
-          Utils.buildTypeScriptPackage(
+        else if (config.mode == "generate-ts-package") {
+          Utils.generateTypeScriptPackage(
             networkType = config.networkType,
             version = networkVersion,
-            saved = false,
           )
           System.exit(0)
         }
