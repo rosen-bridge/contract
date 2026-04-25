@@ -141,26 +141,11 @@ object Utils {
   def generateTypeScriptPackage (
     networkType: String,
     version: String,
-    contractsJson: Json = Json.Null,
-    tokensJson: Json = Json.Null,
+    contractsJson: Json,
+    tokensJson: Json,
   ): Unit = {
     println(s"Generating TypeScript package for network type: $networkType with Version: $version")
     
-    
-    val finalContractsJson = if (contractsJson == Json.Null) {
-      println("Contracts JSON not provided, creating contracts JSON...")
-      createContracts(version, networkType, saved = false)
-    } else {
-      contractsJson
-    }
-    
-    val finalTokensJson = if (tokensJson == Json.Null) {
-      println("Tokens JSON not provided, creating tokens JSON...")
-      createTokenMap(version, networkType, saved = false)
-    } else {
-      tokensJson
-    }
-
     val packageName = s"@rosen-bridge/contract"
     val packageDir = s"./ts-packages/contract-$networkType"
     val distDir = s"$packageDir/dist"
@@ -170,9 +155,9 @@ object Utils {
     
     writeFile(s"$packageDir/package.json", renderPackageJson(packageName, version))
     writeFile(s"$packageDir/README.md", generateReadmeContent())
-    writeFile(s"$distDir/contracts.js", renderContractsJs(finalContractsJson))
-    writeFile(s"$distDir/tokens.js", renderTokensJs(finalTokensJson))
-    writeFile(s"$distDir/contracts.d.ts", renderContractsDts(finalContractsJson))
+    writeFile(s"$distDir/contracts.js", renderContractsJs(contractsJson))
+    writeFile(s"$distDir/tokens.js", renderTokensJs(tokensJson))
+    writeFile(s"$distDir/contracts.d.ts", renderContractsDts(contractsJson))
     writeFile(s"$distDir/tokens.d.ts", renderTokensDts())
     writeFile(s"$distDir/index.js", Templates.indexJsTemplate)
     writeFile(s"$distDir/index.d.ts", Templates.indexDtsTemplate)

@@ -94,9 +94,13 @@ object RosenContractsExecutor extends App {
           System.exit(0)
         }
         else if (config.mode == "generate-ts-package") {
+          val contracts = Utils.createContracts(networkVersion, config.networkType)
+          val tokens = Utils.createTokenMap(networkVersion, config.networkType)
           Utils.generateTypeScriptPackage(
             networkType = config.networkType,
             version = networkVersion,
+            contractsJson = contracts,
+            tokensJson = tokens,
           )
           System.exit(0)
         }
