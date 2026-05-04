@@ -18,7 +18,7 @@ jobs:
       matrix:
         os: [ ubuntu-latest ]
         scala: [ 2.12.7 ]
-        java-distribution: [ adopt ]
+        java-distribution: [ temurin ]
         java: [ 8 ]
     runs-on: ${{ matrix.os }}
 
@@ -102,8 +102,7 @@ jobs:
           mkdir -p release-artifacts/ts-packages
 
           for package_dir in ./ts-packages/*; do
-            package_name=$(basename "$package_dir")
-            tar -czf "release-artifacts/ts-packages/${package_name}.tar.gz" -C ./ts-packages "$package_name"
+            tar -czf "release-artifacts/$package_dir.tar.gz" "$package_dir"
           done
 
       - name: Publish TS packages to npm
