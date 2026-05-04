@@ -98,11 +98,12 @@ jobs:
           java -jar "$ROSEN" all
 
       - name: Create TS package tarballs
+        working-directory: ./ts-packages
         run: |
-          mkdir -p release-artifacts/ts-packages
+          mkdir -p ../release-artifacts/ts-packages
 
-          for package_dir in ./ts-packages/*; do
-            tar -czf "release-artifacts/$package_dir.tar.gz" "$package_dir"
+          for package_dir in *; do
+            tar -czf "../release-artifacts/ts-packages/$package_dir.tar.gz" "$package_dir"
           done
 
       - name: Publish TS packages to npm
