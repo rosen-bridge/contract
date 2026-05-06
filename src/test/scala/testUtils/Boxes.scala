@@ -139,11 +139,11 @@ object Boxes {
     Boxes.createWatcherCollateralBox(ctx, erg, rsn, wid, rwtCount).convertToInputWith(getRandomHexString(), 3)
   }
 
-  def createWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte], rwtCount: Long): OutBox = {
+  def createWatcherCollateralBox(ctx: BlockchainContext, erg: Long, rsn: Long, wid: Array[Byte], rwtCount: Long, contract: ErgoContract = contracts.WatcherCollateral._1): OutBox = {
     val builder = ctx.newTxBuilder().outBoxBuilder()
       .value(erg)
       .tokens(new ErgoToken(networkConfig._2.tokens.AwcNFT, 1))
-      .contract(contracts.WatcherCollateral._1)
+      .contract(contract)
       .registers(
         ErgoValueBuilder.buildFor(Colls.fromArray(wid)),
         ErgoValueBuilder.buildFor(rwtCount),
