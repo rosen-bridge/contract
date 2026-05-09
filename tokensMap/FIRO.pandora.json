@@ -1,0 +1,55 @@
+{
+  "firo": {
+    "tokenId": "firo",
+    "name": "FIRO",
+    "decimals": 8,
+    "type": "native",
+    "residency": "native",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "cff378a158710a224ae9f51dacc658fc2d1fa801b22b21e1c074a77cb8dbaa03",
+    "name": "rpnFIRO",
+    "decimals": 8,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "820dbe3e2c74af878c2d7484e90937ede8cf248fa92c19723824e328.72706e4649524f",
+    "name": "rpnFIRO",
+    "decimals": 8,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "820dbe3e2c74af878c2d7484e90937ede8cf248fa92c19723824e328",
+      "assetName": "72706e4649524f"
+    }
+  },
+  "binance": {
+    "tokenId": "0xce6c3a4d4b0426671bcbfcb2ca9be7fddfb2a027",
+    "name": "rpnFIRO",
+    "decimals": 8,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "ethereum": {
+    "tokenId": "0x576a2fb9b99a16f281fffe4f4c170559f187d6e7",
+    "name": "rpnFIRO",
+    "decimals": 8,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "bitcoin-runes": {
+    "tokenId": "TO_BE_DEFINED",
+    "name": "RPN•FIRO",
+    "decimals": 8,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "RPNFIRO"
+    }
+  }
+}
