@@ -153,7 +153,7 @@ object Utils {
     new File(packageDir).mkdirs()
     new File(distDir).mkdirs()
     
-    writeFile(s"$packageDir/package.json", renderPackageJson(packageName, version))
+    writeFile(s"$packageDir/package.json", renderPackageJson(packageName, version, networkType))
     writeFile(s"$packageDir/README.md", generateReadmeContent())
     writeFile(s"$distDir/contracts.js", renderContractsJs(contractsJson))
     writeFile(s"$distDir/tokens.js", renderTokensJs(tokensJson))
@@ -171,10 +171,11 @@ object Utils {
     writer.close()
   }
 
-  def renderPackageJson(packageName: String, version: String): String = {
+  def renderPackageJson(packageName: String, version: String, networkType: String): String = {
     Templates.packageJsonTemplate
       .replace("$packageName", packageName)
       .replace("$version", version)
+      .replace("$networkType", networkType)
   }
 
   def renderContractsJs(contractsJson: Json): String = {
