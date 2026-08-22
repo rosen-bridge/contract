@@ -1,7 +1,7 @@
 {
   "ergo" : {
-    "tokenId" : "d752bede1a85891fff344604431fd6dc30ba685b382f2e0fe15da8141d36e34e",
-    "name" : "RSN-Pandora",
+    "tokenId" : "aade7bc112a1686e4c8df4563d3283655b3ee717f4528dde335c8293a132e6c7",
+    "name" : "RSN-PandoraV3",
     "decimals" : 3,
     "type" : "EIP-004",
     "residency" : "native",
