@@ -20,7 +20,7 @@
     }
   },
   "ergo" : {
-    "tokenId" : "b2dcea48caf0e73309138d659f6eb69d7ec8793dee989670c72dd4ffde7ebeb3",
+    "tokenId" : "88bc1b3d3bfdb84a46e7bfd5446429d98e7f63af12414b7e073ea458aeb7d621",
     "name" : "rpnBTC",
     "decimals" : 8,
     "type" : "EIP-004",
