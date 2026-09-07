@@ -1,0 +1,12 @@
+name: Mirroring
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+
+jobs:
+  git-sync:
+    uses: rosen-bridge/operation/.github/workflows/mirroring-reusable.yml@master
+    secrets: inherit
