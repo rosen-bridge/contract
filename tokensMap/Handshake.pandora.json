@@ -1,0 +1,55 @@
+{
+  "handshake": {
+    "tokenId": "hns",
+    "name": "Handshake",
+    "decimals": 6,
+    "type": "native",
+    "residency": "native",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "d5db909ad67453d4a03200dfc533b167140ad1f31f5deafc43c7dbf70ee97d49",
+    "name": "rpnHNS",
+    "decimals": 6,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "e3021d9af18eaaa6cac3d9e3815345ba8992a962383765e6c4578f46.72706e484e53",
+    "name": "rpnHNS",
+    "decimals": 6,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "e3021d9af18eaaa6cac3d9e3815345ba8992a962383765e6c4578f46",
+      "assetName": "72706e484e53"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0xd8d47883ccbcf18dacd0cc004445efd148821e99",
+    "name": "rpnHNS",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0xdcda12d242ec0354b193cb560dc26143d802e0b1",
+    "name": "rpnHNS",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "bitcoin-runes": {
+    "tokenId": "967471:2341",
+    "name": "RPN•HANDSHAKE",
+    "decimals": 6,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "RPNHANDSHAKE"
+    }
+  }
+}
