@@ -1,0 +1,55 @@
+{
+  "handshake": {
+    "tokenId": "hns",
+    "name": "HNS",
+    "decimals": 6,
+    "type": "native",
+    "residency": "native",
+    "extra": {}
+  },
+  "ergo": {
+    "tokenId": "edaa0362f492cbb7c284a76d1bab12ff3468061e00b73db4a3f2cebc5aec77b3",
+    "name": "HNS",
+    "decimals": 6,
+    "type": "EIP-004",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "cardano": {
+    "tokenId": "fe8f658ef440d755aedc322b128f6047d295c23b1215ffb24383e5e6.484e53",
+    "name": "HNS",
+    "decimals": 6,
+    "type": "CIP26",
+    "residency": "wrapped",
+    "extra": {
+      "policyId": "fe8f658ef440d755aedc322b128f6047d295c23b1215ffb24383e5e6",
+      "assetName": "484e53"
+    }
+  },
+  "ethereum": {
+    "tokenId": "0x7db56cac06c840835d488c6f41300fb9115da804",
+    "name": "HNS",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "binance": {
+    "tokenId": "0x034ab5561e64194b583aa2d3b0a0382c7d3ebf8a",
+    "name": "HNS",
+    "decimals": 6,
+    "type": "ERC-20",
+    "residency": "wrapped",
+    "extra": {}
+  },
+  "bitcoin-runes": {
+    "tokenId": "975972:1441",
+    "name": "HNS ROSEN TECH",
+    "decimals": 6,
+    "type": "Runes",
+    "residency": "wrapped",
+    "extra": {
+      "uniqueName": "HNSROSENTECH"
+    }
+  }
+}
